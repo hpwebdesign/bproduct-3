@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<modification>
+	<name>Bariklabs Quick Product Manager (bproduct)</name>
+	<code>bproduct</code>
+	<version>2.0.0</version>
+	<author>Bariklabs</author>
+	<link>https://bariklabs.com</link>
+
+	<file path="admin/language/*/common/column_left.php">
+		<operation error="skip">
+			<search trim="true"><![CDATA[// Text]]></search>
+			<add position="after"><![CDATA[
+			$_['text_bproduct']   = 'Quick Product Manager';
+			]]></add>
+		</operation>
+	</file>
+
+	<file path="admin/controller/common/column_left.php">
+		<operation error="skip">
+			<search><![CDATA[$hpwd = array();]]></search>
+			<add position="after"><![CDATA[
+			if ($this->user->hasPermission('access', 'extension/module/bproduct')) {
+				$hpwd[] = array(
+				  'name'     => $this->language->get('text_bproduct'),
+				  'href'     => $this->url->link('extension/module/bproduct', 'user_token=' . $this->session->data['user_token'], true),
+				  'children' => array()
+				);
+			}
+			]]></add>
+		</operation>
+	</file>
+	<file path="admin/controller/catalog/product.php">
+		<operation error="skip">
+			<search><![CDATA[public function index() {]]></search>
+			<add position="after"><![CDATA[
+		if ($this->config->get('module_bproduct_status')) {
+			return new Action('catalog/bproduct');
+		}
+]]></add>
+		</operation>
+		<operation error="skip">
+			<search><![CDATA[$data['add'] = $this->url->link('catalog/product/add']]></search>
+			<add position="before"><![CDATA[$data['bp_status'] = $this->config->get('module_bproduct_status');
+		]]></add>
+		</operation>
+	</file>
+
+	<file path="admin/view/template/catalog/product_list.twig">
+		<operation error="skip">
+			<search><![CDATA[<a href="{{ add }}"]]></search>
+			<add position="before"><![CDATA[{% if bp_status %}<a href="{{ add|replace({'catalog/product/add': 'catalog/product'}) }}&amp;classic=0" data-toggle="tooltip" title="Quick Product Manager" class="btn btn-default"><i class="fa fa-bolt"></i></a>{% endif %} ]]></add>
+		</operation>
+	</file>
+</modification>

@@ -1,0 +1,13 @@
+obfuscated/
+distribution/
+*.zip
+.DS_Store
+.idea/
+obf/
+build/
+RoboFile.php
+.env
+/vendor
+yakpro-po/
+.env
+CLAUDE.md

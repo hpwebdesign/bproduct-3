@@ -1,0 +1,177 @@
+{{ header }}{{ column_left }}
+<div id="content">
+  <link rel="stylesheet" href="view/stylesheet/bproduct/settings.css">
+  <div id="bp-settings">
+    <header>
+      <div class="bar container">
+        <div>
+          <div class="brand">{{ heading_title }}</div>
+          <div class="crumbs" aria-label="Breadcrumb">
+            {% for breadcrumb in breadcrumbs %}
+              <a href="{{ breadcrumb.href }}">{{ breadcrumb.text }}</a>{% if not loop.last %}<span class="sep">›</span>{% endif %}
+            {% endfor %}
+          </div>
+        </div>
+        <div class="spacer"></div>
+        <a href="{{ manager }}" class="btn btn-success"><i class="fa fa-bolt"></i> {{ text_open }}</a>
+        <button type="submit" form="form-module" data-toggle="tooltip" title="{{ button_save }} (Ctrl+S)" class="btn primary"><i class="fa fa-save"></i> {{ button_save }}</button>
+        <a href="{{ cancel }}" class="btn"><i class="fa fa-reply"></i> {{ button_cancel }}</a>
+      </div>
+    </header>
+
+    <div class="container">
+      <h1>{{ heading_title }}</h1>
+
+      {% if error_warning %}
+      <div class="alert alert-danger alert-dismissible"><i class="fa fa-exclamation-circle"></i> {{ error_warning }}
+        <button type="button" class="close" data-dismiss="alert">&times;</button>
+      </div>
+      {% endif %}
+
+      <div class="tabs" role="tablist">
+        <button type="button" class="tab" aria-selected="true" aria-controls="tab-general"><i class="fa fa-cog fa-fw"></i> {{ text_edit }}</button>
+      </div>
+
+      <form id="form-module" data-save-action="{{ action }}">
+        <section id="tab-general" class="panel active">
+          <fieldset>
+            <legend>{{ text_edit }}</legend>
+
+            <div class="form-row two-col">
+              <div class="form-row-text">
+                <label for="input-status">{{ entry_status }}</label>
+                <p class="muted">{{ help_status }}</p>
+              </div>
+              <label class="switch">
+                <input type="checkbox" name="module_bproduct_status" id="input-status" value="1" {{ module_bproduct_status ? 'checked' : '' }}>
+                <span class="slider"></span>
+              </label>
+            </div>
+
+            <div class="form-row two-col">
+              <div class="form-row-text">
+                <label for="input-limit">{{ entry_limit }}</label>
+                <p class="muted">{{ help_limit }}</p>
+              </div>
+              <select name="module_bproduct_limit" id="input-limit" class="form-control">
+                {% for limit in limits %}
+                <option value="{{ limit }}" {{ limit == module_bproduct_limit ? 'selected="selected"' : '' }}>{{ limit }}</option>
+                {% endfor %}
+              </select>
+            </div>
+
+            <div class="form-row two-col">
+              <div class="form-row-text">
+                <label for="input-sort">{{ entry_sort }}</label>
+              </div>
+              <select name="module_bproduct_sort" id="input-sort" class="form-control">
+                {% for sort in sorts %}
+                <option value="{{ sort.value }}" {{ sort.value == module_bproduct_sort ? 'selected="selected"' : '' }}>{{ sort.text }}</option>
+                {% endfor %}
+              </select>
+            </div>
+
+            <div class="form-row two-col">
+              <div class="form-row-text">
+                <label for="input-new-status">{{ entry_new_status }}</label>
+                <p class="muted">{{ help_new_status }}</p>
+              </div>
+              <label class="switch">
+                <input type="checkbox" name="module_bproduct_new_status" id="input-new-status" value="1" {{ module_bproduct_new_status ? 'checked' : '' }}>
+                <span class="slider"></span>
+              </label>
+            </div>
+          </fieldset>
+
+          <fieldset>
+            <legend>{{ text_tabs }}</legend>
+            <p class="muted" style="margin-bottom:14px">{{ text_tabs_desc }}</p>
+            <ul id="bp-tab-list" class="tab-sort">
+              {% for tab in tabs %}
+              <li draggable="true">
+                <i class="fa fa-bars handle"></i>
+                <span class="tname">{{ tab.text }}</span>
+                <input type="hidden" name="module_bproduct_tab_order[]" value="{{ tab.key }}">
+                {% if tab.required %}
+                <span class="lock"><i class="fa fa-lock"></i></span>
+                {% else %}
+                <label class="switch">
+                  <input type="checkbox" name="module_bproduct_tabs[{{ tab.key }}]" value="1" {{ tab.shown ? 'checked' : '' }}>
+                  <span class="slider"></span>
+                </label>
+                {% endif %}
+              </li>
+              {% endfor %}
+            </ul>
+          </fieldset>
+        </section>
+      </form>
+    </div>
+  </div>
+</div>
+<script>
+$(function () {
+  var $form = $('#form-module');
+
+  function notify(type, message) {
+    $('#bp-settings .bp-alert').remove();
+    $('<div class="bp-alert alert alert-' + type + ' alert-dismissible"><i class="fa fa-' + (type == 'success' ? 'check' : 'exclamation') + '-circle"></i> <span></span><button type="button" class="close" data-dismiss="alert">&times;</button></div>')
+      .find('span').text(message).end()
+      .insertBefore('#bp-settings .tabs');
+    if (type == 'success') {
+      setTimeout(function () { $('#bp-settings .bp-alert').fadeOut(300, function () { $(this).remove(); }); }, 4000);
+    }
+  }
+
+  function save() {
+    $.ajax({
+      url: $form.data('save-action'),
+      type: 'POST',
+      dataType: 'json',
+      data: $form.serialize(),
+      beforeSend: function () { $('#bp-settings button[form="form-module"]').prop('disabled', true); },
+      complete: function () { $('#bp-settings button[form="form-module"]').prop('disabled', false); },
+      success: function (json) {
+        if (json.error) {
+          notify('danger', json.error.warning || '{{ error_permission|escape('js') }}');
+        } else if (json.success) {
+          notify('success', json.success);
+        }
+      },
+      error: function () { notify('danger', '{{ error_permission|escape('js') }}'); }
+    });
+  }
+
+  var list = document.getElementById('bp-tab-list'), dragEl = null;
+
+  list.addEventListener('dragstart', function (e) {
+    dragEl = e.target.closest('li');
+    if (!dragEl) { return; }
+    e.dataTransfer.effectAllowed = 'move';
+    e.dataTransfer.setData('text/plain', '');
+    dragEl.classList.add('dragging');
+  });
+  list.addEventListener('dragover', function (e) {
+    if (!dragEl) { return; }
+    e.preventDefault();
+    var over = e.target.closest('li');
+    if (!over || over === dragEl) { return; }
+    var r = over.getBoundingClientRect();
+    list.insertBefore(dragEl, (e.clientY - r.top) > r.height / 2 ? over.nextSibling : over);
+  });
+  list.addEventListener('dragend', function () {
+    if (dragEl) { dragEl.classList.remove('dragging'); }
+    dragEl = null;
+  });
+
+  $form.on('submit', function (e) { e.preventDefault(); save(); });
+
+  $(document).on('keydown', function (e) {
+    if ((e.ctrlKey || e.metaKey) && (e.key === 's' || e.key === 'S')) {
+      e.preventDefault();
+      save();
+    }
+  });
+});
+</script>
+{{ footer }}
