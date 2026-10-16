@@ -509,6 +509,14 @@ th.sortth{white-space:nowrap}
 .editor.srcmode .src{display:block}.editor.srcmode .ct{display:none}
 .editor .ct{min-height:190px;max-height:420px;overflow:auto}
 .editor .ct img{max-width:100%;height:auto}
+.editor .tb{flex-wrap:wrap;align-items:center}
+.editor .hwrap{position:relative;display:inline-block}
+.editor .hmenu{position:absolute;top:100%;left:0;z-index:20;min-width:180px;background:#fff;border:1px solid var(--line);border-radius:8px;box-shadow:0 6px 20px rgba(0,0,0,.12);padding:4px}
+.editor .hmenu button{display:block;width:100%;text-align:left;font-weight:400;padding:4px 10px;color:var(--text)}
+.editor .hmenu h1,.editor .hmenu h2,.editor .hmenu h3,.editor .hmenu h4{margin:0;font-weight:700}
+.editor .hmenu h1{font-size:22px}.editor .hmenu h2{font-size:19px}.editor .hmenu h3{font-size:16px}.editor .hmenu h4{font-size:14px}
+.editor .ct blockquote{margin:8px 0;padding:6px 14px;border-left:4px solid #cbd5e1;color:var(--mute)}
+.editor .ct h1{font-size:1.8em}.editor .ct h2{font-size:1.5em}.editor .ct h3{font-size:1.25em}.editor .ct h4{font-size:1.1em}
 .rowsrch{display:flex;gap:8px;align-items:center}
 .attrt{width:100%;border-collapse:collapse;margin-bottom:10px}
 .attrt th{text-align:left;font-size:12px;color:var(--mute);padding:6px;border-bottom:1px solid var(--line)}
@@ -597,6 +605,10 @@ var T = JSON.parse(document.getElementById('bp-lang').textContent);
 var host = document.getElementById('bp-host');
 var R = host.attachShadow({mode: 'open'});
 R.appendChild(document.getElementById('bp-shell').content.cloneNode(true));
+(function () {
+  var BI = 'https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css';
+  [document.head, R].forEach(function (t) { var l = document.createElement('link'); l.rel = 'stylesheet'; l.href = BI; t.appendChild(l); });
+})();
 Array.prototype.forEach.call(R.querySelectorAll('[data-t]'), function (el) { el.textContent = T[el.dataset.t] || ''; });
 Array.prototype.forEach.call(R.querySelectorAll('[data-tp]'), function (el) { el.setAttribute('placeholder', T[el.dataset.tp] || ''); });
 Array.prototype.forEach.call(R.querySelectorAll('[data-ta]'), function (el) { el.setAttribute('aria-label', T[el.dataset.ta] || ''); });
@@ -1071,9 +1083,12 @@ function pickImage(cb) {
 function editorHtml(lid, html) {
   var b = function (cmd, label, title) { return '<button type="button" data-ed="' + cmd + '" title="' + esc(title) + '">' + label + '</button>'; };
   return '<div class="editor" data-ledit="' + lid + '"><div class="tb">' +
+    '<span class="hwrap"><button type="button" data-ed="headmenu" title="' + esc(T.bp_ed_heading) + '"><i class="bi bi-type-h1"></i> <i class="bi bi-chevron-down" style="font-size:10px"></i></button>' +
+    '<div class="hmenu" style="display:none">' + ['h1', 'h2', 'h3', 'h4', 'p'].map(function (t) { return '<button type="button" data-ed="fmt:' + t + '">' + (t === 'p' ? esc(T.bp_ed_paragraph) : '<' + t + '>' + t.toUpperCase() + ' ' + esc(T.bp_ed_heading) + '</' + t + '>') + '</button>'; }).join('') + '</div></span>' +
     b('bold', '<b>B</b>', T.bp_ed_bold) + b('italic', '<i>I</i>', T.bp_ed_italic) + b('underline', '<u>U</u>', T.bp_ed_underline) +
-    b('insertUnorderedList', '• ' + esc(T.bp_ed_list), T.bp_ed_list) + b('insertOrderedList', '1. ' + esc(T.bp_ed_list), T.bp_ed_list) +
-    b('link', esc(T.bp_ed_link), T.bp_ed_link) + b('unlink', esc(T.bp_ed_unlink), T.bp_ed_unlink) + b('image', esc(T.bp_ed_image), T.bp_ed_image) + b('src', esc(T.bp_ed_source), T.bp_ed_source) +
+    b('quote', '<i class="bi bi-quote"></i>', T.bp_ed_quote) + b('clear', '<i class="bi bi-eraser"></i>', T.bp_ed_clear) +
+    b('insertUnorderedList', '<i class="bi bi-list-ul"></i>', T.bp_ed_list) + b('insertOrderedList', '<i class="bi bi-list-ol"></i>', T.bp_ed_list) +
+    b('link', '<i class="bi bi-link-45deg"></i>', T.bp_ed_link) + b('unlink', '<i class="bi bi-link-45deg" style="opacity:.5;text-decoration:line-through"></i>', T.bp_ed_unlink) + b('image', '<i class="bi bi-image"></i>', T.bp_ed_image) + b('src', '<i class="bi bi-code-slash"></i>', T.bp_ed_source) +
     '</div><div class="lnkrow" style="display:none;padding:6px;border-bottom:1px solid var(--line);gap:6px"><input class="inp sm" data-lnk placeholder="https://" autocomplete="off"><button type="button" class="btn blue sm" data-ed="linkok">' + esc(T.bp_ok) + '</button></div>' +
     '<div class="ct" contenteditable="true" data-k="description">' + html + '</div><textarea class="src" data-k="descsrc"></textarea></div>';
 }
@@ -1115,7 +1130,19 @@ function edRun(btn) {
     return;
   }
   ct.focus();
-  document.execCommand(cmd, false, null);
+  if (cmd === 'headmenu') { var hm = ed.querySelector('.hmenu'); hm.style.display = hm.style.display === 'none' ? 'block' : 'none'; return; }
+  var hmenu = ed.querySelector('.hmenu'); if (hmenu) hmenu.style.display = 'none';
+  if (cmd.indexOf('fmt:') === 0) document.execCommand('formatBlock', false, '<' + cmd.slice(4) + '>');
+  else if (cmd === 'quote') {
+    var blk = selNow() && selNow().anchorNode; blk = blk && (blk.nodeType === 3 ? blk.parentNode : blk);
+    document.execCommand('formatBlock', false, blk && blk.closest && blk.closest('blockquote') ? '<p>' : '<blockquote>');
+  }
+  else if (cmd === 'clear') {
+    document.execCommand('removeFormat', false, null);
+    document.execCommand('unlink', false, null);
+    document.execCommand('formatBlock', false, '<p>');
+  }
+  else document.execCommand(cmd, false, null);
   markDirty('general');
 }
 function editorValue(ed) {
