@@ -6,6 +6,12 @@
 class ControllerExtensionModuleBproduct extends Controller {
 	private $error = array();
 
+	private $v_d = '';
+	private $version = '2.0.0';
+	private $extension_code = 'bproduct';
+	private $domain = '';
+	private $extension_type = 'com';
+
 	private $sorts = array('pd.name|ASC', 'pd.name|DESC', 'p.date_added|DESC', 'p.date_added|ASC');
 	private $limits = array(5, 10, 25, 50, 100);
 
@@ -18,9 +24,22 @@ class ControllerExtensionModuleBproduct extends Controller {
 	public function index() {
 		$this->load->language('extension/module/bproduct');
 
+		$this->domain = str_replace('www.', '', $_SERVER['SERVER_NAME']);
+		$this->houseKeeping();
+		$this->rightman();
+
+		if ($this->domain != $this->v_d) {
+			return $this->storeAuth();
+		}
+
 		$this->document->setTitle($this->language->get('heading_title2'));
 
 		$this->load->model('setting/setting');
+
+		$data['version'] = $this->version;
+		$data['extension_code'] = $this->extension_code;
+		$data['doc_link'] = 'https://hpwebdesign.' . $this->extension_type . '/docs/' . $this->extension_code;
+		$data['ticket_link'] = 'https://hpwebdesign.' . $this->extension_type . '/support';
 
 		$data['error_warning'] = isset($this->error['warning']) ? $this->error['warning'] : '';
 
@@ -129,6 +148,90 @@ class ControllerExtensionModuleBproduct extends Controller {
 		$this->load->model('setting/setting');
 
 		$this->model_setting_setting->deleteSetting('module_bproduct');
+	}
+
+	// Store validation screen (license missing / domain mismatch); validation.twig is delivered by bariklabs houseKeeping()
+	private function storeAuth() {
+		$data['curl_status'] = in_array('curl', get_loaded_extensions());
+		$data['extension_code'] = $this->extension_code;
+		$data['extension_type'] = $this->extension_type;
+		$data['user_token'] = $this->session->data['user_token'];
+		$this->flushdata();
+
+		$this->document->setTitle($this->language->get('text_validation'));
+
+		$data['text_curl'] = $this->language->get('text_curl');
+		$data['text_disabled_curl'] = $this->language->get('text_disabled_curl');
+		$data['text_validation'] = $this->language->get('text_validation');
+		$data['text_validate_store'] = $this->language->get('text_validate_store');
+		$data['text_information_provide'] = $this->language->get('text_information_provide');
+		$data['domain_name'] = $this->domain;
+
+		$data['breadcrumbs'] = array();
+
+		$data['breadcrumbs'][] = array(
+			'text' => $this->language->get('text_home'),
+			'href' => $this->url->link('common/dashboard', 'user_token=' . $this->session->data['user_token'], true)
+		);
+
+		$data['breadcrumbs'][] = array(
+			'text' => $this->language->get('heading_title2'),
+			'href' => $this->url->link('extension/module/bproduct', 'user_token=' . $this->session->data['user_token'], true)
+		);
+
+		$data['header'] = $this->load->controller('common/header');
+		$data['column_left'] = $this->load->controller('common/column_left');
+		$data['footer'] = $this->load->controller('common/footer');
+
+		if (!is_file(DIR_TEMPLATE . 'extension/module/validation.twig')) {
+			// validate.zip could not be downloaded (no internet / write permission)
+			$data['error_warning'] = $this->language->get('error_no_internet_access');
+			$this->response->setOutput($data['header'] . '<div id="content"><div class="container-fluid"><div class="alert alert-danger" style="margin-top:20px">' . $data['error_warning'] . '</div></div></div>' . $data['footer']);
+			return;
+		}
+
+		$this->response->setOutput($this->load->view('extension/module/validation', $data));
+	}
+
+	private function getBariklabs() {
+		require_once(DIR_APPLICATION . 'controller/common/bariklabs.php');
+
+		return new ControllerCommonBariklabs($this->registry);
+	}
+
+	private function rightman() {
+		$result = $this->getBariklabs()->rightman($this->extension_code, $this->domain);
+
+		if ($result === 'api_down') {
+			// License server unreachable: only forgive stores that already hold a license key, otherwise validation is required
+			if ($this->hasLicenseKey()) {
+				$this->error['warning'] = $this->language->get('error_no_internet_access');
+				$this->v_d = $this->domain;
+			}
+		} elseif ($result === true) {
+			$this->v_d = $this->domain;
+		}
+	}
+
+	private function hasLicenseKey() {
+		$query = $this->db->query("SHOW TABLES LIKE 'hpwd_license'");
+
+		if (!$query->num_rows) {
+			return false;
+		}
+
+		$query = $this->db->query("SELECT `license_key` FROM `hpwd_license` WHERE `code` = '" . $this->db->escape($this->extension_code) . "' LIMIT 1");
+
+		return $query->num_rows && $query->row['license_key'] != '';
+	}
+
+	private function houseKeeping() {
+		$this->getBariklabs()->houseKeeping();
+	}
+
+	// An unvalidated store must not keep the module enabled (the OCMOD hook checks this setting)
+	public function flushdata() {
+		$this->db->query("DELETE FROM `" . DB_PREFIX . "setting` WHERE `key` = 'module_bproduct_status'");
 	}
 
 	protected function validate() {

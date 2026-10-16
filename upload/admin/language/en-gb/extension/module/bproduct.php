@@ -6,6 +6,13 @@ $_['heading_title2']       = 'Bariklabs Quick Product Manager';
 
 // Text
 $_['text_extension']      = 'Extensions';
+$_['text_home']           = 'Home';
+$_['text_validation']     = 'Store Validation';
+$_['text_validate_store'] = 'In order to use this extension, please validate your store!. Kindly Contact Us to perform store validation for each domain.';
+$_['text_information_provide'] = '<p>Please provides the following information:</p>';
+$_['text_curl']           = 'cURL is enabled';
+$_['text_disabled_curl']  = 'cURL is disabled on this server. Please enable it to validate your store.';
+$_['error_no_internet_access'] = 'Warning: the license server could not be reached. Your store could not be validated, check that cURL and outbound internet access are available, then reload.';
 $_['text_success']        = 'Success: You have modified the Quick Product Manager settings!';
 $_['text_edit']           = 'Edit Quick Product Manager';
 $_['text_open']           = 'Open Quick Product Manager';
