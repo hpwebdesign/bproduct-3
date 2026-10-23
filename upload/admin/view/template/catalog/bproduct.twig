@@ -37,12 +37,12 @@ svg.i{width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:2;stroke
 .head h1{font-size:20px;margin:0}
 .head p{margin:0;color:var(--mute)}
 .crumb{margin-left:auto;color:var(--mute);font-size:13px}
-.strip{display:grid;grid-template-columns:repeat(4,1fr);background:linear-gradient(135deg,var(--navy2),var(--navy));color:#fff;border-radius:var(--r);padding:12px 6px;margin-bottom:16px}
-.strip div{padding:2px 20px;border-right:1px solid rgba(255,255,255,.14)}
-.strip div:last-child{border:0}
-.strip b{font-size:20px;display:block;line-height:1.2}
-.strip span{font-size:12px;opacity:.75}
-.strip em{font-style:normal;color:#ffd78a}
+.strip{display:flex;flex-wrap:wrap;gap:10px;background:#eef2fb;border-radius:var(--r);padding:10px;margin-bottom:16px}
+.strip .st{display:flex;align-items:center;gap:10px;background:#fff;border-radius:999px;padding:6px 18px 6px 6px;box-shadow:0 1px 2px rgba(20,40,90,.06)}
+.strip .ico{width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:16px;flex:none}
+.strip .ico.blue{background:#e3ecfd;color:#2460b8}.strip .ico.green{background:#dff5e8;color:#1f9d57}.strip .ico.grey{background:#ececf1;color:#6b7280}.strip .ico.amber{background:#fff0d4;color:#c98100}
+.strip b{font-size:17px;line-height:1.15;display:block;color:var(--text)}
+.strip span{font-size:12px;color:var(--mute);white-space:nowrap}
 
 /* generic */
 .card{background:var(--card);border:1px solid var(--line);border-radius:var(--r)}
@@ -392,8 +392,7 @@ td.num{white-space:nowrap}
 @media(max-width:860px){
   .wrap{padding:14px 12px 50px}
   .crumb{display:none}
-  .strip{grid-template-columns:1fr 1fr;gap:10px 0}
-  .strip div:nth-child(2){border:0}
+  .strip .st{flex:1 1 calc(50% - 10px);min-width:0}
   .qa-grid{grid-template-columns:56px 1fr 1fr}
   .qa-grid>.qn{grid-column:span 2}
   .im-b{grid-template-columns:1fr}
@@ -899,7 +898,8 @@ function rowHtml(p, extra) {
 function renderStats() {
   var s = S.stats;
   if (!s) { $('#stats').innerHTML = ''; return; }
-  $('#stats').innerHTML = '<div><b>' + s.total + '</b><span>' + esc(T.bp_stat_total) + '</span></div><div><b>' + s.enabled + '</b><span>' + esc(T.text_enabled) + '</span></div><div><b>' + (s.total - s.enabled) + '</b><span>' + esc(T.text_disabled) + '</span></div><div><b><em>' + s.attention + '</em></b><span>' + esc(T.bp_stat_attention) + '</span></div>';
+  var pill = function (cls, icon, val, label) { return '<div class="st"><i class="ico ' + cls + ' bi bi-' + icon + '"></i><div><b>' + val + '</b><span>' + esc(label) + '</span></div></div>'; };
+  $('#stats').innerHTML = pill('blue', 'box-seam', s.total, T.bp_stat_total) + pill('green', 'check-circle', s.enabled, T.text_enabled) + pill('grey', 'slash-circle', s.total - s.enabled, T.text_disabled) + pill('amber', 'exclamation-triangle', s.attention, T.bp_stat_attention);
 }
 function render() {
   var rows = S.rows, total = S.total, pages = S.pages;
@@ -1187,12 +1187,22 @@ function dinp(k, label, v, extra) {
 function dsel(k, label, list, v, none) {
   return '<div class="f"><label>' + esc(label) + '</label><select class="inp" data-d="' + k + '">' + (none ? '<option value="0">' + esc(T.text_none) + '</option>' : '') + list.map(function (o) { return '<option value="' + o.id + '" ' + (String(o.id) === String(v) ? 'selected' : '') + '>' + esc(o.name) + '</option>'; }).join('') + '</select></div>';
 }
+// Fields that exist only when oc_product has the matching column (CFG.extra_fields)
+function extraLinksHtml(d) {
+  var ex = CFG.extra_fields || [], links = ['frontend_demo_link', 'backend_demo_link', 'documentation_link'].filter(function (k) { return ex.indexOf(k) > -1; });
+  if (!ex.length) return '';
+  var h = '<div class="dt">' + esc(T.bp_group_links) + '</div><div class="dg">';
+  links.forEach(function (k) { h += dinp(k, T['bp_entry_' + k], d[k], 'full'); });
+  if (ex.indexOf('extension_id') > -1) h += dinp('extension_id', T.bp_entry_extension_id, d.extension_id);
+  return h + '</div>';
+}
 function dataBody(p) {
   var d = p.data;
   var yn = function (k, v) { return '<select class="inp" data-d="' + k + '"><option value="1" ' + (+v ? 'selected' : '') + '>' + esc(T.text_yes) + '</option><option value="0" ' + (+v ? '' : 'selected') + '>' + esc(T.text_no) + '</option></select>'; };
   return '<div class="dt">' + esc(T.bp_group_general) + '</div><div class="dg"><div class="f"><label>' + esc(T.entry_model) + ' <b class="req">*</b></label><input class="inp" data-d="model" value="' + esc(d.model) + '" placeholder="' + esc(T.entry_model) + '"><div class="errtxt" data-e="model"></div></div></div>' +
     '<div class="dt">' + esc(T.bp_group_identifiers) + '</div><div class="dg">' +
     ['sku', 'upc', 'ean', 'jan', 'isbn', 'mpn'].map(function (k) { return dinp(k, T['entry_' + k], d[k]); }).join('') + dinp('location', T.entry_location, d.location) + '</div>' +
+    extraLinksHtml(d) +
     '<div class="dt">' + esc(T.bp_group_price_stock) + '</div><div class="dg">' +
     dinp('price', T.entry_price, d.price) + dsel('tax_class_id', T.entry_tax_class, CFG.tax_classes, d.tax_class_id, true) +
     dinp('quantity', T.entry_quantity, d.quantity) + dinp('minimum', T.entry_minimum, d.minimum) +

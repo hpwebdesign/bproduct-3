@@ -14,6 +14,31 @@ class ControllerCatalogBproduct extends Controller {
 
 	private $scalars = array('model', 'sku', 'upc', 'ean', 'jan', 'isbn', 'mpn', 'location', 'quantity', 'minimum', 'subtract', 'stock_status_id', 'date_available', 'shipping', 'price', 'weight', 'weight_class_id', 'length', 'width', 'height', 'length_class_id', 'status', 'tax_class_id', 'sort_order');
 
+	// Optional oc_product columns added by the store's own product OCMOD; only handled when the column exists
+	private $optional_columns = array('frontend_demo_link', 'backend_demo_link', 'documentation_link', 'extension_id');
+
+	private $extra_cache = null;
+
+	private function extraKeys() {
+		if ($this->extra_cache === null) {
+			$this->extra_cache = array();
+
+			foreach ($this->optional_columns as $column) {
+				$query = $this->db->query("SHOW COLUMNS FROM `" . DB_PREFIX . "product` LIKE '" . $this->db->escape($column) . "'");
+
+				if ($query->num_rows) {
+					$this->extra_cache[] = $column;
+				}
+			}
+		}
+
+		return $this->extra_cache;
+	}
+
+	private function scalarKeys() {
+		return array_merge($this->scalars, $this->extraKeys());
+	}
+
 	public function index() {
 		$this->load->language('catalog/product');
 		$this->load->language('catalog/bproduct');
@@ -147,6 +172,7 @@ class ControllerCatalogBproduct extends Controller {
 			'new_status'     => $this->config->has('module_bproduct_new_status') ? (int)$this->config->get('module_bproduct_new_status') : 1,
 			'hidden_tabs'    => is_array($this->config->get('module_bproduct_hidden_tabs')) ? array_values($this->config->get('module_bproduct_hidden_tabs')) : array(),
 			'tab_order'      => is_array($this->config->get('module_bproduct_tab_order')) ? array_values($this->config->get('module_bproduct_tab_order')) : array(),
+			'extra_fields'   => $this->extraKeys(),
 			'can_modify'     => $this->user->hasPermission('modify', 'catalog/product') ? 1 : 0,
 			'default_status' => (int)$this->config->get('config_stock_status_id')
 		);
@@ -391,7 +417,7 @@ class ControllerCatalogBproduct extends Controller {
 
 		$data = array();
 
-		foreach ($this->scalars as $key) {
+		foreach ($this->scalarKeys() as $key) {
 			$data[$key] = $info[$key];
 		}
 
@@ -447,7 +473,7 @@ class ControllerCatalogBproduct extends Controller {
 
 		$fields = array();
 
-		foreach ($this->scalars as $key) {
+		foreach ($this->scalarKeys() as $key) {
 			$fields[$key] = $full[$key];
 		}
 
@@ -615,7 +641,7 @@ class ControllerCatalogBproduct extends Controller {
 
 					break;
 				case 'data':
-					foreach ($this->scalars as $key) {
+					foreach ($this->scalarKeys() as $key) {
 						if (isset($section[$key])) {
 							$data[$key] = $section[$key];
 						}
@@ -966,6 +992,10 @@ class ControllerCatalogBproduct extends Controller {
 			'product_description' => array(),
 			'product_seo_url' => array()
 		);
+
+		foreach ($this->extraKeys() as $key) {
+			$data[$key] = '';
+		}
 
 		$used = array();
 
