@@ -11,3 +11,5 @@ RoboFile.php
 yakpro-po/
 .env
 CLAUDE.md
+composer.json
+composer.lock
