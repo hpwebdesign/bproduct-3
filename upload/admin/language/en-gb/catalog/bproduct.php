@@ -70,6 +70,7 @@ $_['bp_n_products'] = '%d products';
 $_['bp_add_to_category'] = 'Add to category';
 $_['bp_set_manufacturer'] = 'Set manufacturer';
 $_['bp_generate_barcode'] = 'Generate barcode';
+$_['bp_download_barcode'] = 'Download PNG';
 $_['bp_barcode_from'] = 'Fill from %s';
 $_['bp_text_barcode'] = 'Barcode generated for %d product(s), %d skipped.';
 $_['bp_date_added'] = 'Date Added';
