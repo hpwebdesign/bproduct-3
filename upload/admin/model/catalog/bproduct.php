@@ -217,4 +217,29 @@ class ModelCatalogBproduct extends Model {
 			$this->cache->delete('product');
 		}
 	}
+
+	// $field must come from a whitelist; it is a column name, not user input
+	public function isFieldTaken($field, $value, $product_id) {
+		$query = $this->db->query("SELECT product_id FROM " . DB_PREFIX . "product WHERE `" . $field . "` = '" . $this->db->escape($value) . "' AND product_id <> '" . (int)$product_id . "' LIMIT 1");
+
+		return (bool)$query->num_rows;
+	}
+
+	public function getLastProductId() {
+		$query = $this->db->query("SELECT MAX(product_id) AS product_id FROM " . DB_PREFIX . "product");
+
+		return (int)$query->row['product_id'];
+	}
+
+	public function getModelSku($product_id) {
+		$query = $this->db->query("SELECT model, sku FROM " . DB_PREFIX . "product WHERE product_id = '" . (int)$product_id . "'");
+
+		return $query->row;
+	}
+
+	public function editModelSku($product_id, $model, $sku) {
+		$this->db->query("UPDATE " . DB_PREFIX . "product SET model = '" . $this->db->escape($model) . "', sku = '" . $this->db->escape($sku) . "', date_modified = NOW() WHERE product_id = '" . (int)$product_id . "'");
+
+		$this->cache->delete('product');
+	}
 }

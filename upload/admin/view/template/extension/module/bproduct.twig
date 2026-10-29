@@ -84,6 +84,33 @@
           </fieldset>
 
           <fieldset>
+            <legend>{{ text_barcode }}</legend>
+
+            <div class="form-row two-col">
+              <div class="form-row-text">
+                <label for="input-barcode-status">{{ entry_barcode_status }}</label>
+                <p class="muted">{{ help_barcode_status }}</p>
+              </div>
+              <label class="switch">
+                <input type="checkbox" name="module_bproduct_barcode_status" id="input-barcode-status" value="1" {{ module_bproduct_barcode_status ? 'checked' : '' }}>
+                <span class="slider"></span>
+              </label>
+            </div>
+
+            <div class="form-row two-col">
+              <div class="form-row-text">
+                <label for="input-barcode-source">{{ entry_barcode_source }}</label>
+                <p class="muted">{{ help_barcode_source }}</p>
+              </div>
+              <select name="module_bproduct_barcode_source" id="input-barcode-source" class="form-control">
+                {% for source in barcode_sources %}
+                <option value="{{ source.value }}" {{ source.value == module_bproduct_barcode_source ? 'selected="selected"' : '' }}>{{ source.text }}</option>
+                {% endfor %}
+              </select>
+            </div>
+          </fieldset>
+
+          <fieldset>
             <legend>{{ text_tabs }}</legend>
             <p class="muted" style="margin-bottom:14px">{{ text_tabs_desc }}</p>
             <ul id="bp-tab-list" class="tab-sort">

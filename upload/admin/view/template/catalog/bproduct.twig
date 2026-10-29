@@ -56,6 +56,8 @@ svg.i{width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:2;stroke
 .btn.solidred{background:var(--red);color:#fff}
 .btn.sm{padding:6px 10px;font-size:13px}
 .btn.icon{padding:7px 9px}
+.bcrow{display:flex;gap:6px;align-items:flex-start}.bcrow .btn{flex:none;padding:8px 11px}
+.bcw{margin:-4px 0 14px}.bcb{display:flex;align-items:center;gap:14px;flex-wrap:wrap;padding:10px 12px;border:1px solid var(--line);border-radius:10px;background:#fff}.bcb svg{max-width:100%;height:auto}
 .bdg{display:inline-flex;align-items:center;gap:4px;font-size:11px;font-weight:600;padding:2px 8px;border-radius:99px;white-space:nowrap}
 .bdg.g{background:var(--green-soft);color:var(--green)}
 .bdg.a{background:var(--amber-soft);color:var(--amber)}
@@ -1184,6 +1186,64 @@ function checkLang() {
 function dinp(k, label, v, extra) {
   return '<div class="f ' + (extra || '') + '"><label>' + esc(label) + '</label><input class="inp" data-d="' + k + '" value="' + esc(v) + '" placeholder="' + esc(label) + '" autocomplete="off"></div>';
 }
+function modelInp(d) {
+  return '<input class="inp" data-d="model" value="' + esc(d.model) + '" placeholder="' + esc(T.entry_model) + '">';
+}
+function bcBtn() {
+  return '<button type="button" class="btn blue" data-act="gen-barcode" title="' + esc(fmt(T.bp_barcode_from, T['entry_' + CFG.barcode.source])) + '">' + esc(T.bp_generate_barcode) + '</button>';
+}
+function dbarcode(k, v) {
+  return '<div class="f"><label>' + esc(T['entry_' + k]) + '</label><div class="bcrow"><input class="inp" data-d="' + k + '" value="' + esc(v) + '" placeholder="' + esc(T['entry_' + k]) + '" autocomplete="off">' + bcBtn() + '</div><div class="errtxt" data-e="' + k + '"></div></div>';
+}
+// Code128 (set B) bar patterns, values 0-105, 1 = bar, 0 = space
+var BC128 = '11011001100 11001101100 11001100110 10010011000 10010001100 10001001100 10011001000 10011000100 10001100100 11001001000 11001000100 11000100100 10110011100 10011011100 10011001110 10111001100 10011101100 10011100110 11001110010 11001011100 11001001110 11011100100 11001110100 11101101110 11101001100 11100101100 11100100110 11101100100 11100110100 11100110010 11011011000 11011000110 11000110110 10100011000 10001011000 10001000110 10110001000 10001101000 10001100010 11010001000 11000101000 11000100010 10110111000 10110001110 10001101110 10111011000 10111000110 10001110110 11101110110 11010001110 11000101110 11011101000 11011100010 11011101110 11101011000 11101000110 11100010110 11101101000 11101100010 11100011010 11101111010 11001000010 11110001010 10100110000 10100001100 10010110000 10010000110 10000101100 10000100110 10110010000 10110000100 10011010000 10011000010 10000110100 10000110010 11000010010 11001010000 11110111010 11000010100 10001111010 10100111100 10010111100 10010011110 10111100100 10011110100 10011110010 11110100100 11110010100 11110010010 11011011110 11011110110 11110110110 10101111000 10100011110 10001011110 10111101000 10111100010 11110101000 11110100010 10111011110 10111101110 11101011110 11110101110 11010000100 11010010000 11010011100'.split(' ');
+function bcBits(text) {
+  var s = String(text).replace(/[^\x20-\x7e]/g, '');
+  if (!s) return '';
+  var sum = 104, bits = BC128[104];
+  for (var i = 0; i < s.length; i++) { var v = s.charCodeAt(i) - 32; bits += BC128[v]; sum += v * (i + 1); }
+  return bits + BC128[sum % 103] + '1100011101011';
+}
+function bcRuns(bits) {
+  var runs = [], i = 0;
+  while (i < bits.length) {
+    var j = i;
+    while (j < bits.length && bits[j] === bits[i]) j++;
+    if (bits[i] === '1') runs.push([i, j - i]);
+    i = j;
+  }
+  return runs;
+}
+function bcBox(text) {
+  var bits = bcBits(text);
+  if (!bits) return '';
+  var label = String(text).replace(/[^\x20-\x7e]/g, ''), w = bits.length + 20;
+  var rects = bcRuns(bits).map(function (r) { return '<rect x="' + (r[0] + 10) + '" y="0" width="' + r[1] + '" height="60" fill="#000"/>'; }).join('');
+  return '<div class="bcb"><svg xmlns="http://www.w3.org/2000/svg" width="' + (w * 2) + '" height="92" viewBox="0 0 ' + w + ' 92" role="img"><rect width="' + w + '" height="92" fill="#fff"/>' + rects + '<text x="' + (w / 2) + '" y="82" text-anchor="middle" font-family="monospace" font-size="12" fill="#000">' + esc(label) + '</text></svg>' +
+    '<button type="button" class="btn ghost sm" data-act="bc-dl">' + esc(T.bp_download_barcode) + '</button></div>';
+}
+function bcRefresh() {
+  var box = $('#bc-box'), inp = $('[data-d="' + CFG.barcode.source + '"]');
+  if (box && inp) box.innerHTML = bcBox(inp.value);
+}
+function bcDownload() {
+  var inp = $('[data-d="' + CFG.barcode.source + '"]'), text = inp ? inp.value.replace(/[^\x20-\x7e]/g, '') : '', bits = bcBits(text);
+  if (!bits) return;
+  var k = 3, w = (bits.length + 20) * k, c = document.createElement('canvas'), x = c.getContext('2d');
+  c.width = w; c.height = 92 * k;
+  x.fillStyle = '#fff'; x.fillRect(0, 0, c.width, c.height);
+  x.fillStyle = '#000';
+  bcRuns(bits).forEach(function (r) { x.fillRect((r[0] + 10) * k, 0, r[1] * k, 60 * k); });
+  x.font = (12 * k) + 'px monospace'; x.textAlign = 'center';
+  x.fillText(text, w / 2, 82 * k);
+  c.toBlob(function (blob) {
+    var a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = 'barcode-' + text.replace(/[^A-Za-z0-9._-]+/g, '_') + '.png';
+    document.body.appendChild(a); a.click(); a.remove();
+    setTimeout(function () { URL.revokeObjectURL(a.href); }, 1000);
+  }, 'image/png');
+}
 function dsel(k, label, list, v, none) {
   return '<div class="f"><label>' + esc(label) + '</label><select class="inp" data-d="' + k + '">' + (none ? '<option value="0">' + esc(T.text_none) + '</option>' : '') + list.map(function (o) { return '<option value="' + o.id + '" ' + (String(o.id) === String(v) ? 'selected' : '') + '>' + esc(o.name) + '</option>'; }).join('') + '</select></div>';
 }
@@ -1199,9 +1259,10 @@ function extraLinksHtml(d) {
 function dataBody(p) {
   var d = p.data;
   var yn = function (k, v) { return '<select class="inp" data-d="' + k + '"><option value="1" ' + (+v ? 'selected' : '') + '>' + esc(T.text_yes) + '</option><option value="0" ' + (+v ? '' : 'selected') + '>' + esc(T.text_no) + '</option></select>'; };
-  return '<div class="dt">' + esc(T.bp_group_general) + '</div><div class="dg"><div class="f"><label>' + esc(T.entry_model) + ' <b class="req">*</b></label><input class="inp" data-d="model" value="' + esc(d.model) + '" placeholder="' + esc(T.entry_model) + '"><div class="errtxt" data-e="model"></div></div></div>' +
+  return '<div class="dt">' + esc(T.bp_group_general) + '</div><div class="dg"><div class="f"><label>' + esc(T.entry_model) + ' <b class="req">*</b></label>' + (CFG.barcode.on && CFG.barcode.source === 'model' ? '<div class="bcrow">' + modelInp(d) + bcBtn() + '</div>' : modelInp(d)) + '<div class="errtxt" data-e="model"></div></div></div>' +
     '<div class="dt">' + esc(T.bp_group_identifiers) + '</div><div class="dg">' +
-    ['sku', 'upc', 'ean', 'jan', 'isbn', 'mpn'].map(function (k) { return dinp(k, T['entry_' + k], d[k]); }).join('') + dinp('location', T.entry_location, d.location) + '</div>' +
+    ['sku', 'upc', 'ean', 'jan', 'isbn', 'mpn'].map(function (k) { return CFG.barcode.on && k === CFG.barcode.source ? dbarcode(k, d[k]) : dinp(k, T['entry_' + k], d[k]); }).join('') + dinp('location', T.entry_location, d.location) + '</div>' +
+    (CFG.barcode.on ? '<div class="bcw" id="bc-box"></div>' : '') +
     extraLinksHtml(d) +
     '<div class="dt">' + esc(T.bp_group_price_stock) + '</div><div class="dg">' +
     dinp('price', T.entry_price, d.price) + dsel('tax_class_id', T.entry_tax_class, CFG.tax_classes, d.tax_class_id, true) +
@@ -1607,7 +1668,7 @@ function applyErrors(err) {
   clearErrors();
   var first = null;
   function mark(sec, node, msg, eName) {
-    if (node) { node.classList.add('err'); var e = node.parentNode.querySelector('.errtxt[data-e]'); if (e) e.textContent = msg; }
+    if (node) { node.classList.add('err'); var row = node.closest('.bcrow'), e = (row ? row.parentNode : node.parentNode).querySelector('.errtxt[data-e]'); if (e) e.textContent = msg; }
     if (!first) first = {sec: sec, node: node};
   }
   ['name', 'meta_title'].forEach(function (k) {
@@ -1617,6 +1678,7 @@ function applyErrors(err) {
     });
   });
   if (err.model) mark('data', $('[data-d="model"]'), err.model);
+  if (err.sku) mark('data', $('[data-d="sku"]'), err.sku);
   if (err.keyword) Object.keys(err.keyword).forEach(function (sid) {
     Object.keys(err.keyword[sid]).forEach(function (lid) {
       var inp = $('[data-seo="' + sid + '|' + lid + '"]'), m = $('[data-seomsg="' + sid + '|' + lid + '"]');
@@ -1837,6 +1899,8 @@ R.addEventListener('click', function (e) {
     case 'bulk-del': deleteIds(Array.from(S.sel)); break;
     case 'bulk-clone': if (S.sel.size) cloneIds(Array.from(S.sel)); break;
     case 'bulk-en': case 'bulk-dis': setStatus(Array.from(S.sel), a === 'bulk-en' ? 1 : 0); break;
+    case 'gen-barcode': bcRefresh(); break;
+    case 'bc-dl': bcDownload(); break;
     case 'bulk-clear': S.sel.clear(); render(); break;
     case 'menu': openMenu(id, el); break;
     case 'menuclose': case 'popclose': closeFloat(); break;
@@ -1991,6 +2055,7 @@ R.addEventListener('input', function (e) {
   if (el.closest('.lp')) { checkLang(); if (d.k === 'name' || d.k === 'meta_title') headRefresh(); }
   if (d.seo !== undefined) { clearTimeout(seoTimers[d.seo]); seoTimers[d.seo] = setTimeout(function () { seoCheck(el); }, 400); headRefresh(); }
   if (el.matches && el.matches('[data-lnk], [data-chip]')) return;
+  if (CFG.barcode.on && d.d === CFG.barcode.source && $('#bc-box') && $('#bc-box').firstChild) bcRefresh();
   markDirty(secOf(el));
 });
 
