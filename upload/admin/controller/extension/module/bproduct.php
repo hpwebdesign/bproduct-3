@@ -16,7 +16,6 @@ class ControllerExtensionModuleBproduct extends Controller {
 	private $limits = array(5, 10, 25, 50, 100);
 
 	private $barcode_sources = array('model', 'sku');
-	private $barcode_fields = array('upc', 'ean', 'jan', 'isbn', 'mpn');
 
 	// Default tab order of the product editor
 	private $all_tabs = array('general', 'data', 'category', 'related', 'links', 'attributes', 'options', 'discounts', 'specials', 'images', 'reward', 'seo', 'design');
@@ -67,7 +66,7 @@ class ControllerExtensionModuleBproduct extends Controller {
 		$data['cancel'] = $this->url->link('marketplace/extension', 'user_token=' . $this->session->data['user_token'] . '&type=module', true);
 		$data['manager'] = $this->url->link('catalog/product', 'user_token=' . $this->session->data['user_token'], true);
 
-		$defaults = array('status' => 0, 'limit' => 10, 'sort' => 'pd.name|ASC', 'new_status' => 1, 'barcode_status' => 0, 'barcode_source' => 'model', 'barcode_field' => 'ean', 'barcode_overwrite' => 0);
+		$defaults = array('status' => 0, 'limit' => 10, 'sort' => 'pd.name|ASC', 'new_status' => 1, 'barcode_status' => 0, 'barcode_source' => 'model');
 
 		foreach ($defaults as $key => $default) {
 			if (isset($this->request->post['module_bproduct_' . $key])) {
@@ -87,11 +86,6 @@ class ControllerExtensionModuleBproduct extends Controller {
 			$data['barcode_sources'][] = array('value' => $source, 'text' => $this->language->get('entry_' . $source));
 		}
 
-		$data['barcode_fields'] = array();
-
-		foreach ($this->barcode_fields as $field) {
-			$data['barcode_fields'][] = array('value' => $field, 'text' => $this->language->get('entry_' . $field));
-		}
 
 		$hidden = $this->config->get('module_bproduct_hidden_tabs');
 		$hidden = is_array($hidden) ? $hidden : array();
@@ -156,8 +150,6 @@ class ControllerExtensionModuleBproduct extends Controller {
 			'module_bproduct_new_status' => 1,
 			'module_bproduct_barcode_status'    => 0,
 			'module_bproduct_barcode_source'    => 'model',
-			'module_bproduct_barcode_field'     => 'ean',
-			'module_bproduct_barcode_overwrite' => 0,
 			'module_bproduct_hidden_tabs' => array(),
 			'module_bproduct_tab_order'   => $this->all_tabs
 		));
@@ -263,14 +255,9 @@ class ControllerExtensionModuleBproduct extends Controller {
 		$post['module_bproduct_status'] = !empty($post['module_bproduct_status']) ? 1 : 0;
 		$post['module_bproduct_new_status'] = !empty($post['module_bproduct_new_status']) ? 1 : 0;
 		$post['module_bproduct_barcode_status'] = !empty($post['module_bproduct_barcode_status']) ? 1 : 0;
-		$post['module_bproduct_barcode_overwrite'] = !empty($post['module_bproduct_barcode_overwrite']) ? 1 : 0;
 
 		if (!isset($post['module_bproduct_barcode_source']) || !in_array($post['module_bproduct_barcode_source'], $this->barcode_sources)) {
 			$post['module_bproduct_barcode_source'] = 'model';
-		}
-
-		if (!isset($post['module_bproduct_barcode_field']) || !in_array($post['module_bproduct_barcode_field'], $this->barcode_fields)) {
-			$post['module_bproduct_barcode_field'] = 'ean';
 		}
 
 		$shown = isset($post['module_bproduct_tabs']) && is_array($post['module_bproduct_tabs']) ? array_keys($post['module_bproduct_tabs']) : array();

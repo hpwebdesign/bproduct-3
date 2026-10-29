@@ -39,8 +39,19 @@ class ControllerCatalogBproduct extends Controller {
 		return in_array($this->config->get('module_bproduct_barcode_source'), array('model', 'sku')) ? $this->config->get('module_bproduct_barcode_source') : 'model';
 	}
 
-	private function barcodeField() {
-		return in_array($this->config->get('module_bproduct_barcode_field'), array('upc', 'ean', 'jan', 'isbn', 'mpn')) ? $this->config->get('module_bproduct_barcode_field') : 'ean';
+	// Returns an error message when the barcode source value is already used by another product
+	private function barcodeError($value, $product_id) {
+		if (!$this->config->get('module_bproduct_barcode_status') || $value === '') {
+			return '';
+		}
+
+		$source = $this->barcodeSource();
+
+		if ($this->model_catalog_bproduct->isFieldTaken($source, $value, $product_id)) {
+			return $this->language->get('bp_error_unique_' . $source);
+		}
+
+		return '';
 	}
 
 	private function scalarKeys() {
@@ -183,8 +194,7 @@ class ControllerCatalogBproduct extends Controller {
 			'extra_fields'   => $this->extraKeys(),
 			'barcode'        => array(
 				'on'     => (int)$this->config->get('module_bproduct_barcode_status'),
-				'source' => $this->barcodeSource(),
-				'field'  => $this->barcodeField()
+				'source' => $this->barcodeSource()
 			),
 			'can_modify'     => $this->user->hasPermission('modify', 'catalog/product') ? 1 : 0,
 			'default_status' => (int)$this->config->get('config_stock_status_id')
@@ -852,6 +862,17 @@ class ControllerCatalogBproduct extends Controller {
 			if ((utf8_strlen($data['model']) < 1) || (utf8_strlen($data['model']) > 64)) {
 				$error['model'] = $this->language->get('error_model');
 			}
+
+			$source = $this->barcodeSource();
+			$current = $this->model_catalog_product->getProduct($product_id);
+
+			if (!isset($error[$source]) && (!$current || $this->encode($this->decode($current[$source])) !== $data[$source])) {
+				$message = $this->barcodeError($data[$source], $product_id);
+
+				if ($message) {
+					$error[$source] = $message;
+				}
+			}
 		}
 
 		if (isset($sections['seo']) && !empty($sections['seo']['keywords'])) {
@@ -962,6 +983,10 @@ class ControllerCatalogBproduct extends Controller {
 
 		if ((utf8_strlen($model) < 1) || (utf8_strlen($model) > 64)) {
 			$error['model'] = $this->language->get('error_model');
+		}
+
+		if (!isset($error['model']) && $this->barcodeSource() == 'model' && ($message = $this->barcodeError($model, 0))) {
+			$error['model'] = $message;
 		}
 
 		if ($error) {
@@ -1116,12 +1141,6 @@ class ControllerCatalogBproduct extends Controller {
 			$this->model_catalog_bproduct->addToCategory($ids, $value);
 		} elseif (isset($input['action']) && $input['action'] == 'manufacturer') {
 			$this->model_catalog_bproduct->editManufacturer($ids, $value);
-		} elseif (isset($input['action']) && $input['action'] == 'barcode' && $this->config->get('module_bproduct_barcode_status')) {
-			$done = $this->model_catalog_bproduct->generateBarcode($ids, $this->barcodeSource(), $this->barcodeField(), (int)$this->config->get('module_bproduct_barcode_overwrite'));
-
-			$this->json(array('success' => sprintf($this->language->get('bp_text_barcode'), $done, count($ids) - $done), 'stats' => $this->model_catalog_bproduct->getStats()));
-
-			return;
 		} else {
 			$this->json(array('error' => $this->language->get('bp_error_invalid')));
 

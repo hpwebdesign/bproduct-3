@@ -44,25 +44,16 @@ $_['entry_sort']          = 'Default sort';
 $_['entry_new_status']    = 'Status of new products';
 $_['entry_barcode_status']    = 'Barcode Manager';
 $_['entry_barcode_source']    = 'Generate barcode from';
-$_['entry_barcode_field']     = 'Save barcode to field';
-$_['entry_barcode_overwrite'] = 'Overwrite existing values';
 $_['entry_model']         = 'Model';
 $_['entry_sku']           = 'SKU';
-$_['entry_upc']           = 'UPC';
-$_['entry_ean']           = 'EAN';
-$_['entry_jan']           = 'JAN';
-$_['entry_isbn']          = 'ISBN';
-$_['entry_mpn']           = 'MPN';
 $_['text_barcode']        = 'Barcode Manager';
 
 // Help
 $_['help_status']         = 'When disabled, the default OpenCart product list is used.';
 $_['help_limit']          = 'Initial page size of the list. Users can still change it.';
 $_['help_new_status']     = 'Status given to products created with Quick Add.';
-$_['help_barcode_status'] = 'Adds a Generate barcode action to the bulk bar and a Generate button next to the barcode field in the product editor.';
-$_['help_barcode_source'] = 'The barcode value is copied from this product field.';
-$_['help_barcode_field']  = 'The product field that receives the generated barcode.';
-$_['help_barcode_overwrite'] = 'When off, products whose barcode field already has a value are skipped.';
+$_['help_barcode_status'] = 'Adds a Generate barcode button to the product editor. It draws a downloadable barcode image from the chosen field.';
+$_['help_barcode_source'] = 'The barcode is generated from this field. The value must be unique across all products.';
 
 // Error
 $_['error_permission']    = 'Warning: You do not have permission to modify the Quick Product Manager!';

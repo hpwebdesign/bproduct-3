@@ -218,27 +218,10 @@ class ModelCatalogBproduct extends Model {
 		}
 	}
 
-	// $source and $field must come from a whitelist; both are column names, not user input
-	public function generateBarcode($product_ids, $source, $field, $overwrite) {
-		if (!$product_ids) {
-			return 0;
-		}
+	// $field must come from a whitelist; it is a column name, not user input
+	public function isFieldTaken($field, $value, $product_id) {
+		$query = $this->db->query("SELECT product_id FROM " . DB_PREFIX . "product WHERE `" . $field . "` = '" . $this->db->escape($value) . "' AND product_id <> '" . (int)$product_id . "' LIMIT 1");
 
-		$where = "product_id IN (" . implode(',', array_map('intval', $product_ids)) . ") AND TRIM(`" . $source . "`) <> ''";
-
-		if (!$overwrite) {
-			$where .= " AND TRIM(`" . $field . "`) = ''";
-		}
-
-		$query = $this->db->query("SELECT COUNT(*) AS total FROM " . DB_PREFIX . "product WHERE " . $where);
-		$total = (int)$query->row['total'];
-
-		if ($total) {
-			$this->db->query("UPDATE " . DB_PREFIX . "product SET `" . $field . "` = TRIM(`" . $source . "`), date_modified = NOW() WHERE " . $where);
-
-			$this->cache->delete('product');
-		}
-
-		return $total;
+		return (bool)$query->num_rows;
 	}
 }
