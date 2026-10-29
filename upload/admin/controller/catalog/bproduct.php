@@ -1086,6 +1086,26 @@ class ControllerCatalogBproduct extends Controller {
 		$this->json(array('success' => sprintf($this->language->get('bp_text_deleted'), count($ids)), 'count' => count($ids), 'stats' => $this->model_catalog_bproduct->getStats()));
 	}
 
+	// A clone must not share model/SKU with its source: the SKU is cleared and the model gets a -copy suffix
+	private function uniqueCopy($product_id) {
+		$row = $this->model_catalog_bproduct->getModelSku($product_id);
+
+		if (!$row) {
+			return;
+		}
+
+		$base = $this->decode($row['model']);
+		$n = 1;
+
+		do {
+			$suffix = '-copy' . ($n > 1 ? $n : '');
+			$model = $this->encode(utf8_substr($base, 0, 64 - utf8_strlen($suffix)) . $suffix);
+			$n++;
+		} while ($this->model_catalog_bproduct->isFieldTaken('model', $model, $product_id));
+
+		$this->model_catalog_bproduct->editModelSku($product_id, $model, '');
+	}
+
 	private function ajaxCopy() {
 		if (!$this->canModify()) {
 			$this->deny();
@@ -1101,6 +1121,10 @@ class ControllerCatalogBproduct extends Controller {
 
 		foreach ($ids as $product_id) {
 			$this->model_catalog_product->copyProduct($product_id);
+
+			if ($this->config->get('module_bproduct_barcode_status')) {
+				$this->uniqueCopy($this->model_catalog_bproduct->getLastProductId());
+			}
 		}
 
 		$this->json(array('success' => sprintf($this->language->get('bp_text_copied'), count($ids)), 'count' => count($ids), 'stats' => $this->model_catalog_bproduct->getStats()));
