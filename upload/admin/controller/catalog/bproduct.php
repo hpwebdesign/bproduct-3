@@ -35,6 +35,14 @@ class ControllerCatalogBproduct extends Controller {
 		return $this->extra_cache;
 	}
 
+	private function barcodeSource() {
+		return in_array($this->config->get('module_bproduct_barcode_source'), array('model', 'sku')) ? $this->config->get('module_bproduct_barcode_source') : 'model';
+	}
+
+	private function barcodeField() {
+		return in_array($this->config->get('module_bproduct_barcode_field'), array('upc', 'ean', 'jan', 'isbn', 'mpn')) ? $this->config->get('module_bproduct_barcode_field') : 'ean';
+	}
+
 	private function scalarKeys() {
 		return array_merge($this->scalars, $this->extraKeys());
 	}
@@ -173,6 +181,11 @@ class ControllerCatalogBproduct extends Controller {
 			'hidden_tabs'    => is_array($this->config->get('module_bproduct_hidden_tabs')) ? array_values($this->config->get('module_bproduct_hidden_tabs')) : array(),
 			'tab_order'      => is_array($this->config->get('module_bproduct_tab_order')) ? array_values($this->config->get('module_bproduct_tab_order')) : array(),
 			'extra_fields'   => $this->extraKeys(),
+			'barcode'        => array(
+				'on'     => (int)$this->config->get('module_bproduct_barcode_status'),
+				'source' => $this->barcodeSource(),
+				'field'  => $this->barcodeField()
+			),
 			'can_modify'     => $this->user->hasPermission('modify', 'catalog/product') ? 1 : 0,
 			'default_status' => (int)$this->config->get('config_stock_status_id')
 		);
@@ -1103,6 +1116,12 @@ class ControllerCatalogBproduct extends Controller {
 			$this->model_catalog_bproduct->addToCategory($ids, $value);
 		} elseif (isset($input['action']) && $input['action'] == 'manufacturer') {
 			$this->model_catalog_bproduct->editManufacturer($ids, $value);
+		} elseif (isset($input['action']) && $input['action'] == 'barcode' && $this->config->get('module_bproduct_barcode_status')) {
+			$done = $this->model_catalog_bproduct->generateBarcode($ids, $this->barcodeSource(), $this->barcodeField(), (int)$this->config->get('module_bproduct_barcode_overwrite'));
+
+			$this->json(array('success' => sprintf($this->language->get('bp_text_barcode'), $done, count($ids) - $done), 'stats' => $this->model_catalog_bproduct->getStats()));
+
+			return;
 		} else {
 			$this->json(array('error' => $this->language->get('bp_error_invalid')));
 

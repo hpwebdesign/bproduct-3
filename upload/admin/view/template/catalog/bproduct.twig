@@ -572,6 +572,7 @@ th.sortth{white-space:nowrap}
     <button type="button" class="btn sm needmod" data-act="bulk-dis" data-t="text_disabled"></button>
     <button type="button" class="btn sm needmod" data-act="bulkpick" data-kind="category"><span data-t="bp_add_to_category"></span> ▾</button>
     <button type="button" class="btn sm needmod" data-act="bulkpick" data-kind="manufacturer"><span data-t="bp_set_manufacturer"></span> ▾</button>
+    <button type="button" class="btn sm needmod" id="b-barcode" data-act="bulk-barcode" data-t="bp_generate_barcode"></button>
     <button type="button" class="x btn sm" data-act="bulk-clear" data-t="bp_clear"></button>
   </div>
 
@@ -609,6 +610,7 @@ R.appendChild(document.getElementById('bp-shell').content.cloneNode(true));
   [document.head, R].forEach(function (t) { var l = document.createElement('link'); l.rel = 'stylesheet'; l.href = BI; t.appendChild(l); });
 })();
 Array.prototype.forEach.call(R.querySelectorAll('[data-t]'), function (el) { el.textContent = T[el.dataset.t] || ''; });
+if (!CFG.barcode.on) { var bb = $('#b-barcode'); if (bb) bb.remove(); }
 Array.prototype.forEach.call(R.querySelectorAll('[data-tp]'), function (el) { el.setAttribute('placeholder', T[el.dataset.tp] || ''); });
 Array.prototype.forEach.call(R.querySelectorAll('[data-ta]'), function (el) { el.setAttribute('aria-label', T[el.dataset.ta] || ''); });
 
@@ -1006,6 +1008,20 @@ function setStatus(ids, status, el) {
     if (!el) render();
   }).catch(function (e) { fail(e); if (el) el.checked = !status; });
 }
+function bulkBarcode(ids) {
+  api('bulk', null, {action: 'barcode', ids: ids}).then(function (j) {
+    if (j.error) { toast(j.error, 'err'); return; }
+    S.stats = j.stats;
+    toast(j.success);
+    load();
+  }).catch(fail);
+}
+function genBarcode() {
+  var src = $('[data-d="' + CFG.barcode.source + '"]'), dst = $('[data-d="' + CFG.barcode.field + '"]');
+  if (!src || !dst) return;
+  dst.value = src.value.trim();
+  dst.dispatchEvent(new Event('input', {bubbles: true}));
+}
 function saveSlug(id, keyword, done) {
   var kw = {}; kw[0] = {}; kw[0][CFG.language_id] = keyword;
   api('save', null, {product_id: id, sections: {seo: {keywords: kw}}}).then(function (j) {
@@ -1184,6 +1200,9 @@ function checkLang() {
 function dinp(k, label, v, extra) {
   return '<div class="f ' + (extra || '') + '"><label>' + esc(label) + '</label><input class="inp" data-d="' + k + '" value="' + esc(v) + '" placeholder="' + esc(label) + '" autocomplete="off"></div>';
 }
+function dbarcode(k, v) {
+  return '<div class="f"><label>' + esc(T['entry_' + k]) + '</label><div style="display:flex;gap:6px"><input class="inp" data-d="' + k + '" value="' + esc(v) + '" placeholder="' + esc(T['entry_' + k]) + '" autocomplete="off"><button type="button" class="btn sm needmod" data-act="gen-barcode" title="' + esc(fmt(T.bp_barcode_from, T['entry_' + CFG.barcode.source])) + '">' + esc(T.bp_generate_barcode) + '</button></div></div>';
+}
 function dsel(k, label, list, v, none) {
   return '<div class="f"><label>' + esc(label) + '</label><select class="inp" data-d="' + k + '">' + (none ? '<option value="0">' + esc(T.text_none) + '</option>' : '') + list.map(function (o) { return '<option value="' + o.id + '" ' + (String(o.id) === String(v) ? 'selected' : '') + '>' + esc(o.name) + '</option>'; }).join('') + '</select></div>';
 }
@@ -1201,7 +1220,7 @@ function dataBody(p) {
   var yn = function (k, v) { return '<select class="inp" data-d="' + k + '"><option value="1" ' + (+v ? 'selected' : '') + '>' + esc(T.text_yes) + '</option><option value="0" ' + (+v ? '' : 'selected') + '>' + esc(T.text_no) + '</option></select>'; };
   return '<div class="dt">' + esc(T.bp_group_general) + '</div><div class="dg"><div class="f"><label>' + esc(T.entry_model) + ' <b class="req">*</b></label><input class="inp" data-d="model" value="' + esc(d.model) + '" placeholder="' + esc(T.entry_model) + '"><div class="errtxt" data-e="model"></div></div></div>' +
     '<div class="dt">' + esc(T.bp_group_identifiers) + '</div><div class="dg">' +
-    ['sku', 'upc', 'ean', 'jan', 'isbn', 'mpn'].map(function (k) { return dinp(k, T['entry_' + k], d[k]); }).join('') + dinp('location', T.entry_location, d.location) + '</div>' +
+    ['sku', 'upc', 'ean', 'jan', 'isbn', 'mpn'].map(function (k) { return CFG.barcode.on && k === CFG.barcode.field ? dbarcode(k, d[k]) : dinp(k, T['entry_' + k], d[k]); }).join('') + dinp('location', T.entry_location, d.location) + '</div>' +
     extraLinksHtml(d) +
     '<div class="dt">' + esc(T.bp_group_price_stock) + '</div><div class="dg">' +
     dinp('price', T.entry_price, d.price) + dsel('tax_class_id', T.entry_tax_class, CFG.tax_classes, d.tax_class_id, true) +
@@ -1780,7 +1799,7 @@ var slugCheck = debounce(function (inp) {
 }, 300);
 
 /* ---------- events ---------- */
-var MODACTS = ['addopen', 'del', 'bulk-del', 'bulk-clone', 'bulk-en', 'bulk-dis', 'dup', 'slugok', 'bulkpick', 'bppick', 'dsave', 'addsave', 'tog'];
+var MODACTS = ['addopen', 'del', 'bulk-del', 'bulk-clone', 'bulk-en', 'bulk-dis', 'dup', 'slugok', 'bulkpick', 'bppick', 'dsave', 'addsave', 'tog', 'bulk-barcode', 'gen-barcode'];
 function denied(a) {
   if (CFG.can_modify || MODACTS.indexOf(a) < 0) return false;
   toast(T.error_permission, 'err');
@@ -1837,6 +1856,8 @@ R.addEventListener('click', function (e) {
     case 'bulk-del': deleteIds(Array.from(S.sel)); break;
     case 'bulk-clone': if (S.sel.size) cloneIds(Array.from(S.sel)); break;
     case 'bulk-en': case 'bulk-dis': setStatus(Array.from(S.sel), a === 'bulk-en' ? 1 : 0); break;
+    case 'bulk-barcode': if (S.sel.size) bulkBarcode(Array.from(S.sel)); break;
+    case 'gen-barcode': genBarcode(); break;
     case 'bulk-clear': S.sel.clear(); render(); break;
     case 'menu': openMenu(id, el); break;
     case 'menuclose': case 'popclose': closeFloat(); break;

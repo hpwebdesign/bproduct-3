@@ -217,4 +217,28 @@ class ModelCatalogBproduct extends Model {
 			$this->cache->delete('product');
 		}
 	}
+
+	// $source and $field must come from a whitelist; both are column names, not user input
+	public function generateBarcode($product_ids, $source, $field, $overwrite) {
+		if (!$product_ids) {
+			return 0;
+		}
+
+		$where = "product_id IN (" . implode(',', array_map('intval', $product_ids)) . ") AND TRIM(`" . $source . "`) <> ''";
+
+		if (!$overwrite) {
+			$where .= " AND TRIM(`" . $field . "`) = ''";
+		}
+
+		$query = $this->db->query("SELECT COUNT(*) AS total FROM " . DB_PREFIX . "product WHERE " . $where);
+		$total = (int)$query->row['total'];
+
+		if ($total) {
+			$this->db->query("UPDATE " . DB_PREFIX . "product SET `" . $field . "` = TRIM(`" . $source . "`), date_modified = NOW() WHERE " . $where);
+
+			$this->cache->delete('product');
+		}
+
+		return $total;
+	}
 }
