@@ -1262,7 +1262,7 @@ function dataBody(p) {
   return '<div class="dt">' + esc(T.bp_group_general) + '</div><div class="dg"><div class="f"><label>' + esc(T.entry_model) + ' <b class="req">*</b></label>' + (CFG.barcode.on && CFG.barcode.source === 'model' ? '<div class="bcrow">' + modelInp(d) + bcBtn() + '</div>' : modelInp(d)) + '<div class="errtxt" data-e="model"></div></div></div>' +
     '<div class="dt">' + esc(T.bp_group_identifiers) + '</div><div class="dg">' +
     ['sku', 'upc', 'ean', 'jan', 'isbn', 'mpn'].map(function (k) { return CFG.barcode.on && k === CFG.barcode.source ? dbarcode(k, d[k]) : dinp(k, T['entry_' + k], d[k]); }).join('') + dinp('location', T.entry_location, d.location) + '</div>' +
-    (CFG.barcode.on ? '<div class="bcw" id="bc-box"></div>' : '') +
+    (CFG.barcode.on ? '<div class="bcw" id="bc-box">' + bcBox(d[CFG.barcode.source]) + '</div>' : '') +
     extraLinksHtml(d) +
     '<div class="dt">' + esc(T.bp_group_price_stock) + '</div><div class="dg">' +
     dinp('price', T.entry_price, d.price) + dsel('tax_class_id', T.entry_tax_class, CFG.tax_classes, d.tax_class_id, true) +
@@ -2055,7 +2055,7 @@ R.addEventListener('input', function (e) {
   if (el.closest('.lp')) { checkLang(); if (d.k === 'name' || d.k === 'meta_title') headRefresh(); }
   if (d.seo !== undefined) { clearTimeout(seoTimers[d.seo]); seoTimers[d.seo] = setTimeout(function () { seoCheck(el); }, 400); headRefresh(); }
   if (el.matches && el.matches('[data-lnk], [data-chip]')) return;
-  if (CFG.barcode.on && d.d === CFG.barcode.source && $('#bc-box') && $('#bc-box').firstChild) bcRefresh();
+  if (CFG.barcode.on && d.d === CFG.barcode.source) bcRefresh();
   markDirty(secOf(el));
 });
 

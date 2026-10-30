@@ -51,4 +51,25 @@
 			<add position="before"><![CDATA[{% if bp_status %}<a href="{{ add|replace({'catalog/product/add': 'catalog/product'}) }}&amp;classic=0" data-toggle="tooltip" title="Quick Product Manager" class="btn btn-default"><i class="fa fa-bolt"></i></a>{% endif %} ]]></add>
 		</operation>
 	</file>
+
+	<file path="catalog/controller/product/product.php" error="skip">
+		<operation error="skip">
+			<search><![CDATA[$data['model'] = $product_info['model'];]]></search>
+			<add position="after"><![CDATA[
+			$data['bp_barcode'] = $this->load->controller('extension/module/bproduct/barcode', $product_info);
+			]]></add>
+		</operation>
+	</file>
+	<file path="catalog/view/theme/default/template/product/product.twig" error="skip">
+		<operation error="skip">
+			<search><![CDATA[<li>{{ text_stock }} {{ stock }}</li>]]></search>
+			<add position="after"><![CDATA[{% if bp_barcode %}<li class="bp-barcode-row">{{ bp_barcode }}</li>{% endif %}]]></add>
+		</operation>
+	</file>
+	<file path="catalog/view/theme/barik/template/product/product.twig" error="skip">
+		<operation error="skip">
+			<search><![CDATA[<li>{{ text_stock }}: <strong>{{ stock }}</strong></li>]]></search>
+			<add position="after"><![CDATA[{% if bp_barcode %}<li class="bp-barcode-row">{{ bp_barcode }}</li>{% endif %}]]></add>
+		</operation>
+	</file>
 </modification>

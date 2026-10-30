@@ -99,6 +99,17 @@
 
             <div class="form-row two-col">
               <div class="form-row-text">
+                <label for="input-barcode-front">{{ entry_barcode_front }}</label>
+                <p class="muted">{{ help_barcode_front }}</p>
+              </div>
+              <label class="switch">
+                <input type="checkbox" name="module_bproduct_barcode_front" id="input-barcode-front" value="1" {{ module_bproduct_barcode_front ? 'checked' : '' }}>
+                <span class="slider"></span>
+              </label>
+            </div>
+
+            <div class="form-row two-col">
+              <div class="form-row-text">
                 <label for="input-barcode-source">{{ entry_barcode_source }}</label>
                 <p class="muted">{{ help_barcode_source }}</p>
               </div>
