@@ -3,7 +3,7 @@
 A fast, AJAX-based replacement for the default OpenCart product list.
 Find, filter, edit and add products from one page, without leaving the list.
 
-- **Version:** 2.0.0
+- **Version:** 1.1.0.0
 - **Author:** Bariklabs
 - **Compatibility:** OpenCart 3.0.3.x (admin, Twig, OCMOD)
 - **Tested on:** OpenCart 3.0.3.9, PHP 8.3, MariaDB 10.11
@@ -132,6 +132,16 @@ Display names are stored in the `bproduct_category_display` table, created on in
   be saved from the drawer.
 - Slugs are not changed automatically when a product is renamed.
 - Only the `en-gb` language file is included.
+
+## Changelog
+
+**1.1.0.0**
+- Barcode Manager: Code128 barcode from Model or SKU in the product editor (downloadable PNG), unique Model/SKU check, clone gets a unique Model and an empty SKU, optional barcode on the storefront product page (default and Barik themes).
+- Category Manager: AJAX category list and editor, bulk actions, Quick Add.
+- Display Name: a per-language storefront name for each category, separate from the category name.
+
+**1.0.0.0**
+- Baseline release.
 
 ## Uninstall
 
