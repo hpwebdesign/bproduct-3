@@ -7,7 +7,7 @@ class ControllerExtensionModuleBproduct extends Controller {
 	private $error = array();
 
 	private $v_d = '';
-	private $version = '1.0.0.0';
+	private $version = '1.1.0.6';
 	private $extension_code = 'bproduct';
 	private $domain = '';
 	private $extension_type = 'com';
@@ -66,7 +66,7 @@ class ControllerExtensionModuleBproduct extends Controller {
 		$data['cancel'] = $this->url->link('marketplace/extension', 'user_token=' . $this->session->data['user_token'] . '&type=module', true);
 		$data['manager'] = $this->url->link('catalog/product', 'user_token=' . $this->session->data['user_token'], true);
 
-		$defaults = array('status' => 0, 'limit' => 10, 'sort' => 'pd.name|ASC', 'new_status' => 1, 'barcode_status' => 0, 'barcode_source' => 'model', 'barcode_front' => 0);
+		$defaults = array('status' => 0, 'limit' => 10, 'sort' => 'pd.name|ASC', 'new_status' => 1, 'barcode_status' => 0, 'barcode_source' => 'model', 'barcode_front' => 0, 'category_status' => 0, 'category_display' => 1);
 
 		foreach ($defaults as $key => $default) {
 			if (isset($this->request->post['module_bproduct_' . $key])) {
@@ -142,6 +142,9 @@ class ControllerExtensionModuleBproduct extends Controller {
 	public function install() {
 		$this->load->model('setting/setting');
 
+		$this->load->model('catalog/bcategory');
+		$this->model_catalog_bcategory->ensureTable();
+
 		// Disabled until the store owner turns it on
 		$this->model_setting_setting->editSetting('module_bproduct', array(
 			'module_bproduct_status'     => 0,
@@ -151,6 +154,8 @@ class ControllerExtensionModuleBproduct extends Controller {
 			'module_bproduct_barcode_status'    => 0,
 			'module_bproduct_barcode_source'    => 'model',
 			'module_bproduct_barcode_front'     => 0,
+			'module_bproduct_category_status'   => 0,
+			'module_bproduct_category_display'  => 1,
 			'module_bproduct_hidden_tabs' => array(),
 			'module_bproduct_tab_order'   => $this->all_tabs
 		));
@@ -257,6 +262,8 @@ class ControllerExtensionModuleBproduct extends Controller {
 		$post['module_bproduct_new_status'] = !empty($post['module_bproduct_new_status']) ? 1 : 0;
 		$post['module_bproduct_barcode_status'] = !empty($post['module_bproduct_barcode_status']) ? 1 : 0;
 		$post['module_bproduct_barcode_front'] = !empty($post['module_bproduct_barcode_front']) ? 1 : 0;
+		$post['module_bproduct_category_status'] = !empty($post['module_bproduct_category_status']) ? 1 : 0;
+		$post['module_bproduct_category_display'] = !empty($post['module_bproduct_category_display']) ? 1 : 0;
 
 		if (!isset($post['module_bproduct_barcode_source']) || !in_array($post['module_bproduct_barcode_source'], $this->barcode_sources)) {
 			$post['module_bproduct_barcode_source'] = 'model';

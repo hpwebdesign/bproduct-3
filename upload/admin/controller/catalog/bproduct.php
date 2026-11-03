@@ -153,7 +153,7 @@ class ControllerCatalogBproduct extends Controller {
 			}
 		}
 
-		$stores = array(array('store_id' => 0, 'name' => $this->decode($this->config->get('config_name')) . ' (' . $this->language->get('text_default') . ')'));
+		$stores = array(array('store_id' => 0, 'name' => $this->decode($this->config->get('config_name')) . ' ' . trim(strip_tags($this->language->get('text_default')))));
 
 		foreach ($this->model_setting_store->getStores() as $store) {
 			$stores[] = array('store_id' => (int)$store['store_id'], 'name' => $this->decode($store['name']));

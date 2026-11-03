@@ -167,6 +167,7 @@ table{width:100%;border-collapse:collapse}
 th{text-align:left;font-size:11px;text-transform:uppercase;letter-spacing:.04em;color:var(--mute);padding:11px 12px;background:#f9fbfe;border-bottom:1px solid var(--line)}
 th:first-child{border-top-left-radius:var(--r)}th:last-child{border-top-right-radius:var(--r)}
 td{padding:10px 12px;border-bottom:1px solid #edf0f7;vertical-align:middle}
+tr.row{cursor:pointer}
 tr.row:hover td{background:#fafcff}
 tr.row.sel td{background:#f2f6ff}
 tr.row.editing td{background:var(--amber-soft)}
@@ -547,7 +548,7 @@ th.sortth{white-space:nowrap}
 {% endverbatim %}</style>{% verbatim %}<div class="bpw"><div class="wrap">
   <div class="head">
     <div class="logo">B</div>
-    <div><p style="font-size:15px;font-weight:600;color:var(--text)" data-t="bp_subtitle"></p><span class="bdg b">v2.0</span></div>
+    <div><p style="font-size:15px;font-weight:600;color:var(--text)" data-t="bp_subtitle"></p><span class="bdg b">v1.1</span></div>
     <div class="crumb"><a class="btn ghost sm" href="{% endverbatim %}{{ classic }}{% verbatim %}" data-t="bp_button_classic"></a> <a class="btn ghost sm" href="{% endverbatim %}{{ add_full }}{% verbatim %}" data-t="bp_button_add_full"></a></div>
     <button type="button" class="btn primary cta needmod" data-act="addopen"><span id="ic-plus2"></span> <span data-t="bp_add_product"></span></button>
   </div>
@@ -1885,6 +1886,8 @@ R.addEventListener('click', function (e) {
   if (!t.closest('#menu,#pop,[data-act="menu"],[data-act="bulkpick"]')) closeFloat();
   var ed = t.closest('[data-ed]');
   if (ed) { edRun(ed); return; }
+  var tr = t.closest('tr.row');
+  if (tr && !t.closest('a,button,input,label,select,textarea,[data-act]')) { closeFloat(); openDrawer(+tr.dataset.id, 'general'); return; }
   var el = t.closest('[data-act]');
   if (!el || (el.matches('input') && el.type !== 'button')) return;
   var a = el.dataset.act, id = el.dataset.id ? +el.dataset.id : null, i = el.dataset.i !== undefined ? +el.dataset.i : null;

@@ -3,7 +3,7 @@
 A fast, AJAX-based replacement for the default OpenCart product list.
 Find, filter, edit and add products from one page, without leaving the list.
 
-- **Version:** 2.0.0
+- **Version:** 1.1.0.6
 - **Author:** Bariklabs
 - **Compatibility:** OpenCart 3.0.3.x (admin, Twig, OCMOD)
 - **Tested on:** OpenCart 3.0.3.9, PHP 8.3, MariaDB 10.11
@@ -39,6 +39,15 @@ Special, Image, Reward Points, SEO, Design.
 Name, model, categories, manufacturer, image and status. Everything else gets
 safe defaults. Save, Save & add another, or Save & edit.
 
+**Category Manager**
+A matching AJAX list for **Catalog > Categories** (enable it in Settings).
+- Search by name, status filter, parent filter (includes subcategories), sort by name or sort order, page size, pager.
+- Categories are listed by path, indented by level, with SEO URL, product count and a status toggle per row.
+- Bulk bar: Enable, Disable, Move to parent, show or hide in the top menu. Delete works on the selection and also removes subcategories.
+- Edit drawer: General (name, description, meta fields, per language), Data (parent, sort order, columns, top menu, status, image, stores, filters), SEO and Design.
+- **Display Name:** a separate name shown to customers instead of the category name (per language). It has its own column with an edit button that opens the drawer on the Display name field. Leave it empty to use the category name.
+- Quick Add: name, display name, parent, image and status.
+
 ## Installation
 
 1. Go to **Extensions > Installer** and upload `bproduct.ocmod.zip`.
@@ -60,6 +69,8 @@ installed), the default OpenCart product list is used.
 | Products per page | Initial page size: 5, 10, 25, 50 or 100. |
 | Default sort | Name A–Z, Name Z–A, Newest first, Oldest first. |
 | Status of new products | Status given to products created with Quick Add. |
+| Category Manager | Replaces the default category list with the Category Manager. Needs the module Status above to be enabled. |
+| Use Display Name on storefront | Shows each category Display Name instead of its name in menus, breadcrumbs and category pages (OCMOD on the catalog category model). |
 | Product Editor Tabs | Drag to change the order of the edit-drawer tabs and show or hide them. General, Data, Category Links, SEO and Image are always shown (they can be reordered but not hidden). Related Products, Other Links, Attribute, Option, Discount, Special, Reward Points and Design can be hidden. |
 
 The settings page saves with AJAX (button or Ctrl+S) and shows the result in an
@@ -87,18 +98,28 @@ saved from the drawer. Use the **Full product form** to edit them.
 install.xml
 upload/admin/
   controller/catalog/bproduct.php
+  controller/catalog/bcategory.php
   controller/extension/module/bproduct.php
   model/catalog/bproduct.php
+  model/catalog/bcategory.php
   language/en-gb/catalog/bproduct.php
+  language/en-gb/catalog/bcategory.php
   language/en-gb/extension/module/bproduct.php
   view/template/catalog/bproduct.twig
+  view/template/catalog/bcategory.twig
   view/template/extension/module/bproduct.twig
   view/stylesheet/bproduct/settings.css
+upload/catalog/
+  model/extension/module/bproduct.php
 ```
 
 OCMOD changes (all with `error="skip"`):
 - `admin/controller/catalog/product.php`: hand-over hook and a `bp_status` template variable.
 - `admin/view/template/catalog/product_list.twig`: button to return to the manager.
+- `admin/controller/catalog/category.php`: hand-over hook to the Category Manager (skipped with `classic=1`).
+- `catalog/model/catalog/category.php`: replaces the category name with its Display Name when one is set.
+
+Display names are stored in the `bproduct_category_display` table, created on install (or on first use). Uninstalling the module keeps the table.
 
 ## Known limitations
 
@@ -111,6 +132,39 @@ OCMOD changes (all with `error="skip"`):
   be saved from the drawer.
 - Slugs are not changed automatically when a product is renamed.
 - Only the `en-gb` language file is included.
+
+## Changelog
+
+**1.1.0.6**
+- Category Manager: using the pager scrolls the page back to the top.
+- Category Manager: tidier table layout with fixed column widths and aligned headers.
+
+**1.1.0.5**
+- Category Manager: the copy link and open on storefront buttons show when hovering anywhere on the row.
+
+**1.1.0.4**
+- Category Manager: removed the "Top level" text under top level category names.
+
+**1.1.0.3**
+- Category Manager: every column is sortable (category, display name, products, sort order, status).
+- Category Manager: categories shown in the top menu are marked with a yellow star next to the name.
+- Category Manager: the SEO URL moved under the category name, with copy link and open on storefront buttons, like the product list.
+
+**1.1.0.2**
+- Category Manager: the description uses the same rich text editor as the product editor.
+- Product Manager: clicking anywhere on a row opens the edit drawer.
+
+**1.1.0.1**
+- Fix: the default store name showed raw HTML in the editor (Design and store lists).
+- Category Manager: clicking anywhere on a row opens the edit drawer.
+
+**1.1.0.0**
+- Barcode Manager: Code128 barcode from Model or SKU in the product editor (downloadable PNG), unique Model/SKU check, clone gets a unique Model and an empty SKU, optional barcode on the storefront product page (default and Barik themes).
+- Category Manager: AJAX category list and editor, bulk actions, Quick Add.
+- Display Name: a per-language storefront name for each category, separate from the category name.
+
+**1.0.0.0**
+- Baseline release.
 
 ## Uninstall
 

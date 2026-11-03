@@ -122,6 +122,32 @@
           </fieldset>
 
           <fieldset>
+            <legend>{{ text_category }}</legend>
+
+            <div class="form-row two-col">
+              <div class="form-row-text">
+                <label for="input-category-status">{{ entry_category_status }}</label>
+                <p class="muted">{{ help_category_status }}</p>
+              </div>
+              <label class="switch">
+                <input type="checkbox" name="module_bproduct_category_status" id="input-category-status" value="1" {{ module_bproduct_category_status ? 'checked' : '' }}>
+                <span class="slider"></span>
+              </label>
+            </div>
+
+            <div class="form-row two-col">
+              <div class="form-row-text">
+                <label for="input-category-display">{{ entry_category_display }}</label>
+                <p class="muted">{{ help_category_display }}</p>
+              </div>
+              <label class="switch">
+                <input type="checkbox" name="module_bproduct_category_display" id="input-category-display" value="1" {{ module_bproduct_category_display ? 'checked' : '' }}>
+                <span class="slider"></span>
+              </label>
+            </div>
+          </fieldset>
+
+          <fieldset>
             <legend>{{ text_tabs }}</legend>
             <p class="muted" style="margin-bottom:14px">{{ text_tabs_desc }}</p>
             <ul id="bp-tab-list" class="tab-sort">
