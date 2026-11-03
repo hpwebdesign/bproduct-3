@@ -3,7 +3,7 @@
 A fast, AJAX-based replacement for the default OpenCart product list.
 Find, filter, edit and add products from one page, without leaving the list.
 
-- **Version:** 1.1.0.1
+- **Version:** 1.1.0.2
 - **Author:** Bariklabs
 - **Compatibility:** OpenCart 3.0.3.x (admin, Twig, OCMOD)
 - **Tested on:** OpenCart 3.0.3.9, PHP 8.3, MariaDB 10.11
@@ -134,6 +134,10 @@ Display names are stored in the `bproduct_category_display` table, created on in
 - Only the `en-gb` language file is included.
 
 ## Changelog
+
+**1.1.0.2**
+- Category Manager: the description uses the same rich text editor as the product editor.
+- Product Manager: clicking anywhere on a row opens the edit drawer.
 
 **1.1.0.1**
 - Fix: the default store name showed raw HTML in the editor (Design and store lists).

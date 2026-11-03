@@ -60,6 +60,21 @@ $_['bc_nothing_to_save'] = 'Nothing to save.';
 $_['bc_required_all_langs'] = 'Name and meta title are required in every language.';
 $_['bc_fix_fields'] = 'Please fix the highlighted fields.';
 
+// Editor
+$_['bc_ok'] = 'OK';
+$_['bc_ed_bold'] = 'Bold';
+$_['bc_ed_italic'] = 'Italic';
+$_['bc_ed_underline'] = 'Underline';
+$_['bc_ed_list'] = 'List';
+$_['bc_ed_link'] = 'Link';
+$_['bc_ed_unlink'] = 'Unlink';
+$_['bc_ed_image'] = 'Image';
+$_['bc_ed_source'] = 'Source';
+$_['bc_ed_heading'] = 'Heading';
+$_['bc_ed_paragraph'] = 'Paragraph';
+$_['bc_ed_quote'] = 'Quote';
+$_['bc_ed_clear'] = 'Clear formatting';
+
 // Entries
 $_['bc_entry_name'] = 'Category name';
 $_['bc_name_help'] = 'Internal name used in the admin, filters, reports and integrations.';
