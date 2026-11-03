@@ -552,6 +552,8 @@ th.sortth{white-space:nowrap}
 .cname b{display:block;font-weight:600}
 .cname small{display:block;color:var(--mute);font-size:12px}
 .bpw tr.row{cursor:pointer}
+.topstar{display:inline-flex;vertical-align:-2px;margin-left:4px;color:#f5b301}
+.topstar svg.i{fill:#f5b301;stroke:#d99a00}
 .dncell{display:flex;align-items:center;gap:8px;min-width:0}
 .dncell .dnt{font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .dncell .dnn{color:var(--mute);font-style:italic;white-space:nowrap}
@@ -638,6 +640,8 @@ chev:'<polyline points="6 9 12 15 18 9"/>',
 check:'<polyline points="20 6 9 17 4 12"/>',
 x:'<line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>',
 camera:'<path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/>',
+star:'<polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>',
+copy:'<rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>',
 ext:'<path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/>',
 image:'<rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/>',
 folder:'<path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/>',
@@ -777,7 +781,10 @@ var ssSearch = debounce(function (n, q) { ssFill(n, q); }, 220);
 /* ---------- list rendering ---------- */
 var SORTS = {
   'name': {l: T.bc_column_name, asc: 'A–Z', desc: 'Z–A', first: 'ASC'},
-  'sort_order': {l: T.bc_column_sort, asc: '0–9', desc: '9–0', first: 'ASC'}
+  'display': {l: T.bc_display_name, asc: 'A–Z', desc: 'Z–A', first: 'ASC'},
+  'products': {l: T.bc_column_products, asc: '0–9', desc: '9–0', first: 'DESC'},
+  'sort_order': {l: T.bc_column_sort, asc: '0–9', desc: '9–0', first: 'ASC'},
+  'status': {l: T.bc_column_status, asc: T.text_disabled, desc: T.text_enabled, first: 'DESC'}
 };
 function sortBtn(key) {
   var c = SORTS[key], on = S.sort === key, next = on ? (S.order === 'ASC' ? 'DESC' : 'ASC') : c.first;
@@ -785,7 +792,7 @@ function sortBtn(key) {
 }
 function slugCell(c) {
   if (!c.slug) return '<div class="slug"><span class="bdg a">' + esc(T.bc_missing_seo) + '</span><button class="mini" data-act="slugauto" data-id="' + c.category_id + '" style="opacity:1;color:var(--blue);font-weight:600">' + esc(T.bc_generate) + '</button></div>';
-  return '<div class="slug"><code>/' + esc(c.slug) + '</code></div>';
+  return '<div class="slug"><code title="' + esc(T.bc_slug_url) + '">/' + esc(c.slug) + '</code><button class="mini" data-act="slugcopy" data-id="' + c.category_id + '" title="' + esc(T.bc_copy) + '" aria-label="' + esc(T.bc_copy) + '">' + ic('copy', 13) + '</button><button class="mini" data-act="storefront" data-id="' + c.category_id + '" title="' + esc(T.bc_view_storefront) + '" aria-label="' + esc(T.bc_view_storefront) + '">' + ic('ext', 13) + '</button></div>';
 }
 function dnCell(c) {
   return '<div class="dncell">' + (c.display ? '<span class="dnt" title="' + esc(c.display) + '">' + esc(c.display) + '</span>' : '<span class="dnn">' + esc(T.bc_uses_category_name) + '</span>') +
@@ -798,9 +805,8 @@ function rowHtml(c) {
   var lvl = Math.min(c.level, 6) * 18;
   return '<tr class="' + cls.join(' ') + '" data-id="' + id + '">' +
     '<td class="c-sel"><input type="checkbox" data-act="selrow" data-id="' + id + '" ' + (S.sel.has(id) ? 'checked' : '') + ' aria-label="' + esc(c.leaf) + '"></td>' +
-    '<td class="c-name"><div class="cname' + (c.status ? '' : ' off') + '" style="padding-left:' + lvl + 'px"><span class="fi">' + ic('folder', 16) + '</span><div><b>' + esc(c.leaf) + '</b><small>' + esc(c.path || T.bc_top_level) + (c.status ? '' : ' <span class="bdg n">' + esc(T.text_disabled) + '</span>') + '</small></div></div></td>' +
+    '<td class="c-name"><div class="cname' + (c.status ? '' : ' off') + '" style="padding-left:' + lvl + 'px"><span class="fi">' + ic('folder', 16) + '</span><div><b>' + esc(c.leaf) + (c.top ? ' <span class="topstar" title="' + esc(T.bc_top_marker) + '" aria-label="' + esc(T.bc_top_marker) + '">' + ic('star', 14) + '</span>' : '') + '</b><small>' + esc(c.path || T.bc_top_level) + (c.status ? '' : ' <span class="bdg n">' + esc(T.text_disabled) + '</span>') + '</small>' + slugCell(c) + '</div></div></td>' +
     '<td class="c-dn" data-l="' + esc(T.bc_display_name) + '">' + dnCell(c) + '</td>' +
-    '<td class="c-seo" data-l="' + esc(T.bc_tab_seo) + '">' + slugCell(c) + '</td>' +
     '<td class="c-qty num" data-l="' + esc(T.bc_column_products) + '">' + c.products + '</td>' +
     '<td class="c-qty num" data-l="' + esc(T.bc_column_sort) + '">' + c.sort_order + '</td>' +
     '<td class="c-stat" data-l="' + esc(T.bc_column_status) + '"><label class="tg"><input type="checkbox" ' + (c.status ? 'checked' : '') + ' data-act="tog" data-id="' + id + '"><i></i></label></td>' +
@@ -815,7 +821,7 @@ function renderStats() {
 }
 function render() {
   var rows = S.rows, total = S.total, pages = S.pages;
-  $('#thr').innerHTML = '<th style="width:36px"><input type="checkbox" id="selall" data-act="selall"></th><th class="sortth">' + sortBtn('name') + '</th><th>' + esc(T.bc_display_name) + ' <span class="bdg b">' + esc(T.bc_storefront) + '</span></th><th>' + esc(T.bc_tab_seo) + '</th><th class="num">' + esc(T.bc_column_products) + '</th><th class="sortth">' + sortBtn('sort_order') + '</th><th>' + esc(T.bc_column_status) + '</th><th style="width:96px"></th>';
+  $('#thr').innerHTML = '<th style="width:36px"><input type="checkbox" id="selall" data-act="selall"></th><th class="sortth">' + sortBtn('name') + '</th><th class="sortth">' + sortBtn('display') + ' <span class="bdg b">' + esc(T.bc_storefront) + '</span></th><th class="sortth num">' + sortBtn('products') + '</th><th class="sortth">' + sortBtn('sort_order') + '</th><th class="sortth">' + sortBtn('status') + '</th><th style="width:96px"></th>';
   $('#tbody').innerHTML = rows.map(rowHtml).join('');
   var filtered = S.q.trim() || S.status !== '' || S.parent;
   $('#emptybox').innerHTML = total ? '' : '<div class="empty"><b>' + esc(T.bc_no_results) + '</b>' + esc(filtered ? T.bc_no_results_filters : T.bc_no_results_empty) + (filtered ? '<div style="margin-top:12px"><button class="btn blue" data-act="reset">' + esc(T.bc_reset_all) + '</button></div>' : '') + '</div>';
@@ -1370,6 +1376,8 @@ R.addEventListener('click', function (e) {
     case 'dn': openDrawer(id, 'general', true); break;
     case 'fullform': window.open(CFG.edit_url + id, '_blank'); break;
     case 'slugauto': slugGenerate(id); break;
+    case 'slugcopy': { var q = rowById(id); if (q && navigator.clipboard) navigator.clipboard.writeText(CFG.catalog_url + '/' + q.slug); toast(T.bc_slug_copied); break; }
+    case 'storefront': { var sp = rowById(id); window.open(sp && sp.slug ? CFG.catalog_url + '/' + sp.slug : CFG.storefront_url + id, '_blank'); break; }
     case 'ssopen': {
       var w = el.closest('.ss'), was = w.classList.contains('open');
       ssCloseAll();

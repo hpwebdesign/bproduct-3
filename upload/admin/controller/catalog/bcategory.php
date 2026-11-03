@@ -121,6 +121,8 @@ class ControllerCatalogBcategory extends Controller {
 			'endpoint'     => 'index.php?route=catalog/category&user_token=' . $token . '&bc=',
 			'edit_url'     => 'index.php?route=catalog/category/edit&user_token=' . $token . '&category_id=',
 			'filemanager'  => 'index.php?route=common/filemanager&user_token=' . $token,
+			'catalog_url'  => rtrim($catalog, '/'),
+			'storefront_url' => $catalog . 'index.php?route=product/category&path=',
 			'image_base'   => $catalog . 'image/',
 			'placeholder'  => $this->model_tool_image->resize('no_image.png', 100, 100),
 			'language_id'  => (int)$this->config->get('config_language_id'),

@@ -49,16 +49,44 @@ class ModelCatalogBcategory extends Model {
 	public function getCategories($data = array()) {
 		$language_id = (int)$this->config->get('config_language_id');
 
-		$sql = "SELECT cp.category_id AS category_id, GROUP_CONCAT(cd1.name ORDER BY cp.level SEPARATOR ' &gt; ') AS name, c1.parent_id, c1.sort_order, c1.status, c1.top, MAX(cp.level) AS level FROM " . DB_PREFIX . "category_path cp LEFT JOIN " . DB_PREFIX . "category c1 ON (cp.category_id = c1.category_id) LEFT JOIN " . DB_PREFIX . "category_description cd1 ON (cp.path_id = cd1.category_id) LEFT JOIN " . DB_PREFIX . "category_description cd2 ON (cp.category_id = cd2.category_id) WHERE cd1.language_id = '" . $language_id . "' AND cd2.language_id = '" . $language_id . "'";
+		$sort = isset($data['sort']) ? $data['sort'] : 'name';
+		$order = isset($data['order']) && $data['order'] == 'DESC' ? 'DESC' : 'ASC';
+
+		if (!in_array($sort, array('name', 'sort_order', 'status', 'display', 'seo', 'products'))) {
+			$sort = 'name';
+		}
+
+		$select = '';
+		$join = '';
+
+		if ($sort == 'display') {
+			$this->ensureTable();
+
+			$select = ", dn.display_name AS display_name";
+			$join = " LEFT JOIN `" . DB_PREFIX . "bproduct_category_display` dn ON (dn.category_id = cp.category_id AND dn.language_id = '" . $language_id . "')";
+		} elseif ($sort == 'seo') {
+			$select = ", su.keyword AS keyword";
+			$join = " LEFT JOIN " . DB_PREFIX . "seo_url su ON (su.query = CONCAT('category_id=', cp.category_id) AND su.store_id = '0' AND su.language_id = '" . $language_id . "')";
+		} elseif ($sort == 'products') {
+			$select = ", (SELECT COUNT(DISTINCT p2c.product_id) FROM " . DB_PREFIX . "product_to_category p2c WHERE p2c.category_id = cp.category_id) AS products";
+		}
+
+		$sql = "SELECT cp.category_id AS category_id, GROUP_CONCAT(cd1.name ORDER BY cp.level SEPARATOR ' &gt; ') AS name, c1.parent_id, c1.sort_order, c1.status, c1.top, MAX(cp.level) AS level" . $select . " FROM " . DB_PREFIX . "category_path cp LEFT JOIN " . DB_PREFIX . "category c1 ON (cp.category_id = c1.category_id) LEFT JOIN " . DB_PREFIX . "category_description cd1 ON (cp.path_id = cd1.category_id) LEFT JOIN " . DB_PREFIX . "category_description cd2 ON (cp.category_id = cd2.category_id)" . $join . " WHERE cd1.language_id = '" . $language_id . "' AND cd2.language_id = '" . $language_id . "'";
 
 		$sql .= $this->buildWhere($data);
 		$sql .= " GROUP BY cp.category_id";
 
-		$sorts = array('name' => 'name', 'sort_order' => 'c1.sort_order', 'status' => 'c1.status');
-		$sort = isset($data['sort']) && isset($sorts[$data['sort']]) ? $sorts[$data['sort']] : 'name';
-		$order = isset($data['order']) && $data['order'] == 'DESC' ? 'DESC' : 'ASC';
+		// Empty display names and SEO URLs always sort last
+		$sorts = array(
+			'name'       => "name " . $order,
+			'sort_order' => "c1.sort_order " . $order . ", name ASC",
+			'status'     => "c1.status " . $order . ", name ASC",
+			'display'    => "(dn.display_name IS NULL OR dn.display_name = '') ASC, dn.display_name " . $order . ", name ASC",
+			'seo'        => "(su.keyword IS NULL OR su.keyword = '') ASC, su.keyword " . $order . ", name ASC",
+			'products'   => "products " . $order . ", name ASC"
+		);
 
-		$sql .= " ORDER BY " . $sort . " " . $order . ($sort != 'name' ? ", name ASC" : "");
+		$sql .= " ORDER BY " . (isset($sorts[$sort]) ? $sorts[$sort] : $sorts['name']);
 
 		if (isset($data['start']) || isset($data['limit'])) {
 			$sql .= " LIMIT " . max(0, (int)$data['start']) . "," . max(1, (int)$data['limit']);

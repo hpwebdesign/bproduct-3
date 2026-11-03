@@ -18,6 +18,7 @@ $_['bc_clear'] = 'Clear';
 $_['bc_n_selected'] = '%d selected';
 $_['bc_n_categories'] = '%d categories';
 $_['bc_move_to_parent'] = 'Move to parent';
+$_['bc_top_marker'] = 'Shown in the top menu';
 $_['bc_top_on'] = 'Show in top menu';
 $_['bc_top_off'] = 'Hide from top menu';
 
@@ -128,6 +129,10 @@ $_['bc_text_disabled'] = '%d category(ies) disabled.';
 $_['bc_text_updated'] = '%d category(ies) updated.';
 $_['bc_text_skipped'] = '%d skipped (a category cannot move into itself or its own subcategories).';
 $_['bc_slug_generated'] = 'SEO URL generated.';
+$_['bc_slug_url'] = 'SEO URL';
+$_['bc_copy'] = 'Copy link';
+$_['bc_view_storefront'] = 'Open on the storefront';
+$_['bc_slug_copied'] = 'Link copied.';
 $_['bc_slug_empty'] = 'Nothing to generate: every SEO URL is already set, or the name has no usable characters.';
 
 // Errors

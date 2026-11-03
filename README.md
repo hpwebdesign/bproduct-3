@@ -3,7 +3,7 @@
 A fast, AJAX-based replacement for the default OpenCart product list.
 Find, filter, edit and add products from one page, without leaving the list.
 
-- **Version:** 1.1.0.2
+- **Version:** 1.1.0.3
 - **Author:** Bariklabs
 - **Compatibility:** OpenCart 3.0.3.x (admin, Twig, OCMOD)
 - **Tested on:** OpenCart 3.0.3.9, PHP 8.3, MariaDB 10.11
@@ -134,6 +134,11 @@ Display names are stored in the `bproduct_category_display` table, created on in
 - Only the `en-gb` language file is included.
 
 ## Changelog
+
+**1.1.0.3**
+- Category Manager: every column is sortable (category, display name, products, sort order, status).
+- Category Manager: categories shown in the top menu are marked with a yellow star next to the name.
+- Category Manager: the SEO URL moved under the category name, with copy link and open on storefront buttons, like the product list.
 
 **1.1.0.2**
 - Category Manager: the description uses the same rich text editor as the product editor.
