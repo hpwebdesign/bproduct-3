@@ -48,11 +48,16 @@ $_['entry_barcode_front']     = 'Show barcode on product page';
 $_['entry_model']         = 'Model';
 $_['entry_sku']           = 'SKU';
 $_['text_barcode']        = 'Barcode Manager';
+$_['text_category']       = 'Category Manager';
+$_['entry_category_status']  = 'Category Manager';
+$_['entry_category_display'] = 'Use Display Name on storefront';
 
 // Help
 $_['help_status']         = 'When disabled, the default OpenCart product list is used.';
 $_['help_limit']          = 'Initial page size of the list. Users can still change it.';
 $_['help_new_status']     = 'Status given to products created with Quick Add.';
+$_['help_category_status'] = 'Replaces the default category list with the Quick Category Manager. Requires the Quick Product Manager status above to be enabled.';
+$_['help_category_display'] = 'Shows each category Display Name (when set) instead of the category name in menus, breadcrumbs and category pages. Uses OCMOD, so refresh modifications after installing.';
 $_['help_barcode_status'] = 'Adds a Generate barcode button to the product editor. It draws a downloadable barcode image from the chosen field.';
 $_['help_barcode_front'] = 'Shows the barcode on the storefront product page (default and Barik themes, through OCMOD). Products with an empty source value show nothing.';
 $_['help_barcode_source'] = 'The barcode is generated from this field. The value must be unique across all products.';

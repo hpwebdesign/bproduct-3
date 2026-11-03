@@ -39,6 +39,15 @@ Special, Image, Reward Points, SEO, Design.
 Name, model, categories, manufacturer, image and status. Everything else gets
 safe defaults. Save, Save & add another, or Save & edit.
 
+**Category Manager**
+A matching AJAX list for **Catalog > Categories** (enable it in Settings).
+- Search by name, status filter, parent filter (includes subcategories), sort by name or sort order, page size, pager.
+- Categories are listed by path, indented by level, with SEO URL, product count and a status toggle per row.
+- Bulk bar: Enable, Disable, Move to parent, show or hide in the top menu. Delete works on the selection and also removes subcategories.
+- Edit drawer: General (name, description, meta fields, per language), Data (parent, sort order, columns, top menu, status, image, stores, filters), SEO and Design.
+- **Display Name:** a separate name shown to customers instead of the category name (per language). It has its own column with an edit button that opens the drawer on the Display name field. Leave it empty to use the category name.
+- Quick Add: name, display name, parent, image and status.
+
 ## Installation
 
 1. Go to **Extensions > Installer** and upload `bproduct.ocmod.zip`.
@@ -60,6 +69,8 @@ installed), the default OpenCart product list is used.
 | Products per page | Initial page size: 5, 10, 25, 50 or 100. |
 | Default sort | Name A–Z, Name Z–A, Newest first, Oldest first. |
 | Status of new products | Status given to products created with Quick Add. |
+| Category Manager | Replaces the default category list with the Category Manager. Needs the module Status above to be enabled. |
+| Use Display Name on storefront | Shows each category Display Name instead of its name in menus, breadcrumbs and category pages (OCMOD on the catalog category model). |
 | Product Editor Tabs | Drag to change the order of the edit-drawer tabs and show or hide them. General, Data, Category Links, SEO and Image are always shown (they can be reordered but not hidden). Related Products, Other Links, Attribute, Option, Discount, Special, Reward Points and Design can be hidden. |
 
 The settings page saves with AJAX (button or Ctrl+S) and shows the result in an
@@ -87,18 +98,28 @@ saved from the drawer. Use the **Full product form** to edit them.
 install.xml
 upload/admin/
   controller/catalog/bproduct.php
+  controller/catalog/bcategory.php
   controller/extension/module/bproduct.php
   model/catalog/bproduct.php
+  model/catalog/bcategory.php
   language/en-gb/catalog/bproduct.php
+  language/en-gb/catalog/bcategory.php
   language/en-gb/extension/module/bproduct.php
   view/template/catalog/bproduct.twig
+  view/template/catalog/bcategory.twig
   view/template/extension/module/bproduct.twig
   view/stylesheet/bproduct/settings.css
+upload/catalog/
+  model/extension/module/bproduct.php
 ```
 
 OCMOD changes (all with `error="skip"`):
 - `admin/controller/catalog/product.php`: hand-over hook and a `bp_status` template variable.
 - `admin/view/template/catalog/product_list.twig`: button to return to the manager.
+- `admin/controller/catalog/category.php`: hand-over hook to the Category Manager (skipped with `classic=1`).
+- `catalog/model/catalog/category.php`: replaces the category name with its Display Name when one is set.
+
+Display names are stored in the `bproduct_category_display` table, created on install (or on first use). Uninstalling the module keeps the table.
 
 ## Known limitations
 

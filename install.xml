@@ -72,4 +72,51 @@
 			<add position="after"><![CDATA[{% if bp_barcode %}<li class="bp-barcode-row">{{ bp_barcode }}</li>{% endif %}]]></add>
 		</operation>
 	</file>
+
+	<file path="admin/controller/catalog/category.php" error="skip">
+		<operation error="skip">
+			<search><![CDATA[public function index() {]]></search>
+			<add position="after"><![CDATA[
+		if ($this->config->get('module_bproduct_status') && $this->config->get('module_bproduct_category_status') && !isset($this->request->get['classic'])) {
+			return new Action('catalog/bcategory');
+		}
+]]></add>
+		</operation>
+	</file>
+	<file path="catalog/model/catalog/category.php" error="skip">
+		<operation error="skip">
+			<search><![CDATA[public function getCategory($category_id) {]]></search>
+			<add position="before"><![CDATA[	public function bproductDisplay($row) {
+		if ($row && isset($row['category_id'], $row['name'])) {
+			$this->load->model('extension/module/bproduct');
+
+			$display = $this->model_extension_module_bproduct->getDisplayName($row['category_id']);
+
+			if ($display !== '') {
+				$row['name'] = $display;
+			}
+		}
+
+		return $row;
+	}
+
+	public function bproductDisplayRows($rows) {
+		foreach ($rows as $key => $row) {
+			$rows[$key] = $this->bproductDisplay($row);
+		}
+
+		return $rows;
+	}
+
+	]]></add>
+		</operation>
+		<operation error="skip">
+			<search><![CDATA[return $query->row;]]></search>
+			<add position="replace"><![CDATA[return $this->bproductDisplay($query->row);]]></add>
+		</operation>
+		<operation error="skip">
+			<search><![CDATA[return $query->rows;]]></search>
+			<add position="replace"><![CDATA[return $this->bproductDisplayRows($query->rows);]]></add>
+		</operation>
+	</file>
 </modification>
