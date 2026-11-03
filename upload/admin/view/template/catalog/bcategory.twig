@@ -551,6 +551,7 @@ th.sortth{white-space:nowrap}
 .cname.off .fi{background:#ececf1;color:#4b5365}
 .cname b{display:block;font-weight:600}
 .cname small{display:block;color:var(--mute);font-size:12px}
+.bpw tr.row{cursor:pointer}
 .dncell{display:flex;align-items:center;gap:8px;min-width:0}
 .dncell .dnt{font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .dncell .dnn{color:var(--mute);font-style:italic;white-space:nowrap}
@@ -1271,6 +1272,8 @@ R.addEventListener('click', function (e) {
   if (!t.closest('.ss')) ssCloseAll();
   if (!t.closest('.ac')) $$('.acl.on').forEach(function (x) { x.classList.remove('on'); });
   if (!t.closest('#pop,[data-act="bulkpick"]')) closeFloat();
+  var tr = t.closest('tr.row');
+  if (tr && !t.closest('a,button,input,label,select,textarea,[data-act]')) { openDrawer(+tr.dataset.id, 'general'); return; }
   var el = t.closest('[data-act]');
   if (!el || (el.matches('input') && el.type !== 'button')) return;
   var a = el.dataset.act, id = el.dataset.id ? +el.dataset.id : null;
