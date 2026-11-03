@@ -805,7 +805,7 @@ function rowHtml(c) {
   var lvl = Math.min(c.level, 6) * 18;
   return '<tr class="' + cls.join(' ') + '" data-id="' + id + '">' +
     '<td class="c-sel"><input type="checkbox" data-act="selrow" data-id="' + id + '" ' + (S.sel.has(id) ? 'checked' : '') + ' aria-label="' + esc(c.leaf) + '"></td>' +
-    '<td class="c-name"><div class="cname' + (c.status ? '' : ' off') + '" style="padding-left:' + lvl + 'px"><span class="fi">' + ic('folder', 16) + '</span><div><b>' + esc(c.leaf) + (c.top ? ' <span class="topstar" title="' + esc(T.bc_top_marker) + '" aria-label="' + esc(T.bc_top_marker) + '">' + ic('star', 14) + '</span>' : '') + '</b><small>' + esc(c.path || T.bc_top_level) + (c.status ? '' : ' <span class="bdg n">' + esc(T.text_disabled) + '</span>') + '</small>' + slugCell(c) + '</div></div></td>' +
+    '<td class="c-name"><div class="cname' + (c.status ? '' : ' off') + '" style="padding-left:' + lvl + 'px"><span class="fi">' + ic('folder', 16) + '</span><div><b>' + esc(c.leaf) + (c.top ? ' <span class="topstar" title="' + esc(T.bc_top_marker) + '" aria-label="' + esc(T.bc_top_marker) + '">' + ic('star', 14) + '</span>' : '') + '</b><small>' + esc(c.path) + (c.status ? '' : ' <span class="bdg n">' + esc(T.text_disabled) + '</span>') + '</small>' + slugCell(c) + '</div></div></td>' +
     '<td class="c-dn" data-l="' + esc(T.bc_display_name) + '">' + dnCell(c) + '</td>' +
     '<td class="c-qty num" data-l="' + esc(T.bc_column_products) + '">' + c.products + '</td>' +
     '<td class="c-qty num" data-l="' + esc(T.bc_column_sort) + '">' + c.sort_order + '</td>' +
