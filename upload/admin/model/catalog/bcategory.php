@@ -71,7 +71,7 @@ class ModelCatalogBcategory extends Model {
 			$select = ", (SELECT COUNT(DISTINCT p2c.product_id) FROM " . DB_PREFIX . "product_to_category p2c WHERE p2c.category_id = cp.category_id) AS products";
 		}
 
-		$sql = "SELECT cp.category_id AS category_id, GROUP_CONCAT(cd1.name ORDER BY cp.level SEPARATOR ' &gt; ') AS name, c1.parent_id, c1.sort_order, c1.status, c1.top, MAX(cp.level) AS level" . $select . " FROM " . DB_PREFIX . "category_path cp LEFT JOIN " . DB_PREFIX . "category c1 ON (cp.category_id = c1.category_id) LEFT JOIN " . DB_PREFIX . "category_description cd1 ON (cp.path_id = cd1.category_id) LEFT JOIN " . DB_PREFIX . "category_description cd2 ON (cp.category_id = cd2.category_id)" . $join . " WHERE cd1.language_id = '" . $language_id . "' AND cd2.language_id = '" . $language_id . "'";
+		$sql = "SELECT cp.category_id AS category_id, GROUP_CONCAT(cd1.name ORDER BY cp.level SEPARATOR ' &gt; ') AS name, c1.parent_id, c1.sort_order, c1.status, c1.top, c1.image, MAX(cp.level) AS level" . $select . " FROM " . DB_PREFIX . "category_path cp LEFT JOIN " . DB_PREFIX . "category c1 ON (cp.category_id = c1.category_id) LEFT JOIN " . DB_PREFIX . "category_description cd1 ON (cp.path_id = cd1.category_id) LEFT JOIN " . DB_PREFIX . "category_description cd2 ON (cp.category_id = cd2.category_id)" . $join . " WHERE cd1.language_id = '" . $language_id . "' AND cd2.language_id = '" . $language_id . "'";
 
 		$sql .= $this->buildWhere($data);
 		$sql .= " GROUP BY cp.category_id";

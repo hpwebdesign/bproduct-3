@@ -1,0 +1,50 @@
+[size=6][b]Quick Product Manager: manage your OpenCart catalog from one page[/b][/size]
+
+[i]Find, edit and add products and categories without leaving the list.[/i]
+
+[size=5][b]1. Work from one page, not ten[/b][/size]
+[list]
+[*]AJAX product and category lists: search, filter, sort and page with no page reloads.
+[*]Edit in a side drawer, so you never lose your place in the list. Click any row to open its editor.
+[*]Only the tabs you changed are sent to the server, and unsaved tabs are marked with a dot.
+[/list]
+
+[size=5][b]2. Bulk work made simple[/b][/size]
+[list]
+[*]Bulk bar for enabling or disabling, adding to a category, setting a manufacturer, moving categories to a new parent, showing or hiding categories in the top menu, cloning and deleting.
+[*]Quick Add: create a product or a category with just a few fields. Everything else gets safe defaults.
+[/list]
+
+[size=5][b]3. One category, two names: Display Name[/b][/size]
+[list]
+[*]Keep a consistent internal category name for the admin, and show a customer-friendly name on the storefront, per language.
+[*]The Display Name shows in menus, breadcrumbs and category page titles, without changing the core category name.
+[*]Leave it empty to fall back to the category name.
+[/list]
+
+[size=5][b]4. Barcodes from Model or SKU[/b][/size]
+[list]
+[*]Generate a Code128 barcode from the Model or the SKU, download it as a PNG, and optionally show it on the product page (default and Barik themes).
+[*]The chosen field must be unique across products, and cloned products never duplicate it.
+[/list]
+
+[size=5][b]5. Cleaner, easier-to-track data[/b][/size]
+[list]
+[*]SEO URL shown right under each name, with Generate, copy link and open-on-storefront buttons.
+[*]Quick signals: products or categories with no SEO URL, top-menu categories marked with a star, and summary counts for total, enabled, disabled and empty categories.
+[*]Live SEO URL duplicate checks while you type.
+[/list]
+
+[size=5][b]6. Safe to install, easy to remove[/b][/size]
+[list]
+[*]Built on OCMOD with every operation set to skip on error. Turn the module off at any time and the default OpenCart lists come back.
+[*]No changes to core tables. Display Names are stored in their own table.
+[*]Uses the default OpenCart models and permissions, so there are no new user roles to configure.
+[*]A Full form button is always one click away for fields added by other extensions.
+[/list]
+
+[size=5][b]7. Configurable for your store[/b][/size]
+[list]
+[*]Choose the order and visibility of the editor tabs, rows per page, the default sort, and the barcode source from the settings page.
+[*]Multi-language and multi-store aware.
+[/list]
