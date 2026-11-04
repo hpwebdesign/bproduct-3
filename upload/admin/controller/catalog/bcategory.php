@@ -281,6 +281,7 @@ class ControllerCatalogBcategory extends Controller {
 				'category_id' => $id,
 				'leaf'        => $leaf,
 				'path'        => implode(' > ', $parts),
+				'thumb'       => $this->thumb($row['image']),
 				'level'       => (int)$row['level'],
 				'parent_id'   => (int)$row['parent_id'],
 				'status'      => (int)$row['status'],

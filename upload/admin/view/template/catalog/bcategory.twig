@@ -552,7 +552,7 @@ th.sortth{white-space:nowrap}
 .cname b{display:block;font-weight:600}
 .cname small{display:block;color:var(--mute);font-size:12px}
 .bpw tr.row{cursor:pointer}
-.cattbl{table-layout:fixed;min-width:1000px}
+.cattbl{table-layout:fixed;min-width:1100px}
 .cattbl th,.cattbl td{vertical-align:middle}
 .cattbl th:first-child,.cattbl td:first-child{padding-left:16px;padding-right:4px}
 .cattbl th.tn,.cattbl td.tn{text-align:right;padding-right:28px;font-variant-numeric:tabular-nums}
@@ -607,7 +607,7 @@ th.sortth{white-space:nowrap}
 
   <div class="card" id="listcard" style="overflow:visible">
     <div class="lbar"></div>
-    <div class="tw"><table class="cattbl"><colgroup><col style="width:44px"><col><col style="width:270px"><col style="width:110px"><col style="width:90px"><col style="width:130px"><col style="width:100px"></colgroup><thead><tr id="thr"></tr></thead><tbody id="tbody"></tbody></table></div>
+    <div class="tw"><table class="cattbl"><colgroup><col style="width:44px"><col style="width:84px"><col><col style="width:270px"><col style="width:110px"><col style="width:90px"><col style="width:130px"><col style="width:100px"></colgroup><thead><tr id="thr"></tr></thead><tbody id="tbody"></tbody></table></div>
     <div id="emptybox"></div>
     <div class="pager" id="pager"></div>
   </div>
@@ -814,7 +814,8 @@ function rowHtml(c) {
   var lvl = Math.min(c.level, 6) * 18;
   return '<tr class="' + cls.join(' ') + '" data-id="' + id + '">' +
     '<td class="c-sel"><input type="checkbox" data-act="selrow" data-id="' + id + '" ' + (S.sel.has(id) ? 'checked' : '') + ' aria-label="' + esc(c.leaf) + '"></td>' +
-    '<td class="c-name"><div class="cname' + (c.status ? '' : ' off') + '" style="padding-left:' + lvl + 'px"><span class="fi">' + ic('folder', 16) + '</span><div><b>' + esc(c.leaf) + (c.top ? ' <span class="topstar" title="' + esc(T.bc_top_marker) + '" aria-label="' + esc(T.bc_top_marker) + '">' + ic('star', 14) + '</span>' : '') + '</b><small>' + esc(c.path) + (c.status ? '' : ' <span class="bdg n">' + esc(T.text_disabled) + '</span>') + '</small>' + slugCell(c) + '</div></div></td>' +
+    '<td class="c-img"><button type="button" class="thumb" data-act="sec" data-id="' + id + '" data-sec="data" title="' + esc(T.bc_entry_image) + '" aria-label="' + esc(T.bc_entry_image) + '"><img src="' + esc(c.thumb) + '" alt=""><span class="cam">' + ic('camera', 18) + '</span></button></td>' +
+    '<td class="c-name"><div class="cname' + (c.status ? '' : ' off') + '" style="padding-left:' + lvl + 'px"><div><b>' + esc(c.leaf) + (c.top ? ' <span class="topstar" title="' + esc(T.bc_top_marker) + '" aria-label="' + esc(T.bc_top_marker) + '">' + ic('star', 14) + '</span>' : '') + '</b><small>' + esc(c.path) + (c.status ? '' : ' <span class="bdg n">' + esc(T.text_disabled) + '</span>') + '</small>' + slugCell(c) + '</div></div></td>' +
     '<td class="c-dn" data-l="' + esc(T.bc_display_name) + '">' + dnCell(c) + '</td>' +
     '<td class="c-qty tn" data-l="' + esc(T.bc_column_products) + '">' + c.products + '</td>' +
     '<td class="c-qty tn" data-l="' + esc(T.bc_column_sort) + '">' + c.sort_order + '</td>' +
@@ -830,7 +831,7 @@ function renderStats() {
 }
 function render() {
   var rows = S.rows, total = S.total, pages = S.pages;
-  $('#thr').innerHTML = '<th><input type="checkbox" id="selall" data-act="selall"></th><th class="sortth">' + sortBtn('name') + '</th><th class="sortth">' + sortBtn('display') + ' <span class="bdg b">' + esc(T.bc_storefront) + '</span></th><th class="sortth tn">' + sortBtn('products') + '</th><th class="sortth tn">' + sortBtn('sort_order') + '</th><th class="sortth tc">' + sortBtn('status') + '</th><th></th>';
+  $('#thr').innerHTML = '<th><input type="checkbox" id="selall" data-act="selall"></th><th>' + esc(T.bc_column_image) + '</th><th class="sortth">' + sortBtn('name') + '</th><th class="sortth">' + sortBtn('display') + ' <span class="bdg b">' + esc(T.bc_storefront) + '</span></th><th class="sortth tn">' + sortBtn('products') + '</th><th class="sortth tn">' + sortBtn('sort_order') + '</th><th class="sortth tc">' + sortBtn('status') + '</th><th></th>';
   $('#tbody').innerHTML = rows.map(rowHtml).join('');
   var filtered = S.q.trim() || S.status !== '' || S.parent;
   $('#emptybox').innerHTML = total ? '' : '<div class="empty"><b>' + esc(T.bc_no_results) + '</b>' + esc(filtered ? T.bc_no_results_filters : T.bc_no_results_empty) + (filtered ? '<div style="margin-top:12px"><button class="btn blue" data-act="reset">' + esc(T.bc_reset_all) + '</button></div>' : '') + '</div>';

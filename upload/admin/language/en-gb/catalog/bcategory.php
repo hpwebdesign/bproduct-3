@@ -29,6 +29,7 @@ $_['bc_stat_empty'] = 'No products';
 
 // Columns
 $_['bc_column_name'] = 'Category';
+$_['bc_column_image'] = 'Image';
 $_['bc_column_products'] = 'Products';
 $_['bc_column_sort'] = 'Sort';
 $_['bc_column_status'] = 'Status';
