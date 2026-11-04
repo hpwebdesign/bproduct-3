@@ -1,241 +1,155 @@
 {{ header }}{{ column_left }}
 <div id="content">
-  <link rel="stylesheet" href="view/stylesheet/bproduct/settings.css">
-  <div id="bp-settings">
-    <header>
-      <div class="bar container">
-        <div>
-          <div class="brand">{{ heading_title }}</div>
-          <div class="crumbs" aria-label="Breadcrumb">
-            {% for breadcrumb in breadcrumbs %}
-              <a href="{{ breadcrumb.href }}">{{ breadcrumb.text }}</a>{% if not loop.last %}<span class="sep">›</span>{% endif %}
-            {% endfor %}
-          </div>
-        </div>
-        <div class="spacer"></div>
-        <a href="{{ manager }}" class="btn btn-success"><i class="fa fa-bolt"></i> {{ text_open }}</a>
-        <button type="submit" form="form-module" data-toggle="tooltip" title="{{ button_save }} (Ctrl+S)" class="btn primary"><i class="fa fa-save"></i> {{ button_save }}</button>
-        <a href="{{ cancel }}" class="btn"><i class="fa fa-reply"></i> {{ button_cancel }}</a>
-      </div>
-    </header>
+	<link rel="stylesheet" href="view/stylesheet/bproduct/settings.css">
 
-    <div class="container">
-      <h1>{{ heading_title }}</h1>
+	<div class="page-header">
+		<div class="container-fluid">
+			<ul class="breadcrumb">
+				{% for breadcrumb in breadcrumbs %}
+					<li><a href="{{ breadcrumb.href }}">{{ breadcrumb.text }}</a></li>
+				{% endfor %}
+			</ul>
+		</div>
+	</div>
 
-      {% if error_warning %}
-      <div class="alert alert-danger alert-dismissible"><i class="fa fa-exclamation-circle"></i> {{ error_warning }}
-        <button type="button" class="close" data-dismiss="alert">&times;</button>
-      </div>
-      {% endif %}
+	<div class="container-fluid">
+		{% if error_warning %}
+		<div class="alert alert-danger alert-dismissible"><i class="fa fa-exclamation-circle"></i> {{ error_warning }}
+			<button type="button" class="close" data-dismiss="alert">&times;</button>
+		</div>
+		{% endif %}
 
-      <div class="tabs" role="tablist">
-        <button type="button" class="tab" aria-selected="true" aria-controls="tab-general"><i class="fa fa-cog fa-fw"></i> {{ text_edit }}</button>
-      </div>
+		<div id="bps-root" class="bps"
+			data-save="{{ action }}"
+			data-unsaved="{{ text_unsaved|e('html_attr') }}"
+			data-fail="{{ text_request_failed|e('html_attr') }}"
+			data-denied="{{ error_permission|e('html_attr') }}">
 
-      <form id="form-module" data-save-action="{{ action }}">
-        <section id="tab-general" class="panel active">
-          <fieldset>
-            <legend>{{ text_edit }}</legend>
+			<div class="bps-ph">
+				<div><h1>{{ heading_title2 }} <span class="bps-pill bps-pill-inline">{{ text_build }} · v{{ version }}</span></h1><p>{{ text_subtitle }}</p></div>
+				<div class="bps-acts">
+					<span class="bps-un" id="bps-un" hidden><i class="fa fa-exclamation-circle"></i> {{ text_unsaved }}</span>
+					<a href="{{ manager }}" class="btn btn-default"><i class="fa fa-bolt"></i> {{ text_open }}</a>
+					<button type="button" id="bps-save" class="btn btn-primary" disabled><i class="fa fa-check"></i> {{ button_save }}</button>
+				</div>
+			</div>
 
-            <div class="form-row two-col">
-              <div class="form-row-text">
-                <label for="input-status">{{ entry_status }}</label>
-                <p class="muted">{{ help_status }}</p>
-              </div>
-              <label class="switch">
-                <input type="checkbox" name="module_bproduct_status" id="input-status" value="1" {{ module_bproduct_status ? 'checked' : '' }}>
-                <span class="slider"></span>
-              </label>
-            </div>
+			<div class="bps-lay">
+				<nav class="bps-sn" role="tablist">
+					<div class="bps-sg">{{ nav_settings }}</div>
+					<a href="#bps-general" data-bps-tab="general" class="bps-snav bps-on"><i class="fa fa-sliders"></i> {{ tab_general }}</a>
+					<a href="#bps-barcode" data-bps-tab="barcode" class="bps-snav"><i class="fa fa-barcode"></i> {{ tab_barcode }}</a>
+					<a href="#bps-category" data-bps-tab="category" class="bps-snav"><i class="fa fa-sitemap"></i> {{ tab_category }}</a>
+					<div class="bps-sg">{{ nav_editor }}</div>
+					<a href="#bps-tabs" data-bps-tab="tabs" class="bps-snav"><i class="fa fa-columns"></i> {{ tab_editor }}</a>
+				</nav>
 
-            <div class="form-row two-col">
-              <div class="form-row-text">
-                <label for="input-limit">{{ entry_limit }}</label>
-                <p class="muted">{{ help_limit }}</p>
-              </div>
-              <select name="module_bproduct_limit" id="input-limit" class="form-control">
-                {% for limit in limits %}
-                <option value="{{ limit }}" {{ limit == module_bproduct_limit ? 'selected="selected"' : '' }}>{{ limit }}</option>
-                {% endfor %}
-              </select>
-            </div>
+				<main class="bps-main">
+					<form id="form-module" onsubmit="return false;">
 
-            <div class="form-row two-col">
-              <div class="form-row-text">
-                <label for="input-sort">{{ entry_sort }}</label>
-              </div>
-              <select name="module_bproduct_sort" id="input-sort" class="form-control">
-                {% for sort in sorts %}
-                <option value="{{ sort.value }}" {{ sort.value == module_bproduct_sort ? 'selected="selected"' : '' }}>{{ sort.text }}</option>
-                {% endfor %}
-              </select>
-            </div>
+					<div class="bps-pane bps-on" id="bps-general">
+						<div class="bps-card">
+							<div class="bps-card-h"><h3>{{ text_edit }}</h3></div>
+							<div class="bps-row">
+								<div class="bps-row-l"><b>{{ entry_status }}</b><small>{{ help_status }}</small></div>
+								<div class="bps-row-r"><label class="bps-sw"><input type="checkbox" data-bps-field name="module_bproduct_status" value="1" {% if module_bproduct_status %}checked{% endif %}><span></span></label></div>
+							</div>
+							<div class="bps-row">
+								<div class="bps-row-l"><b>{{ entry_limit }}</b><small>{{ help_limit }}</small></div>
+								<div class="bps-row-r">
+									<select class="form-control" data-bps-field name="module_bproduct_limit">
+										{% for limit in limits %}
+										<option value="{{ limit }}" {{ limit == module_bproduct_limit ? 'selected="selected"' : '' }}>{{ limit }}</option>
+										{% endfor %}
+									</select>
+								</div>
+							</div>
+							<div class="bps-row">
+								<div class="bps-row-l"><b>{{ entry_sort }}</b></div>
+								<div class="bps-row-r">
+									<select class="form-control" data-bps-field name="module_bproduct_sort">
+										{% for sort in sorts %}
+										<option value="{{ sort.value }}" {{ sort.value == module_bproduct_sort ? 'selected="selected"' : '' }}>{{ sort.text }}</option>
+										{% endfor %}
+									</select>
+								</div>
+							</div>
+							<div class="bps-row">
+								<div class="bps-row-l"><b>{{ entry_new_status }}</b><small>{{ help_new_status }}</small></div>
+								<div class="bps-row-r"><label class="bps-sw"><input type="checkbox" data-bps-field name="module_bproduct_new_status" value="1" {% if module_bproduct_new_status %}checked{% endif %}><span></span></label></div>
+							</div>
+						</div>
+					</div>
 
-            <div class="form-row two-col">
-              <div class="form-row-text">
-                <label for="input-new-status">{{ entry_new_status }}</label>
-                <p class="muted">{{ help_new_status }}</p>
-              </div>
-              <label class="switch">
-                <input type="checkbox" name="module_bproduct_new_status" id="input-new-status" value="1" {{ module_bproduct_new_status ? 'checked' : '' }}>
-                <span class="slider"></span>
-              </label>
-            </div>
-          </fieldset>
+					<div class="bps-pane" id="bps-barcode">
+						<div class="bps-card">
+							<div class="bps-card-h"><h3>{{ text_barcode }}</h3></div>
+							<div class="bps-row">
+								<div class="bps-row-l"><b>{{ entry_barcode_status }}</b><small>{{ help_barcode_status }}</small></div>
+								<div class="bps-row-r"><label class="bps-sw"><input type="checkbox" data-bps-field name="module_bproduct_barcode_status" value="1" {% if module_bproduct_barcode_status %}checked{% endif %}><span></span></label></div>
+							</div>
+							<div class="bps-row">
+								<div class="bps-row-l"><b>{{ entry_barcode_front }}</b><small>{{ help_barcode_front }}</small></div>
+								<div class="bps-row-r"><label class="bps-sw"><input type="checkbox" data-bps-field name="module_bproduct_barcode_front" value="1" {% if module_bproduct_barcode_front %}checked{% endif %}><span></span></label></div>
+							</div>
+							<div class="bps-row">
+								<div class="bps-row-l"><b>{{ entry_barcode_source }}</b><small>{{ help_barcode_source }}</small></div>
+								<div class="bps-row-r">
+									<select class="form-control" data-bps-field name="module_bproduct_barcode_source">
+										{% for source in barcode_sources %}
+										<option value="{{ source.value }}" {{ source.value == module_bproduct_barcode_source ? 'selected="selected"' : '' }}>{{ source.text }}</option>
+										{% endfor %}
+									</select>
+								</div>
+							</div>
+						</div>
+					</div>
 
-          <fieldset>
-            <legend>{{ text_barcode }}</legend>
+					<div class="bps-pane" id="bps-category">
+						<div class="bps-card">
+							<div class="bps-card-h"><h3>{{ text_category }}</h3></div>
+							<div class="bps-row">
+								<div class="bps-row-l"><b>{{ entry_category_status }}</b><small>{{ help_category_status }}</small></div>
+								<div class="bps-row-r"><label class="bps-sw"><input type="checkbox" data-bps-field name="module_bproduct_category_status" value="1" {% if module_bproduct_category_status %}checked{% endif %}><span></span></label></div>
+							</div>
+							<div class="bps-row">
+								<div class="bps-row-l"><b>{{ entry_category_display }}</b><small>{{ help_category_display }}</small></div>
+								<div class="bps-row-r"><label class="bps-sw"><input type="checkbox" data-bps-field name="module_bproduct_category_display" value="1" {% if module_bproduct_category_display %}checked{% endif %}><span></span></label></div>
+							</div>
+						</div>
+					</div>
 
-            <div class="form-row two-col">
-              <div class="form-row-text">
-                <label for="input-barcode-status">{{ entry_barcode_status }}</label>
-                <p class="muted">{{ help_barcode_status }}</p>
-              </div>
-              <label class="switch">
-                <input type="checkbox" name="module_bproduct_barcode_status" id="input-barcode-status" value="1" {{ module_bproduct_barcode_status ? 'checked' : '' }}>
-                <span class="slider"></span>
-              </label>
-            </div>
+					<div class="bps-pane" id="bps-tabs">
+						<div class="bps-card">
+							<div class="bps-card-h"><h3>{{ text_tabs }}</h3></div>
+							<p class="bps-lead">{{ text_tabs_desc }}</p>
+							<ul id="bps-tab-list" class="bps-sort">
+								{% for tab in tabs %}
+								<li draggable="true">
+									<i class="fa fa-bars bps-handle"></i>
+									<span class="bps-tname">{{ tab.text }}</span>
+									<input type="hidden" data-bps-field name="module_bproduct_tab_order[]" value="{{ tab.key }}">
+									{% if tab.required %}
+									<span class="bps-lock"><i class="fa fa-lock"></i></span>
+									{% else %}
+									<label class="bps-sw"><input type="checkbox" data-bps-field name="module_bproduct_tabs[{{ tab.key }}]" value="1" {% if tab.shown %}checked{% endif %}><span></span></label>
+									{% endif %}
+								</li>
+								{% endfor %}
+							</ul>
+						</div>
+					</div>
 
-            <div class="form-row two-col">
-              <div class="form-row-text">
-                <label for="input-barcode-front">{{ entry_barcode_front }}</label>
-                <p class="muted">{{ help_barcode_front }}</p>
-              </div>
-              <label class="switch">
-                <input type="checkbox" name="module_bproduct_barcode_front" id="input-barcode-front" value="1" {{ module_bproduct_barcode_front ? 'checked' : '' }}>
-                <span class="slider"></span>
-              </label>
-            </div>
+					</form>
+				</main>
+			</div>
 
-            <div class="form-row two-col">
-              <div class="form-row-text">
-                <label for="input-barcode-source">{{ entry_barcode_source }}</label>
-                <p class="muted">{{ help_barcode_source }}</p>
-              </div>
-              <select name="module_bproduct_barcode_source" id="input-barcode-source" class="form-control">
-                {% for source in barcode_sources %}
-                <option value="{{ source.value }}" {{ source.value == module_bproduct_barcode_source ? 'selected="selected"' : '' }}>{{ source.text }}</option>
-                {% endfor %}
-              </select>
-            </div>
-          </fieldset>
-
-          <fieldset>
-            <legend>{{ text_category }}</legend>
-
-            <div class="form-row two-col">
-              <div class="form-row-text">
-                <label for="input-category-status">{{ entry_category_status }}</label>
-                <p class="muted">{{ help_category_status }}</p>
-              </div>
-              <label class="switch">
-                <input type="checkbox" name="module_bproduct_category_status" id="input-category-status" value="1" {{ module_bproduct_category_status ? 'checked' : '' }}>
-                <span class="slider"></span>
-              </label>
-            </div>
-
-            <div class="form-row two-col">
-              <div class="form-row-text">
-                <label for="input-category-display">{{ entry_category_display }}</label>
-                <p class="muted">{{ help_category_display }}</p>
-              </div>
-              <label class="switch">
-                <input type="checkbox" name="module_bproduct_category_display" id="input-category-display" value="1" {{ module_bproduct_category_display ? 'checked' : '' }}>
-                <span class="slider"></span>
-              </label>
-            </div>
-          </fieldset>
-
-          <fieldset>
-            <legend>{{ text_tabs }}</legend>
-            <p class="muted" style="margin-bottom:14px">{{ text_tabs_desc }}</p>
-            <ul id="bp-tab-list" class="tab-sort">
-              {% for tab in tabs %}
-              <li draggable="true">
-                <i class="fa fa-bars handle"></i>
-                <span class="tname">{{ tab.text }}</span>
-                <input type="hidden" name="module_bproduct_tab_order[]" value="{{ tab.key }}">
-                {% if tab.required %}
-                <span class="lock"><i class="fa fa-lock"></i></span>
-                {% else %}
-                <label class="switch">
-                  <input type="checkbox" name="module_bproduct_tabs[{{ tab.key }}]" value="1" {{ tab.shown ? 'checked' : '' }}>
-                  <span class="slider"></span>
-                </label>
-                {% endif %}
-              </li>
-              {% endfor %}
-            </ul>
-          </fieldset>
-        </section>
-      </form>
-    </div>
-  </div>
+			<div class="bps-foot">
+				<span class="bps-un" id="bps-un-foot" hidden><i class="fa fa-exclamation-circle"></i> {{ text_unsaved }}</span>
+				<button type="button" id="bps-save-foot" class="btn btn-primary" title="Ctrl + S" disabled><i class="fa fa-check"></i> {{ button_save }}</button>
+			</div>
+		</div>
+	</div>
 </div>
-<script>
-$(function () {
-  var $form = $('#form-module');
-
-  function notify(type, message) {
-    $('#bp-settings .bp-alert').remove();
-    $('<div class="bp-alert alert alert-' + type + ' alert-dismissible"><i class="fa fa-' + (type == 'success' ? 'check' : 'exclamation') + '-circle"></i> <span></span><button type="button" class="close" data-dismiss="alert">&times;</button></div>')
-      .find('span').text(message).end()
-      .insertBefore('#bp-settings .tabs');
-    if (type == 'success') {
-      setTimeout(function () { $('#bp-settings .bp-alert').fadeOut(300, function () { $(this).remove(); }); }, 4000);
-    }
-  }
-
-  function save() {
-    $.ajax({
-      url: $form.data('save-action'),
-      type: 'POST',
-      dataType: 'json',
-      data: $form.serialize(),
-      beforeSend: function () { $('#bp-settings button[form="form-module"]').prop('disabled', true); },
-      complete: function () { $('#bp-settings button[form="form-module"]').prop('disabled', false); },
-      success: function (json) {
-        if (json.error) {
-          notify('danger', json.error.warning || '{{ error_permission|escape('js') }}');
-        } else if (json.success) {
-          notify('success', json.success);
-        }
-      },
-      error: function () { notify('danger', '{{ error_permission|escape('js') }}'); }
-    });
-  }
-
-  var list = document.getElementById('bp-tab-list'), dragEl = null;
-
-  list.addEventListener('dragstart', function (e) {
-    dragEl = e.target.closest('li');
-    if (!dragEl) { return; }
-    e.dataTransfer.effectAllowed = 'move';
-    e.dataTransfer.setData('text/plain', '');
-    dragEl.classList.add('dragging');
-  });
-  list.addEventListener('dragover', function (e) {
-    if (!dragEl) { return; }
-    e.preventDefault();
-    var over = e.target.closest('li');
-    if (!over || over === dragEl) { return; }
-    var r = over.getBoundingClientRect();
-    list.insertBefore(dragEl, (e.clientY - r.top) > r.height / 2 ? over.nextSibling : over);
-  });
-  list.addEventListener('dragend', function () {
-    if (dragEl) { dragEl.classList.remove('dragging'); }
-    dragEl = null;
-  });
-
-  $form.on('submit', function (e) { e.preventDefault(); save(); });
-
-  $(document).on('keydown', function (e) {
-    if ((e.ctrlKey || e.metaKey) && (e.key === 's' || e.key === 'S')) {
-      e.preventDefault();
-      save();
-    }
-  });
-});
-</script>
+<script src="view/javascript/bproduct/settings.js"></script>
 {{ footer }}
