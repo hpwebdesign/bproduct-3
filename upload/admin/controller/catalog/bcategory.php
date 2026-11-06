@@ -131,11 +131,20 @@ class ControllerCatalogBcategory extends Controller {
 			'layouts'      => $layouts,
 			'limit'        => in_array($limit, array(5, 10, 25, 50, 100)) ? $limit : 10,
 			'display_on'   => (int)$this->config->get('module_bproduct_category_display'),
+			'complete_seo' => $this->completeSeo() ? 1 : 0,
 			'can_modify'   => $this->user->hasPermission('modify', 'catalog/category') ? 1 : 0
 		);
 	}
 
 	/* --------------------------------------------------------------- helpers */
+
+	private function completeSeo() {
+		if ((int)$this->config->get('module_complete_seo_status') !== 1) {
+			return false;
+		}
+
+		return (bool)$this->db->query("SHOW COLUMNS FROM `" . DB_PREFIX . "category_description` LIKE 'seo_h1'")->num_rows;
+	}
 
 	private function json($json) {
 		$this->response->addHeader('Content-Type: application/json');
@@ -381,6 +390,12 @@ class ControllerCatalogBcategory extends Controller {
 				'meta_description' => isset($d['meta_description']) ? $this->decode($d['meta_description']) : '',
 				'meta_keyword'     => isset($d['meta_keyword']) ? $this->decode($d['meta_keyword']) : ''
 			);
+
+			if ($this->completeSeo()) {
+				foreach (array('seo_h1', 'seo_h2', 'seo_h3') as $key) {
+					$descriptions[$language_id][$key] = isset($d[$key]) ? $this->decode($d[$key]) : '';
+				}
+			}
 		}
 
 		$display = array();
@@ -447,6 +462,10 @@ class ControllerCatalogBcategory extends Controller {
 		if (isset($sections['general']['descriptions']) && is_array($sections['general']['descriptions'])) {
 			foreach ($sections['general']['descriptions'] as $language_id => $value) {
 				$keys = array('name', 'description', 'meta_title', 'meta_description', 'meta_keyword');
+
+				if ($this->completeSeo()) {
+					$keys = array_merge($keys, array('seo_h1', 'seo_h2', 'seo_h3'));
+				}
 				$current = isset($data['category_description'][(int)$language_id]) ? $data['category_description'][(int)$language_id] : array_fill_keys($keys, '');
 
 				foreach ($keys as $key) {

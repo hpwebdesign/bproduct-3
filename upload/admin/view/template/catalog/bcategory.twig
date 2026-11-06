@@ -1072,7 +1072,8 @@ function generalBody(c) {
         '<div class="f"><label>' + esc(T.bc_entry_description) + '</label>' + editorHtml(l.language_id, d.description) + '</div>' +
         '<div class="f"><label>' + esc(T.bc_entry_meta_title) + ' <b class="req">*</b></label><input class="inp" data-k="meta_title" value="' + esc(d.meta_title) + '" placeholder="' + esc(T.bc_entry_meta_title) + '"><div class="errtxt" data-e="meta_title"></div></div>' +
         '<div class="f"><label>' + esc(T.bc_entry_meta_description) + '</label><textarea class="inp" rows="3" data-k="meta_description" placeholder="' + esc(T.bc_entry_meta_description) + '">' + esc(d.meta_description) + '</textarea></div>' +
-        '<div class="f"><label>' + esc(T.bc_entry_meta_keyword) + '</label><input class="inp" data-k="meta_keyword" value="' + esc(d.meta_keyword) + '" placeholder="' + esc(T.bc_entry_meta_keyword) + '"></div></div>';
+        '<div class="f"><label>' + esc(T.bc_entry_meta_keyword) + '</label><input class="inp" data-k="meta_keyword" value="' + esc(d.meta_keyword) + '" placeholder="' + esc(T.bc_entry_meta_keyword) + '"></div>' +
+        (CFG.complete_seo ? ['seo_h1', 'seo_h2', 'seo_h3'].map(function (k) { return '<div class="f"><label>' + esc(T['bc_entry_' + k]) + '</label><input class="inp" data-k="' + k + '" value="' + esc(d[k] || '') + '" placeholder="' + esc(T['bc_entry_' + k]) + '"></div>'; }).join('') : '') + '</div>';
     }).join('');
 }
 function collectGeneral() {
@@ -1081,6 +1082,7 @@ function collectGeneral() {
     var v = function (k) { return pn.querySelector('[data-k="' + k + '"]').value; };
     var ed = pn.querySelector('.editor'), orig = DR.c.description[pn.dataset.lid];
     out[pn.dataset.lid] = {name: v('name').trim(), description: ed.dataset.touched || !orig ? editorValue(ed) : orig.description, meta_title: v('meta_title').trim(), meta_description: v('meta_description'), meta_keyword: v('meta_keyword')};
+    if (CFG.complete_seo) { ['seo_h1', 'seo_h2', 'seo_h3'].forEach(function (k) { out[pn.dataset.lid][k] = v(k); }); }
     display[pn.dataset.lid] = v('display').trim();
   });
   return {descriptions: out, display: display};
