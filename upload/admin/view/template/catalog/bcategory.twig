@@ -651,6 +651,12 @@ Array.prototype.forEach.call(R.querySelectorAll('[data-tp]'), function (el) { el
   R.appendChild(st);
 })();
 
+(function () {
+  var st = document.createElement('style');
+  st.textContent = '.df .btn.primary:disabled{opacity:.45;cursor:not-allowed;box-shadow:none}';
+  R.appendChild(st);
+})();
+
 var ICONS = {
 search:'<circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>',
 plus:'<line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>',
@@ -946,18 +952,24 @@ function slugGenerate(id) {
 /* ---------- drawer: shared ---------- */
 var SECS = [['general', 'bc_tab_general', 'file'], ['data', 'bc_tab_data', 'box'], ['seo', 'bc_tab_seo', 'globe'], ['design', 'bc_tab_design', 'layout']];
 function isDirty() { return !!DR && Object.keys(DR.dirty).length > 0; }
+function syncSave() {
+  var b = $('[data-act="dsave"]');
+  if (b) b.disabled = !(DR && DR.loaded && CFG.can_modify && isDirty());
+}
 function markDirty(sec) {
   if (!DR) return;
   var k = DR.mode === 'add' ? 'add' : sec;
   if (!k) return;
   DR.dirty[k] = 1;
   var u = $('#undirty'); if (u) u.classList.add('on');
+  syncSave();
   var t = $('.tabs [data-sec="' + k + '"]'); if (t) t.classList.add('dirtydot');
 }
 function clearDirty() {
   if (!DR) return;
   DR.dirty = {};
   var u = $('#undirty'); if (u) u.classList.remove('on');
+  syncSave();
   $$('.tabs .dirtydot').forEach(function (t) { t.classList.remove('dirtydot'); });
 }
 function multiLang() { return CFG.languages.length > 1; }
@@ -1255,7 +1267,7 @@ function openDrawer(id, sec, focusDn) {
   var tabs = SECS.map(function (s) { return '<button type="button" data-act="tab" data-sec="' + s[0] + '" class="' + (s[0] === sec ? 'on' : '') + '">' + ic(s[2]) + '<span>' + esc(T[s[1]]) + '</span></button>'; }).join('');
   $('#drawer').innerHTML = '<div class="dh"><span class="addic">' + ic('folder', 20) + '</span><div><b>&nbsp;</b><small>&nbsp;</small></div><button type="button" class="btn ghost sm" style="margin-left:auto" data-act="fullform" data-id="' + id + '" title="' + esc(T.bc_full_form_hint) + '">' + ic('ext', 14) + ' ' + esc(T.bc_full_form) + '</button><button type="button" class="btn ghost icon" data-act="dclose" aria-label="' + esc(T.button_close) + '">' + ic('x') + '</button></div>' +
     '<div class="dm"><div class="tabs">' + tabs + '</div><div class="db"><div class="skel" style="width:60%"></div><div class="skel"></div><div class="skel" style="width:80%"></div></div></div>' +
-    '<div class="df"><span class="un" id="undirty">' + ic('alert') + ' ' + esc(T.bc_unsaved) + '</span><span class="sv"></span><span class="kbd">' + KBD + '</span><button type="button" class="btn ghost" data-act="dclose">' + esc(T.button_cancel) + '</button><button type="button" class="btn primary needmod" data-act="dsave">' + ic('check') + ' ' + esc(T.button_save) + '</button></div>';
+    '<div class="df"><span class="un" id="undirty">' + ic('alert') + ' ' + esc(T.bc_unsaved) + '</span><span class="sv"></span><span class="kbd">' + KBD + '</span><button type="button" class="btn ghost" data-act="dclose">' + esc(T.button_cancel) + '</button><button type="button" class="btn primary needmod" data-act="dsave" disabled>' + ic('check') + ' ' + esc(T.button_save) + '</button></div>';
   drawerOpen(false);
   api('category', {category_id: id}).then(function (j) {
     if (!DR || DR.id !== id || DR.mode !== 'edit') return;
