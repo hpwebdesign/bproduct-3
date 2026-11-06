@@ -126,6 +126,43 @@ class ControllerCatalogBproduct extends Controller {
 		return json_encode($value, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT);
 	}
 
+	// Complete SEO writes the SEO URL from seo_keyword when its own URL handling is enabled
+	private function withSeoKeyword($data) {
+		if (!$this->completeSeo()) {
+			return $data;
+		}
+
+		foreach ($data['product_description'] as $language_id => $value) {
+			$data['product_description'][$language_id]['seo_keyword'] = isset($data['product_seo_url'][0][$language_id]) ? $data['product_seo_url'][0][$language_id] : '';
+		}
+
+		return $data;
+	}
+
+	private function completeSeo() {
+		if ((int)$this->config->get('module_complete_seo_status') !== 1) {
+			return false;
+		}
+
+		return (bool)$this->db->query("SHOW COLUMNS FROM `" . DB_PREFIX . "product_description` LIKE 'seo_h1'")->num_rows;
+	}
+
+	private function seoFields() {
+		if (!$this->completeSeo()) {
+			return array();
+		}
+
+		$fields = array('seo_h1', 'seo_h2', 'seo_h3');
+
+		foreach (array('image_alt', 'image_title') as $column) {
+			if ($this->db->query("SHOW COLUMNS FROM `" . DB_PREFIX . "product_description` LIKE '" . $column . "'")->num_rows) {
+				$fields[] = $column;
+			}
+		}
+
+		return $fields;
+	}
+
 	private function getConfig() {
 		$token = $this->session->data['user_token'];
 
@@ -197,6 +234,8 @@ class ControllerCatalogBproduct extends Controller {
 				'source' => $this->barcodeSource()
 			),
 			'can_modify'     => $this->user->hasPermission('modify', 'catalog/product') ? 1 : 0,
+			'complete_seo'   => $this->completeSeo() ? 1 : 0,
+			'seo_fields'     => $this->seoFields(),
 			'default_status' => (int)$this->config->get('config_stock_status_id')
 		);
 	}
@@ -651,6 +690,8 @@ class ControllerCatalogBproduct extends Controller {
 				case 'general':
 					if (isset($section['product_description']) && is_array($section['product_description'])) {
 						foreach ($section['product_description'] as $language_id => $value) {
+							$old = isset($data['product_description'][(int)$language_id]) ? $data['product_description'][(int)$language_id] : array();
+
 							$data['product_description'][(int)$language_id] = array(
 								'name'             => isset($value['name']) ? (string)$value['name'] : '',
 								'description'      => isset($value['description']) ? (string)$value['description'] : '',
@@ -659,6 +700,12 @@ class ControllerCatalogBproduct extends Controller {
 								'meta_keyword'     => isset($value['meta_keyword']) ? (string)$value['meta_keyword'] : '',
 								'tag'              => isset($value['tag']) ? (string)$value['tag'] : ''
 							);
+
+							if ($this->completeSeo()) {
+								foreach ($this->seoFields() as $key) {
+									$data['product_description'][(int)$language_id][$key] = isset($value[$key]) ? (string)$value[$key] : (isset($old[$key]) ? $old[$key] : '');
+								}
+							}
 						}
 					}
 
@@ -935,7 +982,7 @@ class ControllerCatalogBproduct extends Controller {
 			return;
 		}
 
-		$this->model_catalog_product->editProduct($product_id, $data);
+		$this->model_catalog_product->editProduct($product_id, $this->withSeoKeyword($data));
 
 		$this->json(array('success' => $this->language->get('bp_text_saved'), 'row' => $this->rowFor($product_id), 'stats' => $this->model_catalog_bproduct->getStats()));
 	}
@@ -1059,7 +1106,7 @@ class ControllerCatalogBproduct extends Controller {
 			}
 		}
 
-		$product_id = $this->model_catalog_product->addProduct($data);
+		$product_id = $this->model_catalog_product->addProduct($this->withSeoKeyword($data));
 
 		$this->json(array('success' => $this->language->get('bp_text_added'), 'product_id' => (int)$product_id, 'row' => $this->rowFor($product_id), 'stats' => $this->model_catalog_bproduct->getStats()));
 	}
@@ -1371,7 +1418,7 @@ class ControllerCatalogBproduct extends Controller {
 			return;
 		}
 
-		$this->model_catalog_product->editProduct($product_id, $data);
+		$this->model_catalog_product->editProduct($product_id, $this->withSeoKeyword($data));
 
 		$this->json(array('success' => 1, 'row' => $this->rowFor($product_id), 'stats' => $this->model_catalog_bproduct->getStats()));
 	}

@@ -1061,6 +1061,16 @@ function dnPreview(pn) {
   var nm = pn.querySelector('[data-k="name"]').value.trim(), dn = pn.querySelector('[data-k="display"]').value.trim(), box = pn.querySelector('.dnprev');
   if (box) box.innerHTML = esc(T.bc_storefront_shows) + ' <b>' + esc(dn || nm || '—') + '</b>';
 }
+function seoGeneral(c, l, d) {
+  if (!CFG.complete_seo) return '';
+  var kw = (c.seo[0] && c.seo[0][l.language_id]) || '';
+  return '<div class="f"><label>' + esc(T.bc_entry_seo_keyword) + '</label><input class="inp" data-kwm="0|' + l.language_id + '" value="' + esc(kw) + '" placeholder="' + esc(T.bc_entry_seo_keyword) + '" autocomplete="off"></div>' +
+    ['seo_h1', 'seo_h2', 'seo_h3'].map(function (k) { return '<div class="f"><label>' + esc(T['bc_entry_' + k]) + '</label><input class="inp" data-k="' + k + '" value="' + esc(d[k] || '') + '" placeholder="' + esc(T['bc_entry_' + k]) + '"></div>'; }).join('');
+}
+function kwMirror(inp) {
+  var m = $('[data-kwm="' + inp.dataset.seo + '"]');
+  if (m && m.value !== inp.value) m.value = inp.value;
+}
 function generalBody(c) {
   var langs = CFG.languages;
   return (multiLang() ? '<div class="lang">' + langs.map(function (l, i) { return '<button type="button" data-act="lang" data-lid="' + l.language_id + '" class="' + (i ? '' : 'on') + '">' + esc(l.name) + '</button>'; }).join('') + '</div>' : '') +
@@ -1070,9 +1080,10 @@ function generalBody(c) {
         '<div class="f"><label>' + esc(T.bc_entry_name) + ' <b class="req">*</b> <span class="bdg n">' + esc(T.bc_admin) + '</span></label><input class="inp" data-k="name" value="' + esc(d.name) + '" placeholder="' + esc(T.bc_entry_name) + '"><div class="errtxt" data-e="name"></div><small>' + esc(T.bc_name_help) + '</small></div>' +
         dnBox(l, d, c.display[l.language_id]) + '<div class="errtxt" data-e="display"></div>' +
         '<div class="f"><label>' + esc(T.bc_entry_description) + '</label>' + editorHtml(l.language_id, d.description) + '</div>' +
+        seoGeneral(c, l, d) +
         '<div class="f"><label>' + esc(T.bc_entry_meta_title) + ' <b class="req">*</b></label><input class="inp" data-k="meta_title" value="' + esc(d.meta_title) + '" placeholder="' + esc(T.bc_entry_meta_title) + '"><div class="errtxt" data-e="meta_title"></div></div>' +
         '<div class="f"><label>' + esc(T.bc_entry_meta_description) + '</label><textarea class="inp" rows="3" data-k="meta_description" placeholder="' + esc(T.bc_entry_meta_description) + '">' + esc(d.meta_description) + '</textarea></div>' +
-        '<div class="f"><label>' + esc(T.bc_entry_meta_keyword) + '</label><input class="inp" data-k="meta_keyword" value="' + esc(d.meta_keyword) + '" placeholder="' + esc(T.bc_entry_meta_keyword) + '"></div></div>';
+        '<div class="f"><label>' + esc(T.bc_entry_meta_keyword) + '</label><input class="inp" data-k="meta_keyword" value="' + esc(d.meta_keyword) + '" placeholder="' + esc(T.bc_entry_meta_keyword) + '"></div>' + '</div>';
     }).join('');
 }
 function collectGeneral() {
@@ -1081,6 +1092,7 @@ function collectGeneral() {
     var v = function (k) { return pn.querySelector('[data-k="' + k + '"]').value; };
     var ed = pn.querySelector('.editor'), orig = DR.c.description[pn.dataset.lid];
     out[pn.dataset.lid] = {name: v('name').trim(), description: ed.dataset.touched || !orig ? editorValue(ed) : orig.description, meta_title: v('meta_title').trim(), meta_description: v('meta_description'), meta_keyword: v('meta_keyword')};
+    if (CFG.complete_seo) { ['seo_h1', 'seo_h2', 'seo_h3'].forEach(function (k) { out[pn.dataset.lid][k] = v(k); }); }
     display[pn.dataset.lid] = v('display').trim();
   });
   return {descriptions: out, display: display};
@@ -1100,13 +1112,16 @@ function acField(kind, ph) {
   return '<div class="ac"><input class="inp" data-ac="' + kind + '" placeholder="' + esc(ph) + '" autocomplete="off"><div class="acl"></div></div>';
 }
 function chipsPaint() {
-  var box = $('[data-chips="filter"]'); if (!box) return;
-  box.innerHTML = DR.filters.map(function (x) { return '<span class="c">' + esc(x.name) + '<button type="button" data-act="rmchip" data-id="' + x.id + '" aria-label="' + esc(T.button_remove) + '">' + ic('x', 11) + '</button></span>'; }).join('');
+  [['filter', DR.filters], ['extra', DR.extra || []]].forEach(function (p) {
+    var box = $('[data-chips="' + p[0] + '"]'); if (!box) return;
+    box.innerHTML = p[1].map(function (x) { return '<span class="c">' + esc(x.name) + '<button type="button" data-act="rmchip" data-kind="' + p[0] + '" data-id="' + x.id + '" aria-label="' + esc(T.button_remove) + '">' + ic('x', 11) + '</button></span>'; }).join('');
+  });
 }
 function dataBody(c) {
   var d = c.data;
   var yn = function (k, v) { return '<div class="seg"><label><input type="radio" name="d-' + k + '" data-d="' + k + '" value="1" ' + (+v ? 'checked' : '') + '><span>' + esc(T.text_yes) + '</span></label><label><input type="radio" name="d-' + k + '" data-d="' + k + '" value="0" ' + (+v ? '' : 'checked') + '><span>' + esc(T.text_no) + '</span></label></div>'; };
   return '<div class="f"><label>' + esc(T.bc_entry_parent) + '</label>' + ssHtml('dparent') + '<div class="errtxt" data-e="parent"></div></div>' +
+    (CFG.extra_parents ? '<div class="lk"><div class="lkh"><b>' + esc(T.bc_entry_extra_parents) + '</b><small>' + esc(T.bc_extra_parents_hint) + '</small></div>' + acField('extra', T.bc_search_categories) + '<div class="chips" data-chips="extra"></div></div>' : '') +
     '<div class="two">' + dinp('sort_order', T.bc_entry_sort_order, d.sort_order) + dinp('column', T.bc_entry_column, d.column) + '</div>' +
     '<div class="two"><div class="f"><label>' + esc(T.bc_entry_top) + '</label>' + yn('top', d.top) + '</div>' +
     '<div class="f"><label>' + esc(T.bc_column_status) + '</label><select class="inp" data-d="status"><option value="1" ' + (+d.status ? 'selected' : '') + '>' + esc(T.text_enabled) + '</option><option value="0" ' + (+d.status ? '' : 'selected') + '>' + esc(T.text_disabled) + '</option></select></div></div>' +
@@ -1127,6 +1142,7 @@ function collectData() {
   out.image = DR.image ? DR.image.path : '';
   out.stores = st;
   out.filters = DR.filters.map(function (x) { return x.id; });
+  if (CFG.extra_parents) out.extra_parents = (DR.extra || []).map(function (x) { return x.id; });
   return out;
 }
 
@@ -1153,6 +1169,7 @@ function collectSeo() {
 }
 var seoTimers = {};
 function seoCheck(inp, auto) {
+  kwMirror(inp);
   var key = inp.dataset.seo, a = key.split('|'), m = $('[data-seomsg="' + key + '"]'), v = inp.value.trim();
   if (!v) { m.className = 'slugmsg'; m.textContent = ''; return Promise.resolve(true); }
   var dup = $$('[data-seo^="' + a[0] + '|"]').some(function (o) { return o !== inp && o.value.trim() === v; });
@@ -1208,7 +1225,7 @@ function openDrawer(id, sec, focusDn) {
 }
 function fillDrawer(c) {
   DR.c = c; DR.loaded = true;
-  DR.parent = c.parent; DR.stores = c.stores.slice(); DR.filters = c.filters.slice(); DR.image = c.image.path ? {path: c.image.path, thumb: c.image.thumb} : null;
+  DR.parent = c.parent; DR.stores = c.stores.slice(); DR.filters = c.filters.slice(); DR.extra = (c.extra_parents || []).slice(); DR.image = c.image.path ? {path: c.image.path, thumb: c.image.thumb} : null;
   $('.db').innerHTML = SECS.map(function (s) { return '<div class="sec ' + (s[0] === DR.sec ? 'on' : '') + '" data-s="' + s[0] + '">' + secBody(s[0], c) + '</div>'; }).join('');
   ssLabel('dparent'); chipsPaint(); imgPaint('#d-img', DR.image);
   $$('.lp').forEach(dnPreview);
@@ -1413,13 +1430,14 @@ R.addEventListener('click', function (e) {
       break;
     }
     case 'acpick': {
-      var it = (ACI.filter || [])[+el.dataset.i]; if (!it) break;
-      if (DR.filters.some(function (x) { return x.id === it.id; })) { toast(T.bc_already_added); break; }
-      DR.filters.push({id: it.id, name: it.name}); chipsPaint(); markDirty('data');
+      var kind = el.closest('.ac').querySelector('input').dataset.ac, list = kind === 'extra' ? DR.extra : DR.filters;
+      var it = (ACI[kind] || [])[+el.dataset.i]; if (!it) break;
+      if (list.some(function (x) { return x.id === it.id; })) { toast(T.bc_already_added); break; }
+      list.push({id: it.id, name: it.name}); chipsPaint(); markDirty('data');
       var ai = el.closest('.ac').querySelector('input'); ai.value = ''; $$('.acl.on').forEach(function (x) { x.classList.remove('on'); });
       break;
     }
-    case 'rmchip': DR.filters = DR.filters.filter(function (x) { return x.id !== id; }); chipsPaint(); markDirty('data'); break;
+    case 'rmchip': if (el.dataset.kind === 'extra') { DR.extra = DR.extra.filter(function (x) { return x.id !== id; }); } else { DR.filters = DR.filters.filter(function (x) { return x.id !== id; }); } chipsPaint(); markDirty('data'); break;
     case 'dimg': pickImage(function (path, thumb) { DR.image = {path: path, thumb: thumb}; imgPaint('#d-img', DR.image); markDirty('data'); }); break;
     case 'dimgrm': DR.image = null; imgPaint('#d-img', null); markDirty('data'); break;
     case 'addimg': pickImage(function (path, thumb) { DR.image = {path: path, thumb: thumb}; imgPaint('#a-img', DR.image); markDirty(); }); break;
@@ -1435,14 +1453,14 @@ R.addEventListener('click', function (e) {
 /* filter autocomplete */
 var ACI = {}, acTok = 0;
 var acShow = debounce(function (inp) {
-  var q = inp.value.trim(), box = inp.parentNode.querySelector('.acl'), tok = ++acTok;
+  var q = inp.value.trim(), box = inp.parentNode.querySelector('.acl'), tok = ++acTok, kind = inp.dataset.ac;
   box.innerHTML = '<div class="aci" style="color:var(--mute);cursor:default">' + esc(T.text_loading) + '</div>'; box.classList.add('on');
-  api('ac', {type: 'filter', q: q}).then(function (j) {
+  api('ac', kind === 'extra' ? {type: 'category', q: q, exclude: DR ? DR.id : ''} : {type: 'filter', q: q}).then(function (j) {
     if (tok !== acTok) return;
-    ACI.filter = j.items || [];
+    ACI[kind] = j.items || [];
     var h = '';
-    ACI.filter.forEach(function (o, i) {
-      var used = DR && DR.filters.some(function (x) { return x.id === o.id; });
+    ACI[kind].forEach(function (o, i) {
+      var used = DR && (kind === 'extra' ? DR.extra : DR.filters).some(function (x) { return x.id === o.id; });
       h += '<div class="aci" data-act="acpick" data-i="' + i + '"><span>' + hl(o.name, q) + '</span>' + (used ? '<span class="bdg g" style="margin-left:auto">' + esc(T.bc_added) + '</span>' : '') + '</div>';
     });
     box.innerHTML = h || '<div class="aci" style="color:var(--mute);cursor:default">' + esc(T.bc_no_match) + '</div>';
@@ -1471,10 +1489,15 @@ R.addEventListener('input', function (e) {
   if (el.id === 'a-name') { $('#a-slug').textContent = '/' + slugify(el.value); markDirty(); return; }
   if (el.id === 'a-display') { markDirty(); return; }
   if (!DR || !el.closest('#drawer')) return;
+  if (d.kwm !== undefined) {
+    var tgt = $('[data-seo="' + d.kwm + '"]');
+    if (tgt) { tgt.value = el.value; tgt.dispatchEvent(new Event('input', {bubbles: true})); }
+    return;
+  }
   if (el.closest('.editor')) el.closest('.editor').dataset.touched = '1';
   if (el.matches && el.matches('[data-lnk]')) return;
   if (el.closest('.lp')) { checkLang(); dnPreview(el.closest('.lp')); if (d.k === 'name') headRefresh(); }
-  if (d.seo !== undefined) { clearTimeout(seoTimers[d.seo]); seoTimers[d.seo] = setTimeout(function () { seoCheck(el); }, 400); headRefresh(); }
+  if (d.seo !== undefined) { kwMirror(el); clearTimeout(seoTimers[d.seo]); seoTimers[d.seo] = setTimeout(function () { seoCheck(el); }, 400); headRefresh(); }
   markDirty(secOf(el));
 });
 
