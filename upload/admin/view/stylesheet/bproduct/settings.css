@@ -120,3 +120,9 @@ html body #container { overflow: clip; }
 .bps-sort .bps-handle { color: var(--mute); cursor: grab; }
 .bps-sort .bps-tname { flex: 1; font-weight: 600; }
 .bps-sort .bps-lock { width: 38px; text-align: center; color: var(--mute); }
+
+/* input group (value + unit) */
+.bps .input-group { width: 160px; }
+.bps .input-group .form-control { min-width: 0; width: 100%; border-radius: 10px 0 0 10px; text-align: right; font-weight: 700; font-variant-numeric: tabular-nums; }
+.bps .input-group-addon { height: 38px; padding: 0 12px; border: 0; border-radius: 0 10px 10px 0; background: var(--soft); box-shadow: inset 0 0 0 1px var(--line); color: var(--mute); font-size: 13px; font-weight: 600; line-height: 38px; }
+.bps .input-group .form-control:focus { position: relative; z-index: 3; }
