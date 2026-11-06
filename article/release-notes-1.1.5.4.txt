@@ -1,26 +1,16 @@
-Add Columns tab in the module settings to show or hide the Model, Categories, Manufacturer, Price, Quantity and Date added columns of the product list
-Add category image in the Category Manager list, with the folder icon kept for categories without an image
-Add Extra parents field in the category editor, shown when oc_category has the extra_parents column (Multiple Parent Category)
-Add Keyword and SEO H1, H2 and H3 fields in the General tab of the category and product editors when Complete SEO is active, above the meta title and per language
-Add Image alt and Image title fields in the product General tab when Complete SEO is active and the columns exist
-Add image field popover for category and product images: Select file, Manager, URL and Clear buttons with a drag and drop zone, used by the thumbnails in both editors and the Quick Add forms
-Add built-in popover backend catalog/bmedia (upload, download from URL, size limits) served through the catalog/product and catalog/category routes, so no extra permission is needed
-Add download from URL: http and https only, ports 80 and 443, private address blocking, redirect limit, and size and image type checks
-Add dd-mm-yyyy date entry with automatic formatting in Special, Discount and Date available
-Add new settings page layout with sidebar tabs, floating save bar, unsaved-changes notice and toast messages
-Add build.php: bumps the version automatically when packaged files change and writes build/bproduct.v-{version}.ocmod.zip (patch by default, --full for the whole package)
-Change image fields to use the popover of the hpmm module when it is installed, otherwise the built-in popover
-Change attribute values to bare text: markup is removed when loading and saving, and values are edited in 2-line fields
+Add Columns tab in settings to show or hide Model, Categories, Manufacturer, Price, Quantity and Date added in the product list
+Add category image in the Category Manager list
+Add Extra parents field in the category editor (Multiple Parent Category)
+Add Keyword, SEO H1, H2, H3, Image alt and Image title fields in the editors when Complete SEO is active
+Add image popover (select file, drag and drop, URL, manager, clear) for category and product images, hpmm popover used when installed
+Add dd-mm-yyyy date entry in Special, Discount and Date available
+Add build.php: automatic version bump and bproduct.v-{version}.ocmod.zip
+Change attribute values to bare text in 2-line fields
 Change new Special rows to start without dates
-Change quick stats to sit on the same row as the Add button in the product and category lists
-Change Category Manager pager to scroll the page back to the top, with a tidier table layout and fixed column widths
-Fix keyword being lost on save when Complete SEO is active: seo_keyword is now passed on every product and category save
-Fix SEO H1, H2 and H3 being cleared when a product is saved with Complete SEO active
-Remove logo, subtitle and version badge from the headers of the product and category lists
+Change quick stats to sit on the same row as the Add button
+Fix keyword lost on save and SEO H1-H3 cleared on product save when Complete SEO is active
+Remove logo, subtitle and version badge from the list headers
 
 Upgrade notes
-Upload the package in Extensions > Installer, click Refresh in Extensions > Modifications, then hard refresh the manager page once (Ctrl+F5)
-Open the module settings and check the new Columns tab (all columns are shown by default)
-The package adds controller/catalog/bmedia.php and view/javascript/bproduct/hpmm_common.js, and has no database changes
-Image upload size follows Settings > Server > Max file size (OpenCart default is 300 KB)
-Attribute values lose their HTML when saved from the manager, so a link inside an attribute becomes plain text
+Install the package, Refresh modifications, hard refresh the page (Ctrl+F5)
+No database changes
