@@ -3,7 +3,7 @@
 A fast, AJAX-based replacement for the default OpenCart product list.
 Find, filter, edit and add products from one page, without leaving the list.
 
-- **Version:** 1.1.0.8
+- **Version:** 1.1.0.9
 - **Author:** Bariklabs
 - **Compatibility:** OpenCart 3.0.3.x (admin, Twig, OCMOD)
 - **Tested on:** OpenCart 3.0.3.9, PHP 8.3, MariaDB 10.11
@@ -135,7 +135,7 @@ Display names are stored in the `bproduct_category_display` table, created on in
 
 ## Changelog
 
-**1.1.0.8**
+**1.1.0.9**
 - Category Manager: using the pager scrolls the page back to the top.
 - Category Manager: tidier table layout with fixed column widths and aligned headers.
 

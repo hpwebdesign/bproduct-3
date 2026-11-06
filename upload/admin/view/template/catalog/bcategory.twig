@@ -1102,13 +1102,16 @@ function acField(kind, ph) {
   return '<div class="ac"><input class="inp" data-ac="' + kind + '" placeholder="' + esc(ph) + '" autocomplete="off"><div class="acl"></div></div>';
 }
 function chipsPaint() {
-  var box = $('[data-chips="filter"]'); if (!box) return;
-  box.innerHTML = DR.filters.map(function (x) { return '<span class="c">' + esc(x.name) + '<button type="button" data-act="rmchip" data-id="' + x.id + '" aria-label="' + esc(T.button_remove) + '">' + ic('x', 11) + '</button></span>'; }).join('');
+  [['filter', DR.filters], ['extra', DR.extra || []]].forEach(function (p) {
+    var box = $('[data-chips="' + p[0] + '"]'); if (!box) return;
+    box.innerHTML = p[1].map(function (x) { return '<span class="c">' + esc(x.name) + '<button type="button" data-act="rmchip" data-kind="' + p[0] + '" data-id="' + x.id + '" aria-label="' + esc(T.button_remove) + '">' + ic('x', 11) + '</button></span>'; }).join('');
+  });
 }
 function dataBody(c) {
   var d = c.data;
   var yn = function (k, v) { return '<div class="seg"><label><input type="radio" name="d-' + k + '" data-d="' + k + '" value="1" ' + (+v ? 'checked' : '') + '><span>' + esc(T.text_yes) + '</span></label><label><input type="radio" name="d-' + k + '" data-d="' + k + '" value="0" ' + (+v ? '' : 'checked') + '><span>' + esc(T.text_no) + '</span></label></div>'; };
   return '<div class="f"><label>' + esc(T.bc_entry_parent) + '</label>' + ssHtml('dparent') + '<div class="errtxt" data-e="parent"></div></div>' +
+    (CFG.extra_parents ? '<div class="lk"><div class="lkh"><b>' + esc(T.bc_entry_extra_parents) + '</b><small>' + esc(T.bc_extra_parents_hint) + '</small></div>' + acField('extra', T.bc_search_categories) + '<div class="chips" data-chips="extra"></div></div>' : '') +
     '<div class="two">' + dinp('sort_order', T.bc_entry_sort_order, d.sort_order) + dinp('column', T.bc_entry_column, d.column) + '</div>' +
     '<div class="two"><div class="f"><label>' + esc(T.bc_entry_top) + '</label>' + yn('top', d.top) + '</div>' +
     '<div class="f"><label>' + esc(T.bc_column_status) + '</label><select class="inp" data-d="status"><option value="1" ' + (+d.status ? 'selected' : '') + '>' + esc(T.text_enabled) + '</option><option value="0" ' + (+d.status ? '' : 'selected') + '>' + esc(T.text_disabled) + '</option></select></div></div>' +
@@ -1129,6 +1132,7 @@ function collectData() {
   out.image = DR.image ? DR.image.path : '';
   out.stores = st;
   out.filters = DR.filters.map(function (x) { return x.id; });
+  if (CFG.extra_parents) out.extra_parents = (DR.extra || []).map(function (x) { return x.id; });
   return out;
 }
 
@@ -1210,7 +1214,7 @@ function openDrawer(id, sec, focusDn) {
 }
 function fillDrawer(c) {
   DR.c = c; DR.loaded = true;
-  DR.parent = c.parent; DR.stores = c.stores.slice(); DR.filters = c.filters.slice(); DR.image = c.image.path ? {path: c.image.path, thumb: c.image.thumb} : null;
+  DR.parent = c.parent; DR.stores = c.stores.slice(); DR.filters = c.filters.slice(); DR.extra = (c.extra_parents || []).slice(); DR.image = c.image.path ? {path: c.image.path, thumb: c.image.thumb} : null;
   $('.db').innerHTML = SECS.map(function (s) { return '<div class="sec ' + (s[0] === DR.sec ? 'on' : '') + '" data-s="' + s[0] + '">' + secBody(s[0], c) + '</div>'; }).join('');
   ssLabel('dparent'); chipsPaint(); imgPaint('#d-img', DR.image);
   $$('.lp').forEach(dnPreview);
@@ -1415,13 +1419,14 @@ R.addEventListener('click', function (e) {
       break;
     }
     case 'acpick': {
-      var it = (ACI.filter || [])[+el.dataset.i]; if (!it) break;
-      if (DR.filters.some(function (x) { return x.id === it.id; })) { toast(T.bc_already_added); break; }
-      DR.filters.push({id: it.id, name: it.name}); chipsPaint(); markDirty('data');
+      var kind = el.closest('.ac').querySelector('input').dataset.ac, list = kind === 'extra' ? DR.extra : DR.filters;
+      var it = (ACI[kind] || [])[+el.dataset.i]; if (!it) break;
+      if (list.some(function (x) { return x.id === it.id; })) { toast(T.bc_already_added); break; }
+      list.push({id: it.id, name: it.name}); chipsPaint(); markDirty('data');
       var ai = el.closest('.ac').querySelector('input'); ai.value = ''; $$('.acl.on').forEach(function (x) { x.classList.remove('on'); });
       break;
     }
-    case 'rmchip': DR.filters = DR.filters.filter(function (x) { return x.id !== id; }); chipsPaint(); markDirty('data'); break;
+    case 'rmchip': if (el.dataset.kind === 'extra') { DR.extra = DR.extra.filter(function (x) { return x.id !== id; }); } else { DR.filters = DR.filters.filter(function (x) { return x.id !== id; }); } chipsPaint(); markDirty('data'); break;
     case 'dimg': pickImage(function (path, thumb) { DR.image = {path: path, thumb: thumb}; imgPaint('#d-img', DR.image); markDirty('data'); }); break;
     case 'dimgrm': DR.image = null; imgPaint('#d-img', null); markDirty('data'); break;
     case 'addimg': pickImage(function (path, thumb) { DR.image = {path: path, thumb: thumb}; imgPaint('#a-img', DR.image); markDirty(); }); break;
@@ -1437,14 +1442,14 @@ R.addEventListener('click', function (e) {
 /* filter autocomplete */
 var ACI = {}, acTok = 0;
 var acShow = debounce(function (inp) {
-  var q = inp.value.trim(), box = inp.parentNode.querySelector('.acl'), tok = ++acTok;
+  var q = inp.value.trim(), box = inp.parentNode.querySelector('.acl'), tok = ++acTok, kind = inp.dataset.ac;
   box.innerHTML = '<div class="aci" style="color:var(--mute);cursor:default">' + esc(T.text_loading) + '</div>'; box.classList.add('on');
-  api('ac', {type: 'filter', q: q}).then(function (j) {
+  api('ac', kind === 'extra' ? {type: 'category', q: q, exclude: DR ? DR.id : ''} : {type: 'filter', q: q}).then(function (j) {
     if (tok !== acTok) return;
-    ACI.filter = j.items || [];
+    ACI[kind] = j.items || [];
     var h = '';
-    ACI.filter.forEach(function (o, i) {
-      var used = DR && DR.filters.some(function (x) { return x.id === o.id; });
+    ACI[kind].forEach(function (o, i) {
+      var used = DR && (kind === 'extra' ? DR.extra : DR.filters).some(function (x) { return x.id === o.id; });
       h += '<div class="aci" data-act="acpick" data-i="' + i + '"><span>' + hl(o.name, q) + '</span>' + (used ? '<span class="bdg g" style="margin-left:auto">' + esc(T.bc_added) + '</span>' : '') + '</div>';
     });
     box.innerHTML = h || '<div class="aci" style="color:var(--mute);cursor:default">' + esc(T.bc_no_match) + '</div>';

@@ -132,11 +132,30 @@ class ControllerCatalogBcategory extends Controller {
 			'limit'        => in_array($limit, array(5, 10, 25, 50, 100)) ? $limit : 10,
 			'display_on'   => (int)$this->config->get('module_bproduct_category_display'),
 			'complete_seo' => $this->completeSeo() ? 1 : 0,
+			'extra_parents' => $this->hasExtraParents() ? 1 : 0,
 			'can_modify'   => $this->user->hasPermission('modify', 'catalog/category') ? 1 : 0
 		);
 	}
 
 	/* --------------------------------------------------------------- helpers */
+
+	private function hasExtraParents() {
+		return (bool)$this->db->query("SHOW COLUMNS FROM `" . DB_PREFIX . "category` LIKE 'extra_parents'")->num_rows;
+	}
+
+	private function extraParentIds($info) {
+		$ids = array();
+
+		if (!empty($info['extra_parents'])) {
+			foreach (explode('|', $info['extra_parents']) as $id) {
+				if ((int)$id > 0) {
+					$ids[] = (int)$id;
+				}
+			}
+		}
+
+		return array_values(array_unique($ids));
+	}
 
 	private function completeSeo() {
 		if ((int)$this->config->get('module_complete_seo_status') !== 1) {
@@ -347,7 +366,7 @@ class ControllerCatalogBcategory extends Controller {
 	private function loadFull($category_id, $info) {
 		$this->load->model('catalog/category');
 
-		return array(
+		$full = array(
 			'parent_id'            => (int)$info['parent_id'],
 			'top'                  => (int)$info['top'],
 			'column'               => (int)$info['column'],
@@ -360,6 +379,13 @@ class ControllerCatalogBcategory extends Controller {
 			'category_seo_url'     => $this->model_catalog_category->getCategorySeoUrls($category_id),
 			'category_layout'      => $this->model_catalog_category->getCategoryLayouts($category_id)
 		);
+
+		// Always passed back so the Multiple Parent Category hook never resets it on save
+		if ($this->hasExtraParents()) {
+			$full['extra_parents'] = $this->extraParentIds($info);
+		}
+
+		return $full;
 	}
 
 	private function ajaxCategory() {
@@ -424,6 +450,18 @@ class ControllerCatalogBcategory extends Controller {
 			}
 		}
 
+		$extra = array();
+
+		if (isset($full['extra_parents'])) {
+			foreach ($full['extra_parents'] as $extra_id) {
+				$extra_info = $this->model_catalog_category->getCategory($extra_id);
+
+				if ($extra_info) {
+					$extra[] = array('id' => (int)$extra_id, 'name' => $this->cleanPath(!empty($extra_info['path']) ? $extra_info['path'] : $extra_info['name']));
+				}
+			}
+		}
+
 		$seo = array();
 
 		foreach ($full['category_seo_url'] as $store_id => $languages) {
@@ -453,6 +491,7 @@ class ControllerCatalogBcategory extends Controller {
 			'image'       => array('path' => $this->decode($full['image']), 'thumb' => $this->thumb($full['image'])),
 			'stores'      => array_map('intval', $full['category_store']),
 			'filters'     => $filters,
+			'extra_parents' => $extra,
 			'seo'         => $seo,
 			'layouts'     => $layouts
 		)));
@@ -506,6 +545,10 @@ class ControllerCatalogBcategory extends Controller {
 			if (isset($d['filters'])) {
 				$data['category_filter'] = $this->ids($d['filters']);
 			}
+
+			if (isset($d['extra_parents']) && isset($data['extra_parents'])) {
+				$data['extra_parents'] = $this->ids($d['extra_parents']);
+			}
 		}
 
 		if (isset($sections['seo']['keywords']) && is_array($sections['seo']['keywords'])) {
@@ -554,6 +597,10 @@ class ControllerCatalogBcategory extends Controller {
 			if ($this->model_catalog_bcategory->isInSubtree($data['parent_id'], $category_id)) {
 				$error['parent'] = $this->language->get('bc_error_parent');
 			}
+		}
+
+		if (isset($sections['data']['extra_parents']) && !empty($data['extra_parents']) && in_array((int)$category_id, $data['extra_parents'])) {
+			$error['parent'] = $this->language->get('bc_error_extra_self');
 		}
 
 		if (isset($sections['seo']['keywords'])) {
