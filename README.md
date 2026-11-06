@@ -49,6 +49,16 @@ A matching AJAX list for **Catalog > Categories** (enable it in Settings).
 - **Display Name:** a separate name shown to customers instead of the category name (per language). It has its own column with an edit button that opens the drawer on the Display name field. Leave it empty to use the category name.
 - Quick Add: name, display name, parent, image and status.
 
+## Building a package
+
+```
+php build.php            # bumps the last version number if files changed, builds a patch zip
+php build.php --full     # same, but with the whole package
+php build.php --no-bump  # build without changing the version
+```
+
+The zip is written to `build/bproduct.v-{version}.ocmod.zip`. The version is updated in `install.xml`, the module controller and this README. `.build-state.json` records what was released, so the next patch only contains the files that changed since then (plus `install.xml`).
+
 ## Installation
 
 1. Go to **Extensions > Installer** and upload `bproduct.ocmod.zip`.
