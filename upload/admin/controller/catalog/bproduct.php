@@ -126,6 +126,19 @@ class ControllerCatalogBproduct extends Controller {
 		return json_encode($value, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT);
 	}
 
+	// Complete SEO writes the SEO URL from seo_keyword when its own URL handling is enabled
+	private function withSeoKeyword($data) {
+		if (!$this->completeSeo()) {
+			return $data;
+		}
+
+		foreach ($data['product_description'] as $language_id => $value) {
+			$data['product_description'][$language_id]['seo_keyword'] = isset($data['product_seo_url'][0][$language_id]) ? $data['product_seo_url'][0][$language_id] : '';
+		}
+
+		return $data;
+	}
+
 	private function completeSeo() {
 		if ((int)$this->config->get('module_complete_seo_status') !== 1) {
 			return false;
@@ -969,7 +982,7 @@ class ControllerCatalogBproduct extends Controller {
 			return;
 		}
 
-		$this->model_catalog_product->editProduct($product_id, $data);
+		$this->model_catalog_product->editProduct($product_id, $this->withSeoKeyword($data));
 
 		$this->json(array('success' => $this->language->get('bp_text_saved'), 'row' => $this->rowFor($product_id), 'stats' => $this->model_catalog_bproduct->getStats()));
 	}
@@ -1093,7 +1106,7 @@ class ControllerCatalogBproduct extends Controller {
 			}
 		}
 
-		$product_id = $this->model_catalog_product->addProduct($data);
+		$product_id = $this->model_catalog_product->addProduct($this->withSeoKeyword($data));
 
 		$this->json(array('success' => $this->language->get('bp_text_added'), 'product_id' => (int)$product_id, 'row' => $this->rowFor($product_id), 'stats' => $this->model_catalog_bproduct->getStats()));
 	}
@@ -1405,7 +1418,7 @@ class ControllerCatalogBproduct extends Controller {
 			return;
 		}
 
-		$this->model_catalog_product->editProduct($product_id, $data);
+		$this->model_catalog_product->editProduct($product_id, $this->withSeoKeyword($data));
 
 		$this->json(array('success' => 1, 'row' => $this->rowFor($product_id), 'stats' => $this->model_catalog_bproduct->getStats()));
 	}

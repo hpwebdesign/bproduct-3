@@ -157,6 +157,19 @@ class ControllerCatalogBcategory extends Controller {
 		return array_values(array_unique($ids));
 	}
 
+	// Complete SEO writes the SEO URL from seo_keyword when its own URL handling is enabled
+	private function withSeoKeyword($data) {
+		if (!$this->completeSeo()) {
+			return $data;
+		}
+
+		foreach ($data['category_description'] as $language_id => $value) {
+			$data['category_description'][$language_id]['seo_keyword'] = isset($data['category_seo_url'][0][$language_id]) ? $data['category_seo_url'][0][$language_id] : '';
+		}
+
+		return $data;
+	}
+
 	private function completeSeo() {
 		if ((int)$this->config->get('module_complete_seo_status') !== 1) {
 			return false;
@@ -675,7 +688,7 @@ class ControllerCatalogBcategory extends Controller {
 			return;
 		}
 
-		$this->model_catalog_category->editCategory($category_id, $data);
+		$this->model_catalog_category->editCategory($category_id, $this->withSeoKeyword($data));
 
 		if (isset($sections['general']['display'])) {
 			$this->model_catalog_bcategory->saveDisplayNames($category_id, $sections['general']['display']);
@@ -763,7 +776,7 @@ class ControllerCatalogBcategory extends Controller {
 			}
 		}
 
-		$category_id = (int)$this->model_catalog_category->addCategory($data);
+		$category_id = (int)$this->model_catalog_category->addCategory($this->withSeoKeyword($data));
 
 		$display = isset($input['display_name']) ? trim($input['display_name']) : '';
 
@@ -999,7 +1012,7 @@ class ControllerCatalogBcategory extends Controller {
 			return;
 		}
 
-		$this->model_catalog_category->editCategory($category_id, $data);
+		$this->model_catalog_category->editCategory($category_id, $this->withSeoKeyword($data));
 
 		$this->json(array('success' => 1, 'row' => $this->rowFor($category_id), 'stats' => $this->model_catalog_bcategory->getStats()));
 	}
