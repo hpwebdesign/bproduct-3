@@ -7,7 +7,7 @@ class ControllerExtensionModuleBproduct extends Controller {
 	private $error = array();
 
 	private $v_d = '';
-	private $version = '1.1.5.5';
+	private $version = '1.1.5.6';
 	private $extension_code = 'bproduct';
 	private $domain = '';
 	private $extension_type = 'com';
@@ -69,7 +69,7 @@ class ControllerExtensionModuleBproduct extends Controller {
 		$data['cancel'] = $this->url->link('marketplace/extension', 'user_token=' . $this->session->data['user_token'] . '&type=module', true);
 		$data['manager'] = $this->url->link('catalog/product', 'user_token=' . $this->session->data['user_token'], true);
 
-		$defaults = array('status' => 0, 'limit' => 10, 'sort' => 'pd.name|ASC', 'new_status' => 1, 'barcode_status' => 0, 'barcode_source' => 'model', 'barcode_front' => 0, 'category_status' => 0, 'category_display' => 1);
+		$defaults = array('status' => 0, 'limit' => 10, 'sort' => 'pd.name|ASC', 'new_status' => 1, 'barcode_status' => 0, 'barcode_source' => 'model', 'barcode_front' => 0, 'category_status' => 0, 'category_display' => 1, 'drawer_width' => 980);
 
 		foreach ($defaults as $key => $default) {
 			if (isset($this->request->post['module_bproduct_' . $key])) {
@@ -174,6 +174,7 @@ class ControllerExtensionModuleBproduct extends Controller {
 			'module_bproduct_category_display'  => 1,
 			'module_bproduct_hidden_tabs' => array(),
 			'module_bproduct_hidden_columns' => array(),
+			'module_bproduct_drawer_width' => 980,
 			'module_bproduct_tab_order'   => $this->all_tabs
 		));
 	}
@@ -297,6 +298,9 @@ class ControllerExtensionModuleBproduct extends Controller {
 		$order = isset($post['module_bproduct_tab_order']) && is_array($post['module_bproduct_tab_order']) ? array_values(array_intersect($post['module_bproduct_tab_order'], $this->all_tabs)) : array();
 		$order = array_unique($order);
 		$post['module_bproduct_tab_order'] = array_merge($order, array_diff($this->all_tabs, $order));
+
+		$width = isset($post['module_bproduct_drawer_width']) ? (int)$post['module_bproduct_drawer_width'] : 980;
+		$post['module_bproduct_drawer_width'] = ($width >= 600 && $width <= 1600) ? $width : 980;
 
 		if (!isset($post['module_bproduct_limit']) || !in_array((int)$post['module_bproduct_limit'], $this->limits)) {
 			$post['module_bproduct_limit'] = 10;

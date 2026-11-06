@@ -237,6 +237,7 @@ class ControllerCatalogBproduct extends Controller {
 			'limit'          => in_array((int)$this->config->get('module_bproduct_limit'), array(5, 10, 25, 50, 100)) ? (int)$this->config->get('module_bproduct_limit') : 10,
 			'sort'           => in_array($this->config->get('module_bproduct_sort'), array('pd.name|ASC', 'pd.name|DESC', 'p.date_added|DESC', 'p.date_added|ASC')) ? $this->config->get('module_bproduct_sort') : 'pd.name|ASC',
 			'new_status'     => $this->config->has('module_bproduct_new_status') ? (int)$this->config->get('module_bproduct_new_status') : 1,
+			'drawer_width' => ($w = (int)$this->config->get('module_bproduct_drawer_width')) >= 600 && $w <= 1600 ? $w : 980,
 			'hidden_columns' => is_array($this->config->get('module_bproduct_hidden_columns')) ? array_values($this->config->get('module_bproduct_hidden_columns')) : array(),
 			'hidden_tabs'    => is_array($this->config->get('module_bproduct_hidden_tabs')) ? array_values($this->config->get('module_bproduct_hidden_tabs')) : array(),
 			'tab_order'      => is_array($this->config->get('module_bproduct_tab_order')) ? array_values($this->config->get('module_bproduct_tab_order')) : array(),

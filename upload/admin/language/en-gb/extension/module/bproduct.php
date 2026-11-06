@@ -61,6 +61,7 @@ $_['text_tab_design']     = 'Design';
 $_['entry_status']        = 'Status';
 $_['entry_limit']         = 'Products per page';
 $_['entry_sort']          = 'Default sort';
+$_['entry_drawer_width']  = 'Edit drawer width';
 $_['entry_new_status']    = 'Status of new products';
 $_['entry_barcode_status']    = 'Barcode Manager';
 $_['entry_barcode_source']    = 'Generate barcode from';
@@ -74,6 +75,7 @@ $_['entry_category_display'] = 'Use Display Name on storefront';
 
 // Help
 $_['help_status']         = 'When disabled, the default OpenCart product list is used.';
+$_['help_drawer_width']   = 'Width in pixels of the product and category edit drawer (600 to 1600). Default 980. On small screens the drawer always fits the window.';
 $_['help_limit']          = 'Initial page size of the list. Users can still change it.';
 $_['help_new_status']     = 'Status given to products created with Quick Add.';
 $_['help_category_status'] = 'Replaces the default category list with the Quick Category Manager. Requires the Quick Product Manager status above to be enabled.';
