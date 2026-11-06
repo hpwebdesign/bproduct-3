@@ -14,6 +14,7 @@
     <div id="bp-host"></div>
   </div>
 </div>
+<script src="view/javascript/bproduct/hpmm_common.js"></script>
 <script type="application/json" id="bp-config">{{ bp_config }}</script>
 <script type="application/json" id="bp-lang">{{ bp_lang }}</script>
 <template id="bp-shell"><style>{% verbatim %}
@@ -1087,12 +1088,13 @@ function hpmmPick(anchor, cb, clearCb) {
   HPX.box.css({left: r.left, top: r.top, width: r.width, height: r.height});
   HPX.a.css({width: r.width, height: r.height}).data('productid', PRODUCT_ID());
   HPX.h = {cb: cb, clear: clearCb}; HPX.last = anchor;
-  window.hpmmUploader.toggle(HPX.a);
+  window.BP_MEDIA_BASE = CFG.endpoint + 'media&op=';
+  (window.hpmmUploader || window.bpUploader).toggle(HPX.a);
 }
 function PRODUCT_ID() { return DR && DR.id ? DR.id : 0; }
 function pickImage(cb, anchor, clearCb) {
   var j = window.jQuery;
-  if (anchor && j && window.hpmmUploader) { hpmmPick(anchor, cb, clearCb); return; }
+  if (anchor && j && (window.hpmmUploader || window.bpUploader)) { hpmmPick(anchor, cb, clearCb); return; }
   if (!j || !j.fn.modal) { window.open(CFG.filemanager, '_blank'); return; }
   j('#bp-fm-target, #bp-fm-thumb, #modal-image').remove();
   j('body').append('<input type="hidden" id="bp-fm-target"><div id="bp-fm-thumb" style="display:none"><img src="" alt=""></div>');
