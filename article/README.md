@@ -4,8 +4,7 @@ Product description for the Quick Product Manager listing.
 
 | File | Use |
 |---|---|
-| `description.html` | HTML fragment, paste into an HTML / source editor |
-| `description-full.html` | Same content as a standalone page, for preview in a browser |
+| `description.html` | HTML content only (no html, head or body tags), paste into an HTML / source editor |
 | `description.bbcode.txt` | BBCode version for the opencart.com description editor |
 | `description.md` | Markdown source, for docs or other platforms |
 
