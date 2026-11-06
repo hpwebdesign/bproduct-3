@@ -186,3 +186,6 @@ $_['bp_text_enabled'] = '%d product(s) enabled.';
 $_['bp_text_disabled'] = '%d product(s) disabled.';
 $_['bp_text_updated'] = '%d product(s) updated.';
 $_['bp_error_disabled'] = 'Quick Product Manager is disabled. Enable it in Extensions > Modules.';
+$_['entry_seo_h1'] = 'SEO H1';
+$_['entry_seo_h2'] = 'SEO H2';
+$_['entry_seo_h3'] = 'SEO H3';

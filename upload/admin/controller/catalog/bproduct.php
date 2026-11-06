@@ -126,6 +126,14 @@ class ControllerCatalogBproduct extends Controller {
 		return json_encode($value, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT);
 	}
 
+	private function completeSeo() {
+		if ((int)$this->config->get('module_complete_seo_status') !== 1) {
+			return false;
+		}
+
+		return (bool)$this->db->query("SHOW COLUMNS FROM `" . DB_PREFIX . "product_description` LIKE 'seo_h1'")->num_rows;
+	}
+
 	private function getConfig() {
 		$token = $this->session->data['user_token'];
 
@@ -197,6 +205,7 @@ class ControllerCatalogBproduct extends Controller {
 				'source' => $this->barcodeSource()
 			),
 			'can_modify'     => $this->user->hasPermission('modify', 'catalog/product') ? 1 : 0,
+			'complete_seo'   => $this->completeSeo() ? 1 : 0,
 			'default_status' => (int)$this->config->get('config_stock_status_id')
 		);
 	}
@@ -651,6 +660,8 @@ class ControllerCatalogBproduct extends Controller {
 				case 'general':
 					if (isset($section['product_description']) && is_array($section['product_description'])) {
 						foreach ($section['product_description'] as $language_id => $value) {
+							$old = isset($data['product_description'][(int)$language_id]) ? $data['product_description'][(int)$language_id] : array();
+
 							$data['product_description'][(int)$language_id] = array(
 								'name'             => isset($value['name']) ? (string)$value['name'] : '',
 								'description'      => isset($value['description']) ? (string)$value['description'] : '',
@@ -659,6 +670,12 @@ class ControllerCatalogBproduct extends Controller {
 								'meta_keyword'     => isset($value['meta_keyword']) ? (string)$value['meta_keyword'] : '',
 								'tag'              => isset($value['tag']) ? (string)$value['tag'] : ''
 							);
+
+							if ($this->completeSeo()) {
+								foreach (array('seo_h1', 'seo_h2', 'seo_h3') as $key) {
+									$data['product_description'][(int)$language_id][$key] = isset($value[$key]) ? (string)$value[$key] : (isset($old[$key]) ? $old[$key] : '');
+								}
+							}
 						}
 					}
 

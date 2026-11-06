@@ -1164,7 +1164,8 @@ function generalBody(p) {
         '<div class="f"><label>' + esc(T.entry_meta_title) + ' <b class="req">*</b></label><input class="inp" data-k="meta_title" value="' + esc(d.meta_title) + '" placeholder="' + esc(T.entry_meta_title) + '"><div class="errtxt" data-e="meta_title"></div></div>' +
         '<div class="f"><label>' + esc(T.entry_meta_description) + '</label><textarea class="inp" rows="3" data-k="meta_description" placeholder="' + esc(T.entry_meta_description) + '">' + esc(d.meta_description) + '</textarea></div>' +
         '<div class="f"><label>' + esc(T.entry_meta_keyword) + '</label><input class="inp" data-k="meta_keyword" value="' + esc(d.meta_keyword) + '" placeholder="' + esc(T.entry_meta_keyword) + '"></div>' +
-        '<div class="f"><label>' + esc(T.entry_tag) + '</label><input class="inp" data-k="tag" value="' + esc(d.tag) + '" placeholder="' + esc(T.entry_tag) + '"></div></div>';
+        '<div class="f"><label>' + esc(T.entry_tag) + '</label><input class="inp" data-k="tag" value="' + esc(d.tag) + '" placeholder="' + esc(T.entry_tag) + '"></div>' +
+        (CFG.complete_seo ? ['seo_h1', 'seo_h2', 'seo_h3'].map(function (k) { return '<div class="f"><label>' + esc(T['entry_' + k]) + '</label><input class="inp" data-k="' + k + '" value="' + esc(d[k] || '') + '" placeholder="' + esc(T['entry_' + k]) + '"></div>'; }).join('') : '') + '</div>';
     }).join('');
 }
 function collectGeneral() {
@@ -1173,6 +1174,7 @@ function collectGeneral() {
     var v = function (k) { return pn.querySelector('[data-k="' + k + '"]').value; };
     var ed = pn.querySelector('.editor'), orig = DR.p.description[pn.dataset.lid];
     out[pn.dataset.lid] = {name: v('name').trim(), description: ed.dataset.touched || !orig ? editorValue(ed) : orig.description, meta_title: v('meta_title').trim(), meta_description: v('meta_description'), meta_keyword: v('meta_keyword'), tag: v('tag')};
+    if (CFG.complete_seo) { ['seo_h1', 'seo_h2', 'seo_h3'].forEach(function (k) { out[pn.dataset.lid][k] = v(k); }); }
   });
   return {product_description: out};
 }
