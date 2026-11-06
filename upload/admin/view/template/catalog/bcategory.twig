@@ -421,6 +421,8 @@ td.num{white-space:nowrap}
 
 /* v2: filters, selects, add drawer */
 .head .cta{margin-left:auto}
+.head{flex-wrap:wrap}
+.head .strip{margin:0;flex:0 1 auto}
 .bdg.n{background:#eef1f7;color:var(--mute)}
 .fbtn{height:38px;gap:8px}
 .fbtn .fcount{background:var(--navy);color:#fff;border-radius:99px;font-size:11px;padding:0 7px;min-width:20px;text-align:center;font-weight:700;display:none}
@@ -468,6 +470,7 @@ td.c-x mark{background:#ffe9a8;color:inherit;border-radius:3px}
 .df{flex-wrap:wrap}
 .addf{justify-content:flex-end;gap:8px}.addf .btn{padding:8px 11px}.addf .un{margin-right:auto}
 @media(max-width:860px){
+  .head .strip{flex:1 1 100%}
   .head .cta{margin-left:auto}
   .ffr{grid-template-columns:1fr 1fr}
   .fchips .fres{margin-left:0;width:100%}
@@ -550,6 +553,9 @@ th.sortth{white-space:nowrap}
 .cname{display:flex;align-items:center;gap:10px;min-width:0}
 .cname .fi{width:34px;height:34px;border-radius:10px;display:grid;place-items:center;flex:none;background:var(--blue-soft);color:var(--blue)}
 .cname.off .fi{background:#ececf1;color:#4b5365}
+.cname .fi{overflow:hidden}
+.cname .fi img{width:100%;height:100%;object-fit:cover;display:block}
+.cname.off .fi img{opacity:.6}
 .cname b{display:block;font-weight:600}
 .cname small{display:block;color:var(--mute);font-size:12px}
 .bpw tr.row{cursor:pointer}
@@ -577,13 +583,11 @@ th.sortth{white-space:nowrap}
 .num{text-align:right;font-variant-numeric:tabular-nums}
 {% endverbatim %}</style>{% verbatim %}<div class="bpw"><div class="wrap">
   <div class="head">
-    <div class="logo">B</div>
-    <div><p style="font-size:15px;font-weight:600;color:var(--text)" data-t="bc_subtitle"></p><span class="bdg b">v1.1</span></div>
+    <div class="strip" id="stats"></div>
     <div class="crumb"><a class="btn ghost sm" href="{% endverbatim %}{{ classic }}{% verbatim %}" data-t="bc_button_classic"></a> <a class="btn ghost sm" href="{% endverbatim %}{{ add_full }}{% verbatim %}" data-t="bc_button_add_full"></a></div>
     <button type="button" class="btn primary cta needmod" data-act="addopen"><span id="ic-plus2"></span> <span data-t="bc_add_category"></span></button>
   </div>
 
-  <div class="strip" id="stats"></div>
 
   <div class="toolbar">
     <div class="search"><span id="ic-search"></span><input class="inp" id="q" data-tp="bc_search_placeholder" autocomplete="off"></div>
@@ -815,7 +819,7 @@ function rowHtml(c) {
   var lvl = Math.min(c.level, 6) * 18;
   return '<tr class="' + cls.join(' ') + '" data-id="' + id + '">' +
     '<td class="c-sel"><input type="checkbox" data-act="selrow" data-id="' + id + '" ' + (S.sel.has(id) ? 'checked' : '') + ' aria-label="' + esc(c.leaf) + '"></td>' +
-    '<td class="c-name"><div class="cname' + (c.status ? '' : ' off') + '" style="padding-left:' + lvl + 'px"><span class="fi">' + ic('folder', 16) + '</span><div><b>' + esc(c.leaf) + (c.top ? ' <span class="topstar" title="' + esc(T.bc_top_marker) + '" aria-label="' + esc(T.bc_top_marker) + '">' + ic('star', 14) + '</span>' : '') + '</b><small>' + esc(c.path) + (c.status ? '' : ' <span class="bdg n">' + esc(T.text_disabled) + '</span>') + '</small>' + slugCell(c) + '</div></div></td>' +
+    '<td class="c-name"><div class="cname' + (c.status ? '' : ' off') + '" style="padding-left:' + lvl + 'px"><span class="fi">' + (c.thumb ? '<img src="' + esc(c.thumb) + '" alt="" loading="lazy">' : ic('folder', 16)) + '</span><div><b>' + esc(c.leaf) + (c.top ? ' <span class="topstar" title="' + esc(T.bc_top_marker) + '" aria-label="' + esc(T.bc_top_marker) + '">' + ic('star', 14) + '</span>' : '') + '</b><small>' + esc(c.path) + (c.status ? '' : ' <span class="bdg n">' + esc(T.text_disabled) + '</span>') + '</small>' + slugCell(c) + '</div></div></td>' +
     '<td class="c-dn" data-l="' + esc(T.bc_display_name) + '">' + dnCell(c) + '</td>' +
     '<td class="c-qty tn" data-l="' + esc(T.bc_column_products) + '">' + c.products + '</td>' +
     '<td class="c-qty tn" data-l="' + esc(T.bc_column_sort) + '">' + c.sort_order + '</td>' +

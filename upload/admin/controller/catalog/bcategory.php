@@ -322,6 +322,8 @@ class ControllerCatalogBcategory extends Controller {
 		$slugs = $this->model_catalog_bcategory->getSeoKeywords($ids);
 		$displays = $this->model_catalog_bcategory->getDisplayNames($ids);
 
+		$this->load->model('tool/image');
+
 		$result = array();
 
 		foreach ($rows as $row) {
@@ -340,7 +342,8 @@ class ControllerCatalogBcategory extends Controller {
 				'sort_order'  => (int)$row['sort_order'],
 				'products'    => isset($counts[$id]) ? $counts[$id] : 0,
 				'slug'        => isset($slugs[$id]) ? $this->decode($slugs[$id]) : '',
-				'display'     => isset($displays[$id]) ? $this->decode($displays[$id]) : ''
+				'display'     => isset($displays[$id]) ? $this->decode($displays[$id]) : '',
+				'thumb'       => !empty($row['image']) ? (string)$this->model_tool_image->resize($row['image'], 68, 68) : ''
 			);
 		}
 

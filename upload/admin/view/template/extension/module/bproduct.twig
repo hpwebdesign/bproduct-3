@@ -40,6 +40,8 @@
 					<a href="#bps-general" data-bps-tab="general" class="bps-snav bps-on"><i class="fa fa-sliders"></i> {{ tab_general }}</a>
 					<a href="#bps-barcode" data-bps-tab="barcode" class="bps-snav"><i class="fa fa-barcode"></i> {{ tab_barcode }}</a>
 					<a href="#bps-category" data-bps-tab="category" class="bps-snav"><i class="fa fa-sitemap"></i> {{ tab_category }}</a>
+					<div class="bps-sg">{{ nav_list }}</div>
+					<a href="#bps-columns" data-bps-tab="columns" class="bps-snav"><i class="fa fa-table"></i> {{ tab_columns }}</a>
 					<div class="bps-sg">{{ nav_editor }}</div>
 					<a href="#bps-tabs" data-bps-tab="tabs" class="bps-snav"><i class="fa fa-columns"></i> {{ tab_editor }}</a>
 				</nav>
@@ -116,6 +118,19 @@
 								<div class="bps-row-l"><b>{{ entry_category_display }}</b><small>{{ help_category_display }}</small></div>
 								<div class="bps-row-r"><label class="bps-sw"><input type="checkbox" data-bps-field name="module_bproduct_category_display" value="1" {% if module_bproduct_category_display %}checked{% endif %}><span></span></label></div>
 							</div>
+						</div>
+					</div>
+
+					<div class="bps-pane" id="bps-columns">
+						<div class="bps-card">
+							<div class="bps-card-h"><h3>{{ text_columns }}</h3></div>
+							<p class="bps-lead">{{ text_columns_desc }}</p>
+							{% for column in columns %}
+							<div class="bps-row">
+								<div class="bps-row-l"><b>{{ column.text }}</b></div>
+								<div class="bps-row-r"><label class="bps-sw"><input type="checkbox" data-bps-field name="module_bproduct_columns[{{ column.key }}]" value="1" {% if column.shown %}checked{% endif %}><span></span></label></div>
+							</div>
+							{% endfor %}
 						</div>
 					</div>
 

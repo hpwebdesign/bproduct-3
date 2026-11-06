@@ -423,6 +423,8 @@ td.num{white-space:nowrap}
 
 /* v2: filters, selects, add drawer */
 .head .cta{margin-left:auto}
+.head{flex-wrap:wrap}
+.head .strip{margin:0;flex:0 1 auto}
 .bdg.n{background:#eef1f7;color:var(--mute)}
 .fbtn{height:38px;gap:8px}
 .fbtn .fcount{background:var(--navy);color:#fff;border-radius:99px;font-size:11px;padding:0 7px;min-width:20px;text-align:center;font-weight:700;display:none}
@@ -470,6 +472,7 @@ td.c-x mark{background:#ffe9a8;color:inherit;border-radius:3px}
 .df{flex-wrap:wrap}
 .addf{justify-content:flex-end;gap:8px}.addf .btn{padding:8px 11px}.addf .un{margin-right:auto}
 @media(max-width:860px){
+  .head .strip{flex:1 1 100%}
   .head .cta{margin-left:auto}
   .ffr{grid-template-columns:1fr 1fr}
   .fchips .fres{margin-left:0;width:100%}
@@ -549,13 +552,11 @@ th.sortth{white-space:nowrap}
 .addf .btn{white-space:nowrap}
 {% endverbatim %}</style>{% verbatim %}<div class="bpw"><div class="wrap">
   <div class="head">
-    <div class="logo">B</div>
-    <div><p style="font-size:15px;font-weight:600;color:var(--text)" data-t="bp_subtitle"></p><span class="bdg b">v1.1</span></div>
+    <div class="strip" id="stats"></div>
     <div class="crumb"><a class="btn ghost sm" href="{% endverbatim %}{{ classic }}{% verbatim %}" data-t="bp_button_classic"></a> <a class="btn ghost sm" href="{% endverbatim %}{{ add_full }}{% verbatim %}" data-t="bp_button_add_full"></a></div>
     <button type="button" class="btn primary cta needmod" data-act="addopen"><span id="ic-plus2"></span> <span data-t="bp_add_product"></span></button>
   </div>
 
-  <div class="strip" id="stats"></div>
 
   <div class="toolbar">
     <div class="search"><span id="ic-search"></span><input class="inp" id="q" data-tp="bp_search_placeholder" autocomplete="off"></div>
@@ -616,6 +617,15 @@ R.appendChild(document.getElementById('bp-shell').content.cloneNode(true));
 Array.prototype.forEach.call(R.querySelectorAll('[data-t]'), function (el) { el.textContent = T[el.dataset.t] || ''; });
 Array.prototype.forEach.call(R.querySelectorAll('[data-tp]'), function (el) { el.setAttribute('placeholder', T[el.dataset.tp] || ''); });
 Array.prototype.forEach.call(R.querySelectorAll('[data-ta]'), function (el) { el.setAttribute('aria-label', T[el.dataset.ta] || ''); });
+
+(function () {
+  var css = '';
+  (CFG.hidden_columns || []).forEach(function (k) {
+    var map = {model: 'model', category: 'cat', manufacturer: 'mfr', price: 'price', quantity: 'qty', date: 'date'};
+    if (map[k]) css += 'th.h-' + k + ',td.c-' + map[k] + '{display:none}';
+  });
+  if (css) { var st = document.createElement('style'); st.textContent = css; R.appendChild(st); }
+})();
 
 var ICONS = {
 grip:'<circle cx="9" cy="6" r="1"/><circle cx="15" cy="6" r="1"/><circle cx="9" cy="12" r="1"/><circle cx="15" cy="12" r="1"/><circle cx="9" cy="18" r="1"/><circle cx="15" cy="18" r="1"/>',
@@ -909,7 +919,7 @@ function renderStats() {
 function render() {
   var rows = S.rows, total = S.total, pages = S.pages;
   var extra = []; activeFieldFilters().forEach(function (r) { if (extra.indexOf(r.k) < 0) extra.push(r.k); });
-  $('#thr').innerHTML = '<th style="width:36px"><input type="checkbox" id="selall" data-act="selall"></th><th style="width:76px">' + esc(T.column_image) + '</th><th class="sortth">' + sortBtn('pd.name') + '</th><th>' + esc(T.column_model) + '</th><th>' + esc(T.entry_category) + '</th><th>' + esc(T.entry_manufacturer) + '</th><th class="sortth">' + sortBtn('p.price') + '</th><th class="sortth">' + sortBtn('p.quantity') + '</th>' + extra.map(function (k) { return '<th class="xh">' + esc(fieldLabel(k)) + '</th>'; }).join('') + '<th class="sortth">' + sortBtn('p.date_added') + '</th><th class="sortth">' + sortBtn('p.status') + '</th><th style="text-align:right">' + esc(T.column_action) + '</th>';
+  $('#thr').innerHTML = '<th style="width:36px"><input type="checkbox" id="selall" data-act="selall"></th><th style="width:76px">' + esc(T.column_image) + '</th><th class="sortth">' + sortBtn('pd.name') + '</th><th class="h-model">' + esc(T.column_model) + '</th><th class="h-category">' + esc(T.entry_category) + '</th><th class="h-manufacturer">' + esc(T.entry_manufacturer) + '</th><th class="sortth h-price">' + sortBtn('p.price') + '</th><th class="sortth h-quantity">' + sortBtn('p.quantity') + '</th>' + extra.map(function (k) { return '<th class="xh">' + esc(fieldLabel(k)) + '</th>'; }).join('') + '<th class="sortth h-date">' + sortBtn('p.date_added') + '</th><th class="sortth">' + sortBtn('p.status') + '</th><th style="text-align:right">' + esc(T.column_action) + '</th>';
   $('#tbody').innerHTML = rows.map(function (r) { return rowHtml(r, extra); }).join('');
   $('#sortm').value = S.sort + '|' + S.order;
   var nAct = renderChips();
