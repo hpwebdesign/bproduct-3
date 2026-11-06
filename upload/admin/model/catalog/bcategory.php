@@ -32,7 +32,11 @@ class ModelCatalogBcategory extends Model {
 		}
 
 		if (!empty($data['filter_q'])) {
-			$sql .= " AND cd2.name LIKE '%" . $this->like($data['filter_q']) . "%'";
+			$this->ensureTable();
+
+			$q = $this->like($data['filter_q']);
+
+			$sql .= " AND (LOWER(cd2.name) LIKE LOWER('%" . $q . "%') OR EXISTS (SELECT 1 FROM `" . DB_PREFIX . "bproduct_category_display` dn WHERE dn.category_id = cp.category_id AND dn.language_id = '" . (int)$this->config->get('config_language_id') . "' AND LOWER(dn.display_name) LIKE LOWER('%" . $q . "%')))";
 		}
 
 		if (isset($data['filter_status']) && $data['filter_status'] !== '') {

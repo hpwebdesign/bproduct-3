@@ -21,7 +21,7 @@ class ModelCatalogBproduct extends Model {
 		if (!empty($data['filter_q'])) {
 			$q = $this->like($data['filter_q']);
 
-			$sql .= " AND (pd.name LIKE '%" . $q . "%' OR p.model LIKE '%" . $q . "%')";
+			$sql .= " AND (LOWER(pd.name) LIKE LOWER('%" . $q . "%') OR LOWER(p.model) LIKE LOWER('%" . $q . "%'))";
 		}
 
 		if (isset($data['filter_status']) && $data['filter_status'] !== '') {

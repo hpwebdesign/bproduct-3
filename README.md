@@ -3,7 +3,7 @@
 A fast, AJAX-based replacement for the default OpenCart product list.
 Find, filter, edit and add products from one page, without leaving the list.
 
-- **Version:** 1.1.5.4
+- **Version:** 1.1.5.5
 - **Author:** Bariklabs
 - **Compatibility:** OpenCart 3.0.3.x (admin, Twig, OCMOD)
 - **Tested on:** OpenCart 3.0.3.9, PHP 8.3, MariaDB 10.11
@@ -146,9 +146,37 @@ Display names are stored in the `bproduct_category_display` table, created on in
 
 ## Changelog
 
-**1.1.5.0**
-- Category Manager: using the pager scrolls the page back to the top.
-- Category Manager: tidier table layout with fixed column widths and aligned headers.
+**1.1.5.x**
+- 1.1.5.4: Settings has a Columns tab to show or hide the Model, Categories, Manufacturer, Price, Quantity and Date added columns of the product list.
+- 1.1.5.2–1.1.5.3: Cleaner manager headers (no logo, subtitle or version badge). The quick stats sit inline with the Add button.
+- 1.1.5.1: Category Manager shows the category image in the list, with the folder icon as fallback.
+- 1.1.5.0: Attribute values are bare text, edited in 2-line fields. Dates are typed as dd-mm-yyyy. New specials start without dates.
+- `build.php` bumps the version when files changed and builds `bproduct.v-{version}.ocmod.zip`.
+
+**1.1.4.0**
+- Built-in image popover (select file, drag and drop, URL, file manager, clear) for category and product images. The popover of the hpmm module is used when it is installed.
+
+**1.1.3.0**
+- Image fields use the hpmm popover when available.
+
+**1.1.2.x**
+- Keyword, SEO H1–H3, Image alt and Image title fields in the General tab when Complete SEO is active (above the meta title).
+- Fix: the keyword is passed to Complete SEO as `seo_keyword` on every save.
+
+**1.1.1.x**
+- Product editor: SEO H1–H3 fields for Complete SEO. Meta label tidy-up.
+
+**1.1.0.9**
+- Category editor: Extra parents (Multiple Parent Category).
+
+**1.1.0.8**
+- Category editor: SEO H1–H3 fields for Complete SEO.
+
+**1.1.0.7**
+- New settings page layout (sidebar tabs, floating save bar, unsaved-changes notice).
+
+**1.1.0.6**
+- Category Manager: using the pager scrolls the page back to the top. Tidier table layout with fixed column widths and aligned headers.
 
 **1.1.0.5**
 - Category Manager: the copy link and open on storefront buttons show when hovering anywhere on the row.

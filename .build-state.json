@@ -1,5 +1,5 @@
 {
-    "version": "1.1.5.4",
+    "version": "1.1.5.5",
     "files": {
         "install.xml": "d1858244aaf92c8bcb46b7c63d0f6dd1f585495b0450f11864e5188327a6f45e",
         "upload/admin/controller/catalog/bcategory.php": "d77c9a704726f5e346d418f8c87709d63a1d4f82d681442eda336070307ec6a8",
@@ -11,8 +11,8 @@
         "upload/admin/language/en-gb/catalog/bmedia.php": "f2bd8117a7f7bc73f81362877a1b4c3dc9901f204f8f8b9ddff870bd70655c6a",
         "upload/admin/language/en-gb/catalog/bproduct.php": "bc549c0eff9f8d995888ff2b4a8da80fc21ca07633aea84f8af18629158bc575",
         "upload/admin/language/en-gb/extension/module/bproduct.php": "8af602505b8b2aebf64795b5ab3298bf4b965ed36dae8f25c2177a9b540946b7",
-        "upload/admin/model/catalog/bcategory.php": "6ef54f929afbd409f1e210e30eadae00de1b39b1ab62006fbbedce8772b5c7b6",
-        "upload/admin/model/catalog/bproduct.php": "6a65e81254b397596e498cb53d255092778f79c03498f53f20affcaeeda0e3b2",
+        "upload/admin/model/catalog/bcategory.php": "814892942c9f4a60768fe276df671ab54d9d56271dcd9557b15a2fd999c6ceda",
+        "upload/admin/model/catalog/bproduct.php": "b9b2c6ae50098d8c4cd10af526f747b62d38da0a239559d02276666fe7552aaf",
         "upload/admin/view/javascript/bproduct/hpmm_common.js": "2342407bc73c04caa3f09ff45c61c02417300891ed3acaf3af264065212482de",
         "upload/admin/view/javascript/bproduct/settings.js": "31a9a556aa48e90ed8b638cb87ce7a636b8612dfb0dc0a980458152239e9f87e",
         "upload/admin/view/stylesheet/bproduct/settings.css": "0bcf84535540dc23d02e735a3aeb6ac9814af64de7d6d0600787f433d9079e23",

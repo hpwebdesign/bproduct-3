@@ -19,6 +19,7 @@ Quick Product Manager replaces the default OpenCart product and category lists w
 - Sort by name or by date added.
 - Edit the SEO URL right in the list, generate it from the name, copy it or open it on your storefront.
 - Toggle status per row.
+- Choose which columns the list shows (Model, Categories, Manufacturer, Price, Quantity, Date added) in the settings.
 - Bulk actions: Enable, Disable, add to category, set manufacturer, Clone, Delete.
 - **Quick Add:** name, model, categories, manufacturer, image and status. Everything else gets safe defaults. Choose Save, Save & add another, or Save & edit.
 
@@ -80,6 +81,7 @@ Yes, in descriptions, SEO URLs and layouts.
 
 ## Changelog
 
+- **1.1.5.x** Columns settings, category images in the list, bare-text attributes, dd-mm-yyyy dates.
 - **1.1.4.0** Built-in image popover, hpmm popover supported.
 - **1.1.2.x** Keyword, SEO H1–H3, Image alt and Image title fields for Complete SEO.
 - **1.1.0.9** Extra parents in the Category Manager.

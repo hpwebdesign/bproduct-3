@@ -1,0 +1,16 @@
+Add Columns tab in settings to show or hide Model, Categories, Manufacturer, Price, Quantity and Date added in the product list
+Add category image in the Category Manager list
+Add Extra parents field in the category editor (Multiple Parent Category)
+Add Keyword, SEO H1, H2, H3, Image alt and Image title fields in the editors when Complete SEO is active
+Add image popover (select file, drag and drop, URL, manager, clear) for category and product images, hpmm popover used when installed
+Add dd-mm-yyyy date entry in Special, Discount and Date available
+Add build.php: automatic version bump and bproduct.v-{version}.ocmod.zip
+Change attribute values to bare text in 2-line fields
+Change new Special rows to start without dates
+Change quick stats to sit on the same row as the Add button
+Fix keyword lost on save and SEO H1-H3 cleared on product save when Complete SEO is active
+Remove logo, subtitle and version badge from the list headers
+
+Upgrade notes
+Install the package, Refresh modifications, hard refresh the page (Ctrl+F5)
+No database changes
