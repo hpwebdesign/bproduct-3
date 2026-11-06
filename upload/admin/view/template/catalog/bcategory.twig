@@ -550,6 +550,9 @@ th.sortth{white-space:nowrap}
 .cname{display:flex;align-items:center;gap:10px;min-width:0}
 .cname .fi{width:34px;height:34px;border-radius:10px;display:grid;place-items:center;flex:none;background:var(--blue-soft);color:var(--blue)}
 .cname.off .fi{background:#ececf1;color:#4b5365}
+.cname .fi{overflow:hidden}
+.cname .fi img{width:100%;height:100%;object-fit:cover;display:block}
+.cname.off .fi img{opacity:.6}
 .cname b{display:block;font-weight:600}
 .cname small{display:block;color:var(--mute);font-size:12px}
 .bpw tr.row{cursor:pointer}
@@ -815,7 +818,7 @@ function rowHtml(c) {
   var lvl = Math.min(c.level, 6) * 18;
   return '<tr class="' + cls.join(' ') + '" data-id="' + id + '">' +
     '<td class="c-sel"><input type="checkbox" data-act="selrow" data-id="' + id + '" ' + (S.sel.has(id) ? 'checked' : '') + ' aria-label="' + esc(c.leaf) + '"></td>' +
-    '<td class="c-name"><div class="cname' + (c.status ? '' : ' off') + '" style="padding-left:' + lvl + 'px"><span class="fi">' + ic('folder', 16) + '</span><div><b>' + esc(c.leaf) + (c.top ? ' <span class="topstar" title="' + esc(T.bc_top_marker) + '" aria-label="' + esc(T.bc_top_marker) + '">' + ic('star', 14) + '</span>' : '') + '</b><small>' + esc(c.path) + (c.status ? '' : ' <span class="bdg n">' + esc(T.text_disabled) + '</span>') + '</small>' + slugCell(c) + '</div></div></td>' +
+    '<td class="c-name"><div class="cname' + (c.status ? '' : ' off') + '" style="padding-left:' + lvl + 'px"><span class="fi">' + (c.thumb ? '<img src="' + esc(c.thumb) + '" alt="" loading="lazy">' : ic('folder', 16)) + '</span><div><b>' + esc(c.leaf) + (c.top ? ' <span class="topstar" title="' + esc(T.bc_top_marker) + '" aria-label="' + esc(T.bc_top_marker) + '">' + ic('star', 14) + '</span>' : '') + '</b><small>' + esc(c.path) + (c.status ? '' : ' <span class="bdg n">' + esc(T.text_disabled) + '</span>') + '</small>' + slugCell(c) + '</div></div></td>' +
     '<td class="c-dn" data-l="' + esc(T.bc_display_name) + '">' + dnCell(c) + '</td>' +
     '<td class="c-qty tn" data-l="' + esc(T.bc_column_products) + '">' + c.products + '</td>' +
     '<td class="c-qty tn" data-l="' + esc(T.bc_column_sort) + '">' + c.sort_order + '</td>' +
