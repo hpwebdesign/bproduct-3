@@ -423,6 +423,8 @@ td.num{white-space:nowrap}
 
 /* v2: filters, selects, add drawer */
 .head .cta{margin-left:auto}
+.head{flex-wrap:wrap}
+.head .strip{margin:0;flex:0 1 auto}
 .bdg.n{background:#eef1f7;color:var(--mute)}
 .fbtn{height:38px;gap:8px}
 .fbtn .fcount{background:var(--navy);color:#fff;border-radius:99px;font-size:11px;padding:0 7px;min-width:20px;text-align:center;font-weight:700;display:none}
@@ -470,6 +472,7 @@ td.c-x mark{background:#ffe9a8;color:inherit;border-radius:3px}
 .df{flex-wrap:wrap}
 .addf{justify-content:flex-end;gap:8px}.addf .btn{padding:8px 11px}.addf .un{margin-right:auto}
 @media(max-width:860px){
+  .head .strip{flex:1 1 100%}
   .head .cta{margin-left:auto}
   .ffr{grid-template-columns:1fr 1fr}
   .fchips .fres{margin-left:0;width:100%}
@@ -549,11 +552,11 @@ th.sortth{white-space:nowrap}
 .addf .btn{white-space:nowrap}
 {% endverbatim %}</style>{% verbatim %}<div class="bpw"><div class="wrap">
   <div class="head">
+    <div class="strip" id="stats"></div>
     <div class="crumb"><a class="btn ghost sm" href="{% endverbatim %}{{ classic }}{% verbatim %}" data-t="bp_button_classic"></a> <a class="btn ghost sm" href="{% endverbatim %}{{ add_full }}{% verbatim %}" data-t="bp_button_add_full"></a></div>
     <button type="button" class="btn primary cta needmod" data-act="addopen"><span id="ic-plus2"></span> <span data-t="bp_add_product"></span></button>
   </div>
 
-  <div class="strip" id="stats"></div>
 
   <div class="toolbar">
     <div class="search"><span id="ic-search"></span><input class="inp" id="q" data-tp="bp_search_placeholder" autocomplete="off"></div>
