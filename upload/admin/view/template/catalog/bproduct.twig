@@ -362,7 +362,8 @@ td.num{white-space:nowrap}
 .det summary small{color:var(--mute);font-weight:400;margin-left:6px}
 .det[open] summary{border-bottom:1px solid var(--line)}
 .det>div{padding:14px 14px 2px}
-.lgi{display:flex;gap:6px;align-items:center;margin-bottom:5px}
+.lgi{display:flex;gap:6px;align-items:flex-start;margin-bottom:5px}
+.lgi .inp{flex:1}
 .note{display:flex;gap:8px;align-items:flex-start;background:var(--blue-soft);color:var(--navy2);padding:10px 12px;border-radius:10px;margin-bottom:14px;font-size:13px}
 .seo{display:flex;gap:8px;align-items:center;margin-bottom:4px}
 .seo .pre{color:var(--mute)}
@@ -1050,6 +1051,25 @@ function clearDirty() {
   var u = $('#undirty'); if (u) u.classList.remove('on');
   $$('.tabs .dirtydot').forEach(function (t) { t.classList.remove('dirtydot'); });
 }
+function dIso(v) {
+  var m = String(v || '').trim().match(/^(\d{1,2})[-\/.](\d{1,2})[-\/.](\d{4})$/);
+  if (!m) return '';
+  var d = +m[1], mo = +m[2], y = +m[3], dt = new Date(y, mo - 1, d);
+  if (dt.getFullYear() !== y || dt.getMonth() !== mo - 1 || dt.getDate() !== d) return '';
+  return y + '-' + ('0' + mo).slice(-2) + '-' + ('0' + d).slice(-2);
+}
+function dDisp(iso) {
+  var m = String(iso || '').match(/^(\d{4})-(\d{2})-(\d{2})$/);
+  return m && m[1] !== '0000' ? m[3] + '-' + m[2] + '-' + m[1] : '';
+}
+function dMask(el) {
+  var g = el.value.replace(/\D/g, '').slice(0, 8), o = g;
+  if (g.length > 4) o = g.slice(0, 2) + '-' + g.slice(2, 4) + '-' + g.slice(4); else if (g.length > 2) o = g.slice(0, 2) + '-' + g.slice(2);
+  if (el.value !== o) el.value = o;
+}
+function dInput(attr, iso) {
+  return '<input class="inp sm" type="text" inputmode="numeric" maxlength="10" autocomplete="off" placeholder="' + esc(T.bp_date_placeholder) + '" data-date ' + attr + ' value="' + esc(dDisp(iso)) + '">';
+}
 function today() { var d = new Date(); return d.getFullYear() + '-' + ('0' + (d.getMonth() + 1)).slice(-2) + '-' + ('0' + d.getDate()).slice(-2); }
 function langName(l) { return l.name; }
 function multiLang() { return CFG.languages.length > 1; }
@@ -1311,7 +1331,7 @@ function dataBody(p) {
     dinp('price', T.entry_price, d.price) + dsel('tax_class_id', T.entry_tax_class, CFG.tax_classes, d.tax_class_id, true) +
     dinp('quantity', T.entry_quantity, d.quantity) + dinp('minimum', T.entry_minimum, d.minimum) +
     '<div class="f"><label>' + esc(T.entry_subtract) + '</label>' + yn('subtract', d.subtract) + '</div>' + dsel('stock_status_id', T.entry_stock_status, CFG.stock_statuses, d.stock_status_id) +
-    '<div class="f"><label>' + esc(T.entry_date_available) + '</label><input class="inp" type="date" data-d="date_available" value="' + esc(d.date_available) + '"></div></div>' +
+    '<div class="f"><label>' + esc(T.entry_date_available) + '</label>' + dInput('data-d="date_available"', d.date_available).replace('inp sm', 'inp') + '</div></div>' +
     '<div class="dt">' + esc(T.bp_group_shipping) + '</div><div class="dg">' +
     '<div class="f"><label>' + esc(T.bp_shipping_required) + '</label><div class="seg"><label><input type="radio" name="d-ship" data-d="shipping" value="1" ' + (+d.shipping ? 'checked' : '') + '><span>' + esc(T.text_yes) + '</span></label><label><input type="radio" name="d-ship" data-d="shipping" value="0" ' + (+d.shipping ? '' : 'checked') + '><span>' + esc(T.text_no) + '</span></label></div></div><div></div>' +
     '<div class="f full"><label>' + esc(T.entry_dimension) + '</label><div class="dim"><input class="inp" data-d="length" value="' + esc(d.length) + '" placeholder="' + esc(T.entry_length) + '"><input class="inp" data-d="width" value="' + esc(d.width) + '" placeholder="' + esc(T.entry_width) + '"><input class="inp" data-d="height" value="' + esc(d.height) + '" placeholder="' + esc(T.entry_height) + '"></div></div>' +
@@ -1325,7 +1345,7 @@ function collectData() {
   var out = {};
   $$('[data-d]').forEach(function (el) {
     if (el.type === 'radio') { if (el.checked) out[el.dataset.d] = el.value; return; }
-    out[el.dataset.d] = el.value.trim();
+    out[el.dataset.d] = el.dataset.date !== undefined ? dIso(el.value) : el.value.trim();
   });
   return out;
 }
@@ -1405,7 +1425,7 @@ function attrPaint() {
   var box = $('#attrbody'); if (!box) return;
   box.innerHTML = DR.attrs.map(function (a, i) {
     return '<tr><td style="width:34%"><b>' + esc(a.name) + '</b></td><td>' + CFG.languages.map(function (l) {
-      return '<div class="lgi">' + (multiLang() ? langBadge(l) : '') + '<input class="inp sm" data-at="' + i + '" data-lid="' + l.language_id + '" value="' + esc((a.text || {})[l.language_id] || '') + '" placeholder="' + esc(T.entry_text) + '"></div>';
+      return '<div class="lgi">' + (multiLang() ? langBadge(l) : '') + '<textarea class="inp sm" rows="2" style="resize:vertical;min-height:0;line-height:1.4" data-at="' + i + '" data-lid="' + l.language_id + '" placeholder="' + esc(T.entry_text) + '">' + esc((a.text || {})[l.language_id] || '') + '</textarea></div>';
     }).join('') + '</td><td style="width:40px"><button type="button" class="btn red icon sm" data-act="rmattr" data-i="' + i + '" aria-label="' + esc(T.button_remove) + '">' + ic('trash', 14) + '</button></td></tr>';
   }).join('');
   $('#attrempty').style.display = DR.attrs.length ? 'none' : '';
@@ -1499,8 +1519,8 @@ function ruleHtml(kind, r, isNew) {
     (sp ? '' : '<div><label>' + esc(T.entry_quantity) + '</label><input class="inp sm" type="number" min="1" data-r="quantity" value="' + esc(r.quantity) + '"></div>') +
     '<div><label>' + esc(T.entry_priority) + '</label><input class="inp sm" type="number" min="0" data-r="priority" value="' + esc(r.priority) + '"></div>' +
     '<div><label>' + esc(T.entry_price) + '</label><input class="inp sm" type="number" step="0.01" data-r="price" value="' + esc(r.price) + '" placeholder="0.00"></div>' +
-    '<div><label>' + esc(T.entry_date_start) + '</label><input class="inp sm" type="date" data-r="date_start" value="' + esc(r.date_start || '') + '"></div>' +
-    '<div><label>' + esc(T.entry_date_end) + '</label><input class="inp sm" type="date" data-r="date_end" value="' + esc(r.date_end || '') + '"></div></div><div class="rmsg"></div></div>';
+    '<div><label>' + esc(T.entry_date_start) + '</label>' + dInput('data-r="date_start"', r.date_start) + '</div>' +
+    '<div><label>' + esc(T.entry_date_end) + '</label>' + dInput('data-r="date_end"', r.date_end) + '</div></div><div class="rmsg"></div></div>';
 }
 function rulesBody(kind, p) {
   var sp = kind === 'specials', rows = p[kind];
@@ -1512,9 +1532,7 @@ function addRule(kind) {
   var box = $('.rules[data-kind="' + kind + '"]'), n = box.children.length, sp = kind === 'specials';
   var used = $$('.rules[data-kind="' + kind + '"] [data-r="customer_group_id"]').map(function (x) { return x.value; });
   var g = CFG.customer_groups.filter(function (x) { return used.indexOf(String(x.id)) < 0; })[0] || CFG.customer_groups[0];
-  var d = new Date(); d.setDate(d.getDate() + 30);
-  var end = d.getFullYear() + '-' + ('0' + (d.getMonth() + 1)).slice(-2) + '-' + ('0' + d.getDate()).slice(-2);
-  box.insertAdjacentHTML('beforeend', ruleHtml(kind, {customer_group_id: g ? g.id : 0, quantity: sp ? '' : [10, 25, 50, 100][Math.min(n, 3)], priority: n + 1, price: '', date_start: sp ? today() : '', date_end: sp ? end : ''}, true));
+  box.insertAdjacentHTML('beforeend', ruleHtml(kind, {customer_group_id: g ? g.id : 0, quantity: sp ? '' : [10, 25, 50, 100][Math.min(n, 3)], priority: n + 1, price: '', date_start: '', date_end: ''}, true));
   var el = box.lastElementChild; el.scrollIntoView({block: 'center', behavior: 'smooth'});
   el.querySelector('[data-r="price"]').focus();
   $('[data-empty="' + kind + '"]').style.display = 'none';
@@ -1526,8 +1544,9 @@ function validateRules() {
   $$('.rule').forEach(function (r) {
     r.classList.remove('bad');
     var m = r.querySelector('.rmsg'), v = function (k) { return r.querySelector('[data-r="' + k + '"]'); };
-    var price = +v('price').value, s = v('date_start').value, e = v('date_end').value, msg = '';
+    var price = +v('price').value, s = dIso(v('date_start').value), e = dIso(v('date_end').value), msg = '';
     if (!(price > 0)) msg = T.bp_rule_err_price;
+    else if ((v('date_start').value.trim() && !s) || (v('date_end').value.trim() && !e)) msg = T.bp_rule_err_date_format;
     else if (s && e && e < s) msg = T.bp_rule_err_dates;
     else if (r.dataset.kind === 'discounts' && !(+v('quantity').value > 0)) msg = T.bp_rule_err_qty;
     if (msg) { r.classList.add('bad'); m.className = 'rmsg bad'; m.textContent = msg; if (!first) first = {el: r, kind: r.dataset.kind, msg: msg}; }
@@ -1537,7 +1556,7 @@ function validateRules() {
 function collectRules(kind) {
   return {rows: $$('.rules[data-kind="' + kind + '"] .rule').map(function (r) {
     var v = function (k) { var e = r.querySelector('[data-r="' + k + '"]'); return e ? e.value : ''; };
-    return {customer_group_id: +v('customer_group_id'), quantity: +v('quantity'), priority: +v('priority'), price: v('price'), date_start: v('date_start'), date_end: v('date_end')};
+    return {customer_group_id: +v('customer_group_id'), quantity: +v('quantity'), priority: +v('priority'), price: v('price'), date_start: dIso(v('date_start')), date_end: dIso(v('date_end'))};
   })};
 }
 
@@ -2090,11 +2109,12 @@ R.addEventListener('input', function (e) {
   if (d.ac) { acShow(el); return; }
   if (el.id === 'a-name') { $('#a-slug').textContent = '/' + slugify(el.value); markDirty(); return; }
   if (!DR || !el.closest('#drawer')) return;
+  if (el.dataset.date !== undefined) dMask(el);
   if (d.oo !== undefined) { optSync(el); markDirty('options'); return; }
   if (d.at !== undefined) { var a = DR.attrs[+d.at]; if (a) { a.text = a.text || {}; a.text[d.lid] = el.value; } markDirty('attributes'); return; }
   if (d.r) {
     var rule = el.closest('.rule'), v = function (x) { return rule.querySelector('[data-r="' + x + '"]'); };
-    if (d.r === 'date_start' || d.r === 'date_end') { var st = ruleState(v('date_start').value, v('date_end').value), b = v('st'); b.className = 'bdg ' + st[1]; b.textContent = st[0]; }
+    if (d.r === 'date_start' || d.r === 'date_end') { var st = ruleState(dIso(v('date_start').value), dIso(v('date_end').value)), b = v('st'); b.className = 'bdg ' + st[1]; b.textContent = st[0]; }
     rule.classList.remove('bad'); var m = rule.querySelector('.rmsg'); m.className = 'rmsg'; m.textContent = '';
   }
   if (d.kwm !== undefined) {

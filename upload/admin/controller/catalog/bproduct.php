@@ -302,6 +302,17 @@ class ControllerCatalogBproduct extends Controller {
 		return is_string($value) ? html_entity_decode($value, ENT_QUOTES, 'UTF-8') : $value;
 	}
 
+	// Attribute values are kept as bare text: markup is removed, block breaks become line breaks
+	private function plainText($value) {
+		$value = html_entity_decode((string)$value, ENT_QUOTES, 'UTF-8');
+		$value = preg_replace('~<\s*(br|/p|/div|/li|/tr|/h[1-6])\b[^>]*>~i', "\n", $value);
+		$value = html_entity_decode(strip_tags($value), ENT_QUOTES, 'UTF-8');
+		$value = preg_replace('/[ \t\x{00A0}]+/u', ' ', $value);
+		$value = preg_replace('/\s*\n\s*/', "\n", $value);
+
+		return trim($value);
+	}
+
 	private function cleanPath($path) {
 		return preg_replace('/[\s\x{00A0}]*>[\s\x{00A0}]*/u', ' > ', $this->decode($path));
 	}
@@ -617,7 +628,7 @@ class ControllerCatalogBproduct extends Controller {
 				$text = array();
 
 				foreach ($attribute['product_attribute_description'] as $language_id => $value) {
-					$text[$language_id] = $this->decode($value['text']);
+					$text[$language_id] = $this->plainText($value['text']);
 				}
 
 				$attributes[] = array('attribute_id' => (int)$attribute['attribute_id'], 'name' => $this->decode($info_attribute['name']), 'text' => $text);
@@ -776,7 +787,7 @@ class ControllerCatalogBproduct extends Controller {
 						$text = array();
 
 						foreach ((isset($row['text']) ? (array)$row['text'] : array()) as $language_id => $value) {
-							$text[(int)$language_id] = array('text' => (string)$value);
+							$text[(int)$language_id] = array('text' => $this->plainText($value));
 						}
 
 						$data['product_attribute'][] = array('attribute_id' => (int)$row['attribute_id'], 'product_attribute_description' => $text);
