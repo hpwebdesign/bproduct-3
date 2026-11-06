@@ -141,6 +141,7 @@ class ControllerCatalogBcategory extends Controller {
 			'stores'       => $stores,
 			'layouts'      => $layouts,
 			'limit'        => in_array($limit, array(5, 10, 25, 50, 100)) ? $limit : 10,
+			'drawer_width' => ($w = (int)$this->config->get('module_bproduct_drawer_width')) >= 600 && $w <= 1600 ? $w : 980,
 			'display_on'   => (int)$this->config->get('module_bproduct_category_display'),
 			'complete_seo' => $this->completeSeo() ? 1 : 0,
 			'extra_parents' => $this->hasExtraParents() ? 1 : 0,
