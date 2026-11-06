@@ -6,7 +6,7 @@ Managing a growing catalog in OpenCart often means opening one page after anothe
 
 The product and category lists are replaced by an AJAX-based manager. Click a row and the editor opens in a side drawer, while the list stays where you left it.
 
-When you save, only the tabs you changed are sent, and the data is written through the standard OpenCart models. Your other extensions and your user permissions keep working as they do today. If you would like the original lists back, you can turn the module off or open the classic list at any time.
+When you save, only the tabs you changed are sent, and the data is written through the standard OpenCart models. Your user permissions apply as usual. If you would like the original lists back, you can turn the module off or open the classic list at any time.
 
 ## Product Manager
 
@@ -38,13 +38,20 @@ The drawer follows the default product form: General, Data, Category Links, Rela
 
 ## Barcode Manager
 
-Generate a Code128 barcode from the Model or SKU in the product editor and download it as a PNG. Model and SKU are checked for uniqueness. The barcode can also be shown on the product page of the default and Barik themes.
+Generate a Code128 barcode from the Model or SKU in the product editor and download it as a PNG. When the Barcode Manager is on, Model and SKU are checked for uniqueness. The barcode can also be shown on the product page of the default and Barik themes.
 
 ## Works with other extensions
 
 - **Complete SEO:** when it is active, Keyword, SEO H1, H2 and H3 (plus Image alt and Image title for products) appear in the editors and are saved with the record.
 - **Multiple Parent Category:** extra parents appear in the category editor.
 - **hpmm media manager:** if it is installed, its image popover is used. Otherwise the built-in popover is used.
+
+## Good to know
+
+- Data that another extension stores outside the standard product fields can be reset when a product is saved from the drawer. For those products the "Full product form" is the better choice.
+- The Recurring tab is not part of the drawer. Use the full product form for it.
+- To save a product, a name and a meta title are needed in every active language.
+- The category tree browser is replaced by search, and only the en-gb language file is included.
 
 ## Compatibility
 
@@ -58,11 +65,12 @@ Generate a Code128 barcode from the Model or SKU in the product editor and downl
 2. Extensions > Modifications: click Refresh.
 3. Extensions > Extensions > Modules: install Quick Product Manager.
 4. Click Edit, set Status to Enabled and save.
+5. Optional: in the module settings, turn on the Category Manager to replace the default category list as well.
 
 ## Frequently asked questions
 
 **Does it change my products?**  
-Only when you save an edit. The module reads and writes through the standard OpenCart models.
+Only when you save an edit or use an action such as the status switch, a bulk action or Quick Add. The module reads and writes through the standard OpenCart models.
 
 **Can I still use the original product form?**  
 Yes. Use the "Full product form" button, or open the classic list with one click.
