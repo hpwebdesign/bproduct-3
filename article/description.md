@@ -1,108 +1,258 @@
 # Quick Product Manager – Faster Product & Category Management for OpenCart 3
+Manage your OpenCart products and categories faster from a single, streamlined interface. Edit products without navigating between pages, update multiple items at once, and access essential catalog information without the limitations of the default administration lists.
 
-## Pain points
+**Quick Product Manager** replaces the standard product and category lists with an AJAX-powered management interface, featuring inline controls, bulk actions, advanced filters, and a convenient side-drawer editor.
 
-- Every product edit means a page reload and a trip back to the list.
-- Changing many products means repeating the same steps one by one.
-- Finding products by SKU, manufacturer or category takes several steps in the default list.
+Spend less time managing your catalog and more time growing your store.
 
-## What you gain
+## Why Quick Product Manager?
 
-- List, filters and editor on one screen. The editor opens in a side drawer.
-- Bulk actions for status, category, manufacturer, clone and delete.
-- Filters for category, manufacturer, model, store, SKU, UPC, EAN, JAN, ISBN and MPN.
-- Category display names, extra parents and SEO fields in the same drawer.
+Managing a growing product catalog through the default OpenCart interface can be time-consuming.
 
-## How it works
+- **Too many page reloads:** Every product edit requires navigating away from the list and returning afterward.
+- **Repetitive updates:** Updating multiple products means performing the same actions individually.
+- **Limited product filtering:** Finding products by SKU, manufacturer, category, or other identifiers takes extra steps.
+- **Fragmented category management:** Important category settings are spread across different fields and screens.
 
-- Replaces the product and category lists with an AJAX-based manager.
-- Click a row to open the editor in a side drawer.
-- Saving sends only the tabs you changed.
-- Data is written through the standard OpenCart models, and user permissions apply as usual.
-- Turn the module off, or open the classic list, to get the original lists back.
+Quick Product Manager brings these workflows together in one place.
+
+## Key Benefits
+
+- **One-screen management:** Browse products, apply filters, and edit details without leaving the management page.
+- **Convenient side-drawer editor:** Open any product or category directly from its list.
+- **Powerful bulk actions:** Update product status, categories, manufacturers, and more in just a few clicks.
+- **Advanced filtering:** Find products using multiple identifiers and catalog attributes.
+- **Improved category management:** Manage display names, multiple parent categories, and SEO fields from one interface.
+- **Flexible workflow:** Return to the original OpenCart lists or use the full product form whenever needed.
+
+## How It Works
+
+1. The standard product and category lists are replaced with an AJAX-based management interface.
+2. Click any row to open its editor in a convenient side drawer.
+3. Edit the information you need and save. Only modified tabs are submitted.
+4. Data is saved through standard OpenCart models, while existing user permissions remain in effect.
+5. Disable the module or access the classic lists to restore the original management interface.
 
 ## Product Manager
 
-- Search by name or model, filter by status, choose the page size.
-- Filters: category (with subcategories), manufacturer, model, store, SKU, UPC, EAN, JAN, ISBN, MPN, Requires Shipping.
-- Active filters shown as removable chips.
-- Sort by name or date added.
-- Choose the list columns in the settings: Model, Categories, Manufacturer, Price, Quantity, Date added.
-- SEO URL: edit in the list, generate, copy, open on the storefront.
-- Status switch per row.
-- Bulk actions: Enable, Disable, add to category, set manufacturer, Clone, Delete.
-- **Quick Add:** name, model, categories, manufacturer, image, status. Other fields get defaults.
+Take control of your product catalog with faster navigation, flexible filters, and powerful bulk management tools.
 
-## Product editor
+### Product Listing & Filters
 
-- Tabs follow the default product form: General, Data, Category Links, Related Products, Other Links, Attribute, Option, Discount, Special, Image, Reward Points, SEO, Design.
-- Tab order and optional tabs are set in the settings.
-- Descriptions, SEO keywords and layouts per language and store.
-- Rich text editor for descriptions.
-- Image popover: select a file, drag and drop, URL, file manager.
-- Dates typed as dd-mm-yyyy. New specials start without dates.
-- "Full product form" button opens the default form for fields from other extensions.
+- Search products by name or model.
+- Filter by status and customize the number of products per page.
+- Advanced filters for category (including subcategories), manufacturer, model, store, SKU, UPC, EAN, JAN, ISBN, MPN, and Requires Shipping.
+- Active filters are displayed as removable chips.
+- Sort products by name or date added.
+- Customize visible columns through module settings: Model, Categories, Manufacturer, Price, Quantity, and Date Added.
+- Manage SEO URLs directly from the list: edit, generate, copy, and open storefront links.
+- Change product status instantly using the row-level status switch.
+
+### Bulk Product Actions
+
+Perform common catalog operations on multiple products at once:
+
+- Enable or disable products.
+- Assign products to categories.
+- Set manufacturers.
+- Clone products.
+- Delete products.
+
+### Quick Add
+
+Create new products without opening the full product form.
+
+Simply enter the essential information:
+
+- Product name
+- Model
+- Categories
+- Manufacturer
+- Image
+- Status
+
+Other product fields are automatically populated with default values.
+
+## Product Editor
+
+Edit product information through a streamlined side-drawer interface.
+
+### Complete Product Tabs
+
+The editor follows the standard OpenCart product form structure:
+
+- General
+- Data
+- Category Links
+- Related Products
+- Other Links
+- Attributes
+- Options
+- Discounts
+- Specials
+- Images
+- Reward Points
+- SEO
+- Design
+
+Additional flexibility includes:
+
+- Customize tab order and enable or disable optional tabs through module settings.
+- Manage descriptions, SEO keywords, and layouts across multiple languages and stores.
+- Built-in rich text editor for product descriptions.
+- Convenient image popover with file selection, drag and drop, URL input, and file manager integration.
+- Enter dates using the `dd-mm-yyyy` format.
+- New special prices can be created without specifying dates.
+- Access the original OpenCart product form through the **Full Product Form** button for additional fields or third-party extension settings.
 
 ## Category Manager
 
-- List with full path, image, SEO URL, product count and status switch. All columns sortable.
-- Search by name or display name. Filter by status or parent.
-- Bulk actions: Enable, Disable, Move to parent, show or hide in the top menu.
-- Editor drawer: General, Data, SEO, Design.
-- **Display Name:** a per-language name shown to customers in menus, breadcrumbs and category pages.
-- **Extra parents:** one category under several parents (Multiple Parent Category).
-- Quick Add for new categories.
+Manage your category structure more efficiently with a dedicated category management interface.
+
+### Category Listing
+
+- View the complete category path.
+- Display category images, SEO URLs, product counts, and status.
+- Sort all available columns.
+- Search by category name or display name.
+- Filter by status or parent category.
+
+### Bulk Category Actions
+
+- Enable or disable categories.
+- Move categories to another parent.
+- Show or hide categories in the top menu.
+
+### Category Editor
+
+Edit category information through a dedicated side drawer with four tabs:
+
+- General
+- Data
+- SEO
+- Design
+
+**Custom Display Name**
+
+Set a different display name for each language without changing the original category name. The display name is used on the storefront in menus, breadcrumbs, and category pages.
+
+**Multiple Parent Categories**
+
+Assign one category to multiple parent categories using the Multiple Parent Category functionality.
+
+**Quick Add**
+
+Create new categories directly from the Category Manager without navigating to the standard OpenCart form.
 
 ## Barcode Manager
 
-- Code128 barcode from Model or SKU, downloadable as PNG.
-- Model and SKU checked for uniqueness while the Barcode Manager is on.
-- Optional barcode on the product page of the default and Barik themes.
+Generate and manage product barcodes directly from your OpenCart administration panel.
 
-## Works with
+- Generate Code128 barcodes using the product Model or SKU.
+- Download generated barcodes as PNG images.
+- Check Model and SKU uniqueness while the Barcode Manager is enabled.
+- Optionally display product barcodes on storefront product pages using the default OpenCart theme and Barik themes.
 
-- **Complete SEO:** Keyword, SEO H1–H3, and for products Image alt and Image title appear in the editors.
-- **Multiple Parent Category:** extra parents in the category editor.
-- **hpmm media manager:** its image popover is used when installed, otherwise the built-in one.
+## Extension Integrations
 
-## Good to know
+Quick Product Manager supports integration with selected Bariklabs extensions to provide a more complete management experience.
 
-- Data that another extension stores outside the standard product fields can be reset when a product is saved from the drawer. Use the "Full product form" for those products.
-- The Recurring tab is not in the drawer.
-- A product needs a name and a meta title in every active language to be saved.
-- The category tree browser is replaced by search.
-- Only the en-gb language file is included.
+**Complete SEO**
+
+Access additional SEO fields directly from the product and category editors:
+
+- SEO Keyword
+- SEO H1, H2, and H3
+- Image Alt
+- Image Title (for products)
+
+**Multiple Parent Category**
+
+Manage additional parent category assignments directly from the Category Manager.
+
+**hpmm Media Manager**
+
+Use the hpmm Media Manager image popover when the extension is installed. Otherwise, Quick Product Manager automatically uses its built-in image selector.
+
+## Important Notes & Limitations
+
+- **Third-party extension fields:** Data stored outside standard OpenCart product fields may be reset when saving a product through the drawer. For products using such extensions, use the Full Product Form instead.
+- **Recurring tab:** The Recurring tab is not currently included in the side-drawer editor.
+- **Required fields:** A product must have a name and meta title in every active language before it can be saved.
+- **Category browser:** The default category tree browser is replaced by a searchable interface.
+- **Language:** Only the English (en-gb) language file is included.
 
 ## Compatibility
 
-- OpenCart 3.0.3.x.
-- Tested on OpenCart 3.0.3.9, PHP 8.3, MariaDB 10.11.
-- Display Name uses OCMOD: refresh modifications after installing.
+- OpenCart 3.0.3.x
+- Tested with OpenCart 3.0.3.9
+- PHP 8.3
+- MariaDB 10.11
 
-## Installation
+**Additional requirement:** The Display Name feature uses OCMOD. Refresh modifications after installation.
 
-1. Extensions > Installer: upload the package.
-2. Extensions > Modifications: Refresh.
-3. Extensions > Extensions > Modules: install Quick Product Manager.
-4. Edit, set Status to Enabled, save.
-5. Optional: turn on the Category Manager in the module settings.
+## Installation Guide
 
-## FAQ
+1. Go to **Extensions > Installer** and upload the Quick Product Manager package.
+2. Navigate to **Extensions > Modifications** and click Refresh.
+3. Go to **Extensions > Extensions > Modules** and install Quick Product Manager.
+4. Edit the module settings, set Status to Enabled, and save.
+5. Optionally enable Category Manager through the module settings.
 
-- **Does it change my products?** Only when you save an edit or use an action such as the status switch, a bulk action or Quick Add.
-- **Can I still use the original form?** Yes, through the "Full product form" button or the classic list.
-- **What happens on uninstall?** Your catalog stays as it is. The Display Name table is kept.
-- **Multiple languages or stores?** Yes, in descriptions, SEO URLs and layouts.
+## Frequently Asked Questions
+
+**Does Quick Product Manager modify my existing products automatically?**
+
+No. Existing product data is only modified when you explicitly save an edit or perform an action, such as changing status, executing a bulk action, or using Quick Add.
+
+**Can I still use the original OpenCart product form?**
+
+Yes. Use the Full Product Form button to access the standard OpenCart product editor. You can also access the original product and category lists through the classic list options.
+
+**What happens when I uninstall the extension?**
+
+Your existing product and category data remain unchanged. The Display Name database table is retained.
+
+**Does it support multiple languages and stores?**
+
+Yes. Product descriptions, SEO URLs, and layouts support multiple languages and stores.
 
 ## Changelog
 
-- **1.1.5.x** Column settings, category images in the list, bare-text attributes, dd-mm-yyyy dates, case-insensitive search, drawer width setting.
-- **1.1.4.0** Built-in image popover, hpmm popover supported.
-- **1.1.2.x** Keyword, SEO H1–H3, Image alt and Image title for Complete SEO.
-- **1.1.0.9** Extra parents in the Category Manager.
-- **1.1.0.0** Barcode Manager, Category Manager, Display Name.
-- **1.0.0.0** First release.
+**Version 1.1.5.x**
+
+- Customizable product list columns.
+- Category images displayed in the product list.
+- Bare-text attribute support.
+- `dd-mm-yyyy` date input format.
+- Case-insensitive search.
+- Customizable drawer width.
+
+**Version 1.1.4.0**
+
+- Added built-in image popover.
+- Added hpmm Media Manager popover integration.
+
+**Version 1.1.2.x**
+
+- Added Complete SEO integration for Keyword, SEO H1–H3, Image Alt, and Image Title.
+
+**Version 1.1.0.9**
+
+- Added Multiple Parent Category support in Category Manager.
+
+**Version 1.1.0.0**
+
+- Introduced Barcode Manager.
+- Introduced Category Manager.
+- Added Category Display Name functionality.
+
+**Version 1.0.0.0**
+
+- Initial release.
 
 ## Support
 
-- Questions and feedback: Bariklabs (bariklabs.com).
+Need assistance or have suggestions?
+
+Visit [Bariklabs.com](https://bariklabs.com) for product information, documentation, and support.
