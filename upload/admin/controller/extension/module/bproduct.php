@@ -7,7 +7,7 @@ class ControllerExtensionModuleBproduct extends Controller {
 	private $error = array();
 
 	private $v_d = '';
-	private $version = '1.1.5.3';
+	private $version = '1.1.5.4';
 	private $extension_code = 'bproduct';
 	private $domain = '';
 	private $extension_type = 'com';
@@ -22,6 +22,9 @@ class ControllerExtensionModuleBproduct extends Controller {
 
 	// Drawer tabs that can be hidden (general, data, category, seo and images are always shown)
 	private $optional_tabs = array('related', 'links', 'attributes', 'options', 'discounts', 'specials', 'reward', 'design');
+
+	// Product list columns that can be hidden (image, name, status and actions are always shown)
+	private $optional_columns = array('model', 'category', 'manufacturer', 'price', 'quantity', 'date');
 
 	public function index() {
 		$this->load->language('extension/module/bproduct');
@@ -105,6 +108,19 @@ class ControllerExtensionModuleBproduct extends Controller {
 			);
 		}
 
+		$hidden_columns = $this->config->get('module_bproduct_hidden_columns');
+		$hidden_columns = is_array($hidden_columns) ? $hidden_columns : array();
+
+		$data['columns'] = array();
+
+		foreach ($this->optional_columns as $column) {
+			$data['columns'][] = array(
+				'key'   => $column,
+				'text'  => $this->language->get('text_col_' . $column),
+				'shown' => !in_array($column, $hidden_columns)
+			);
+		}
+
 		$data['sorts'] = array();
 
 		foreach ($this->sorts as $sort) {
@@ -157,6 +173,7 @@ class ControllerExtensionModuleBproduct extends Controller {
 			'module_bproduct_category_status'   => 0,
 			'module_bproduct_category_display'  => 1,
 			'module_bproduct_hidden_tabs' => array(),
+			'module_bproduct_hidden_columns' => array(),
 			'module_bproduct_tab_order'   => $this->all_tabs
 		));
 	}
@@ -272,6 +289,10 @@ class ControllerExtensionModuleBproduct extends Controller {
 		$shown = isset($post['module_bproduct_tabs']) && is_array($post['module_bproduct_tabs']) ? array_keys($post['module_bproduct_tabs']) : array();
 		$post['module_bproduct_hidden_tabs'] = array_values(array_diff($this->optional_tabs, $shown));
 		unset($post['module_bproduct_tabs']);
+
+		$shown_columns = isset($post['module_bproduct_columns']) && is_array($post['module_bproduct_columns']) ? array_keys($post['module_bproduct_columns']) : array();
+		$post['module_bproduct_hidden_columns'] = array_values(array_diff($this->optional_columns, $shown_columns));
+		unset($post['module_bproduct_columns']);
 
 		$order = isset($post['module_bproduct_tab_order']) && is_array($post['module_bproduct_tab_order']) ? array_values(array_intersect($post['module_bproduct_tab_order'], $this->all_tabs)) : array();
 		$order = array_unique($order);
