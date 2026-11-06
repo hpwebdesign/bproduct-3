@@ -1,4 +1,4 @@
-# Quick Product Manager – Product and Category Management for OpenCart 3
+# Quick Product Manager – Faster Product & Category Management for OpenCart 3
 
 ## Pain points
 

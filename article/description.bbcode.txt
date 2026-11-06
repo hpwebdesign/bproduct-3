@@ -1,4 +1,4 @@
-[size=5][b]Quick Product Manager – Product and Category Management for OpenCart 3[/b][/size]
+[size=5][b]Quick Product Manager – Faster Product & Category Management for OpenCart 3[/b][/size]
 
 [size=4][b]Pain points[/b][/size]
 
