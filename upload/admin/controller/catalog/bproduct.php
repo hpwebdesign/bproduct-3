@@ -10,7 +10,7 @@
  * The default catalog/product permission is reused, so no extra permission has to be granted.
  */
 class ControllerCatalogBproduct extends Controller {
-	private $actions = array('list', 'product', 'save', 'add', 'delete', 'copy', 'status', 'bulk', 'ac', 'seo', 'slugauto');
+	private $actions = array('list', 'product', 'save', 'add', 'delete', 'copy', 'status', 'bulk', 'ac', 'seo', 'slugauto', 'media');
 
 	private $scalars = array('model', 'sku', 'upc', 'ean', 'jan', 'isbn', 'mpn', 'location', 'quantity', 'minimum', 'subtract', 'stock_status_id', 'date_available', 'shipping', 'price', 'weight', 'weight_class_id', 'length', 'width', 'height', 'length_class_id', 'status', 'tax_class_id', 'sort_order');
 
@@ -82,6 +82,17 @@ class ControllerCatalogBproduct extends Controller {
 
 		if (in_array($bp, $this->actions)) {
 			$this->{'ajax' . ucfirst($bp)}();
+		} else {
+			$this->json(array('error' => $this->language->get('bp_error_invalid')));
+		}
+	}
+
+	// Image popover requests (limits, upload, download) go through this route so the default product permission is enough
+	private function ajaxMedia() {
+		$op = isset($this->request->get['op']) ? $this->request->get['op'] : '';
+
+		if (in_array($op, array('limits', 'upload', 'download'))) {
+			$this->load->controller('catalog/bmedia/' . $op);
 		} else {
 			$this->json(array('error' => $this->language->get('bp_error_invalid')));
 		}

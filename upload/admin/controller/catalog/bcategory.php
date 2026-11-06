@@ -10,7 +10,7 @@
  * The default catalog/category permission is reused, so no extra permission has to be granted.
  */
 class ControllerCatalogBcategory extends Controller {
-	private $actions = array('list', 'category', 'save', 'add', 'delete', 'status', 'bulk', 'ac', 'seo', 'slugauto');
+	private $actions = array('list', 'category', 'save', 'add', 'delete', 'status', 'bulk', 'ac', 'seo', 'slugauto', 'media');
 
 	public function index() {
 		$this->load->language('catalog/bcategory');
@@ -48,6 +48,17 @@ class ControllerCatalogBcategory extends Controller {
 		$method = 'ajax' . ucfirst($bc);
 
 		$this->$method();
+	}
+
+	// Image popover requests (limits, upload, download) go through this route so the default category permission is enough
+	private function ajaxMedia() {
+		$op = isset($this->request->get['op']) ? $this->request->get['op'] : '';
+
+		if (in_array($op, array('limits', 'upload', 'download'))) {
+			$this->load->controller('catalog/bmedia/' . $op);
+		} else {
+			$this->json(array('error' => $this->language->get('bc_error_invalid')));
+		}
 	}
 
 	private function page() {

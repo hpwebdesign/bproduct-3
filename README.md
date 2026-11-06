@@ -3,7 +3,7 @@
 A fast, AJAX-based replacement for the default OpenCart product list.
 Find, filter, edit and add products from one page, without leaving the list.
 
-- **Version:** 1.1.2.1
+- **Version:** 1.1.4.0
 - **Author:** Bariklabs
 - **Compatibility:** OpenCart 3.0.3.x (admin, Twig, OCMOD)
 - **Tested on:** OpenCart 3.0.3.9, PHP 8.3, MariaDB 10.11
@@ -18,6 +18,7 @@ Find, filter, edit and add products from one page, without leaving the list.
   (SKU, UPC, EAN, JAN, ISBN, MPN, Requires Shipping, with an Exact option).
   A field filter also adds that field as a column.
 - Inline SEO URL: edit, generate, copy, open in storefront.
+- Image fields use a popover (select file, drag and drop, URL download, file manager, clear). If the hpmm module provides its own popover, that one is used instead.
 - Status toggle per row.
 - Bulk bar: Enable, Disable, Add to category, Set manufacturer.
   Clone and Delete buttons work on the selection.
@@ -135,7 +136,7 @@ Display names are stored in the `bproduct_category_display` table, created on in
 
 ## Changelog
 
-**1.1.2.1**
+**1.1.4.0**
 - Category Manager: using the pager scrolls the page back to the top.
 - Category Manager: tidier table layout with fixed column widths and aligned headers.
 

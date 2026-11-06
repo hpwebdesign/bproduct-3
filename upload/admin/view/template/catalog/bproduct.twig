@@ -14,6 +14,7 @@
     <div id="bp-host"></div>
   </div>
 </div>
+<script src="view/javascript/bproduct/hpmm_common.js"></script>
 <script type="application/json" id="bp-config">{{ bp_config }}</script>
 <script type="application/json" id="bp-lang">{{ bp_lang }}</script>
 <template id="bp-shell"><style>{% verbatim %}
@@ -1063,8 +1064,37 @@ function gotoTab(k) { var b = $('.tabs [data-sec="' + k + '"]'); if (b) b.click(
 function names(p) { var d = p.description[CFG.language_id]; return d ? d.name : ''; }
 
 /* ---------- image picker (OpenCart file manager) ---------- */
-function pickImage(cb) {
+/* Image popover shared with the BMedia Manager (hpmm) module; falls back to the default file manager */
+var HPX = null, HPX_SKIP = false, HPX_PX = 'data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==';
+document.addEventListener('mousedown', function (e) {
+  var b = e.target.closest ? e.target.closest('[data-act]') : null;
+  HPX_SKIP = !!(HPX && HPX.last && document.querySelector('.hpmm-pop') && b && b === HPX.last);
+}, true);
+function hpmmPick(anchor, cb, clearCb) {
   var j = window.jQuery;
+  if (HPX_SKIP) { HPX_SKIP = false; return; }
+  if (!HPX) {
+    var box = j('<span style="position:fixed;display:block;pointer-events:none;opacity:0"><a id="bp-hpmm-thumb" style="display:block"><img data-placeholder="' + HPX_PX + '" src="' + HPX_PX + '" alt=""></a><input type="hidden" id="bp-hpmm-input"></span>').appendTo('body');
+    HPX = {box: box, a: box.find('a'), img: box.find('img')[0], inp: box.find('input')[0]};
+    HPX.obs = new MutationObserver(function () {
+      var v = HPX.inp.value, src = HPX.img.getAttribute('src'), h = HPX.h || {};
+      HPX.obs.disconnect(); HPX.inp.value = ''; HPX.img.setAttribute('src', HPX_PX);
+      HPX.obs.observe(HPX.img, {attributes: true, attributeFilter: ['src']});
+      if (v) { if (h.cb) h.cb(v, src && src !== HPX_PX ? src : CFG.image_base + v); } else if (h.clear) { h.clear(); }
+    });
+    HPX.obs.observe(HPX.img, {attributes: true, attributeFilter: ['src']});
+  }
+  var r = anchor.getBoundingClientRect();
+  HPX.box.css({left: r.left, top: r.top, width: r.width, height: r.height});
+  HPX.a.css({width: r.width, height: r.height}).data('productid', PRODUCT_ID());
+  HPX.h = {cb: cb, clear: clearCb}; HPX.last = anchor;
+  window.BP_MEDIA_BASE = CFG.endpoint + 'media&op=';
+  (window.hpmmUploader || window.bpUploader).toggle(HPX.a);
+}
+function PRODUCT_ID() { return DR && DR.id ? DR.id : 0; }
+function pickImage(cb, anchor, clearCb) {
+  var j = window.jQuery;
+  if (anchor && j && (window.hpmmUploader || window.bpUploader)) { hpmmPick(anchor, cb, clearCb); return; }
   if (!j || !j.fn.modal) { window.open(CFG.filemanager, '_blank'); return; }
   j('#bp-fm-target, #bp-fm-thumb, #modal-image').remove();
   j('body').append('<input type="hidden" id="bp-fm-target"><div id="bp-fm-thumb" style="display:none"><img src="" alt=""></div>');
@@ -2012,11 +2042,11 @@ R.addEventListener('click', function (e) {
     case 'optrm': { e.stopPropagation(); var oi = +el.dataset.oi; DR.opts.splice(oi, 1); if (DR.optA >= oi) DR.optA = Math.max(0, DR.optA - 1); optPaint(); markDirty('options'); break; }
     case 'optaddv': { var o = DR.opts[+el.dataset.oi]; o.product_option_value.push(newVal(o)); optPaint(); markDirty('options'); break; }
     case 'optrmv': DR.opts[+el.dataset.oi].product_option_value.splice(+el.dataset.vi, 1); optPaint(); markDirty('options'); break;
-    case 'tmain': pickImage(function (path, thumb) { DR.im.main = {path: path, thumb: thumb}; imgPaint(); markDirty('images'); }); break;
+    case 'tmain': pickImage(function (path, thumb) { DR.im.main = {path: path, thumb: thumb}; imgPaint(); markDirty('images'); }, el, function () { DR.im.main = null; imgPaint(); markDirty('images'); }); break;
     case 'tmainrm': DR.im.main = null; imgPaint(); markDirty('images'); break;
-    case 'trow': pickImage(function (path, thumb) { DR.im.add[i].path = path; DR.im.add[i].thumb = thumb; imgPaint(); markDirty('images'); }); break;
+    case 'trow': pickImage(function (path, thumb) { DR.im.add[i].path = path; DR.im.add[i].thumb = thumb; imgPaint(); markDirty('images'); }, el, function () { DR.im.add.splice(i, 1); imgPaint(); markDirty('images'); }); break;
     case 'trowrm': DR.im.add.splice(i, 1); imgPaint(); markDirty('images'); break;
-    case 'trowadd': pickImage(function (path, thumb) { DR.im.add.push({path: path, thumb: thumb, sort: String(DR.im.add.length)}); imgPaint(); markDirty('images'); }); break;
+    case 'trowadd': pickImage(function (path, thumb) { DR.im.add.push({path: path, thumb: thumb, sort: String(DR.im.add.length)}); imgPaint(); markDirty('images'); }, el); break;
     case 'seogen': {
       var key2 = el.dataset.sid + '|' + el.dataset.lid, sin = $('[data-seo="' + key2 + '"]');
       var lp = $('.lp[data-lid="' + el.dataset.lid + '"] [data-k="name"]');
@@ -2024,7 +2054,7 @@ R.addEventListener('click', function (e) {
       sin.value = s; seoCheck(sin, true).then(function () { markDirty('seo'); headRefresh(); });
       break;
     }
-    case 'addimg': pickImage(function (path, thumb) { DR.img = {path: path, thumb: thumb}; paintAddImg(); markDirty(); }); break;
+    case 'addimg': pickImage(function (path, thumb) { DR.img = {path: path, thumb: thumb}; paintAddImg(); markDirty(); }, el, function () { DR.img = null; paintAddImg(); markDirty(); }); break;
     case 'addsave': addSave(el.dataset.mode); break;
   }
 });
