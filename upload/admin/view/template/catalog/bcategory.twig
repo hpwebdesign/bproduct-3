@@ -1070,10 +1070,10 @@ function generalBody(c) {
         '<div class="f"><label>' + esc(T.bc_entry_name) + ' <b class="req">*</b> <span class="bdg n">' + esc(T.bc_admin) + '</span></label><input class="inp" data-k="name" value="' + esc(d.name) + '" placeholder="' + esc(T.bc_entry_name) + '"><div class="errtxt" data-e="name"></div><small>' + esc(T.bc_name_help) + '</small></div>' +
         dnBox(l, d, c.display[l.language_id]) + '<div class="errtxt" data-e="display"></div>' +
         '<div class="f"><label>' + esc(T.bc_entry_description) + '</label>' + editorHtml(l.language_id, d.description) + '</div>' +
+        (CFG.complete_seo ? ['seo_h1', 'seo_h2', 'seo_h3'].map(function (k) { return '<div class="f"><label>' + esc(T['bc_entry_' + k]) + '</label><input class="inp" data-k="' + k + '" value="' + esc(d[k] || '') + '" placeholder="' + esc(T['bc_entry_' + k]) + '"></div>'; }).join('') : '') +
         '<div class="f"><label>' + esc(T.bc_entry_meta_title) + ' <b class="req">*</b></label><input class="inp" data-k="meta_title" value="' + esc(d.meta_title) + '" placeholder="' + esc(T.bc_entry_meta_title) + '"><div class="errtxt" data-e="meta_title"></div></div>' +
         '<div class="f"><label>' + esc(T.bc_entry_meta_description) + '</label><textarea class="inp" rows="3" data-k="meta_description" placeholder="' + esc(T.bc_entry_meta_description) + '">' + esc(d.meta_description) + '</textarea></div>' +
-        '<div class="f"><label>' + esc(T.bc_entry_meta_keyword) + '</label><input class="inp" data-k="meta_keyword" value="' + esc(d.meta_keyword) + '" placeholder="' + esc(T.bc_entry_meta_keyword) + '"></div>' +
-        (CFG.complete_seo ? ['seo_h1', 'seo_h2', 'seo_h3'].map(function (k) { return '<div class="f"><label>' + esc(T['bc_entry_' + k]) + '</label><input class="inp" data-k="' + k + '" value="' + esc(d[k] || '') + '" placeholder="' + esc(T['bc_entry_' + k]) + '"></div>'; }).join('') : '') + '</div>';
+        '<div class="f"><label>' + esc(T.bc_entry_meta_keyword) + '</label><input class="inp" data-k="meta_keyword" value="' + esc(d.meta_keyword) + '" placeholder="' + esc(T.bc_entry_meta_keyword) + '"></div>' + '</div>';
     }).join('');
 }
 function collectGeneral() {
