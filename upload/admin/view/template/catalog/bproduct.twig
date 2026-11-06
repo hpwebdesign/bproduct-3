@@ -1153,6 +1153,16 @@ function editorValue(ed) {
 }
 
 /* ---------- section: general ---------- */
+function seoGeneral(p, l, d) {
+  if (!CFG.seo_fields || !CFG.seo_fields.length) return '';
+  var kw = (p.seo[0] && p.seo[0][l.language_id]) || '';
+  return '<div class="f"><label>' + esc(T.bp_entry_seo_keyword) + '</label><input class="inp" data-kwm="0|' + l.language_id + '" value="' + esc(kw) + '" placeholder="' + esc(T.bp_entry_seo_keyword) + '" autocomplete="off"></div>' +
+    CFG.seo_fields.map(function (k) { return '<div class="f"><label>' + esc(T['entry_' + k]) + '</label><input class="inp" data-k="' + k + '" value="' + esc(d[k] || '') + '" placeholder="' + esc(T['entry_' + k]) + '"></div>'; }).join('');
+}
+function kwMirror(inp) {
+  var m = $('[data-kwm="' + inp.dataset.seo + '"]');
+  if (m && m.value !== inp.value) m.value = inp.value;
+}
 function generalBody(p) {
   var langs = CFG.languages;
   return (multiLang() ? '<div class="lang">' + langs.map(function (l, i) { return '<button type="button" data-act="lang" data-lid="' + l.language_id + '" class="' + (i ? '' : 'on') + '">' + esc(langName(l)) + '</button>'; }).join('') + '</div>' : '') +
@@ -1161,11 +1171,11 @@ function generalBody(p) {
       return '<div class="lp ' + (i ? '' : 'on') + '" data-lid="' + l.language_id + '">' +
         '<div class="f"><label>' + esc(T.entry_name) + ' <b class="req">*</b></label><input class="inp" data-k="name" value="' + esc(d.name) + '" placeholder="' + esc(T.entry_name) + '"><div class="errtxt" data-e="name"></div></div>' +
         '<div class="f"><label>' + esc(T.entry_description) + '</label>' + editorHtml(l.language_id, d.description) + '</div>' +
+        seoGeneral(p, l, d) +
         '<div class="f"><label>' + esc(T.entry_meta_title) + ' <b class="req">*</b></label><input class="inp" data-k="meta_title" value="' + esc(d.meta_title) + '" placeholder="' + esc(T.entry_meta_title) + '"><div class="errtxt" data-e="meta_title"></div></div>' +
         '<div class="f"><label>' + esc(T.entry_meta_description) + '</label><textarea class="inp" rows="3" data-k="meta_description" placeholder="' + esc(T.entry_meta_description) + '">' + esc(d.meta_description) + '</textarea></div>' +
         '<div class="f"><label>' + esc(T.entry_meta_keyword) + '</label><input class="inp" data-k="meta_keyword" value="' + esc(d.meta_keyword) + '" placeholder="' + esc(T.entry_meta_keyword) + '"></div>' +
-        '<div class="f"><label>' + esc(T.entry_tag) + '</label><input class="inp" data-k="tag" value="' + esc(d.tag) + '" placeholder="' + esc(T.entry_tag) + '"></div>' +
-        (CFG.complete_seo ? ['seo_h1', 'seo_h2', 'seo_h3'].map(function (k) { return '<div class="f"><label>' + esc(T['entry_' + k]) + '</label><input class="inp" data-k="' + k + '" value="' + esc(d[k] || '') + '" placeholder="' + esc(T['entry_' + k]) + '"></div>'; }).join('') : '') + '</div>';
+        '<div class="f"><label>' + esc(T.entry_tag) + '</label><input class="inp" data-k="tag" value="' + esc(d.tag) + '" placeholder="' + esc(T.entry_tag) + '"></div></div>';
     }).join('');
 }
 function collectGeneral() {
@@ -1174,7 +1184,7 @@ function collectGeneral() {
     var v = function (k) { return pn.querySelector('[data-k="' + k + '"]').value; };
     var ed = pn.querySelector('.editor'), orig = DR.p.description[pn.dataset.lid];
     out[pn.dataset.lid] = {name: v('name').trim(), description: ed.dataset.touched || !orig ? editorValue(ed) : orig.description, meta_title: v('meta_title').trim(), meta_description: v('meta_description'), meta_keyword: v('meta_keyword'), tag: v('tag')};
-    if (CFG.complete_seo) { ['seo_h1', 'seo_h2', 'seo_h3'].forEach(function (k) { out[pn.dataset.lid][k] = v(k); }); }
+    if (CFG.seo_fields) { CFG.seo_fields.forEach(function (k) { out[pn.dataset.lid][k] = v(k); }); }
   });
   return {product_description: out};
 }
@@ -1556,13 +1566,14 @@ function collectSeo() {
 }
 var seoTimers = {};
 function seoCheck(inp, auto) {
+  kwMirror(inp);
   var key = inp.dataset.seo, a = key.split('|'), m = $('[data-seomsg="' + key + '"]'), v = inp.value.trim();
   if (!v) { m.className = 'slugmsg'; m.textContent = ''; return Promise.resolve(true); }
   var dup = $$('[data-seo^="' + a[0] + '|"]').some(function (o) { return o !== inp && o.value.trim() === v; });
   if (dup) { m.className = 'slugmsg bad'; m.textContent = T.error_unique; return Promise.resolve(false); }
   return api('seo', {keyword: v, store_id: a[0], product_id: DR ? DR.id : 0}).then(function (j) {
     if (j.ok) { m.className = 'slugmsg ok'; m.textContent = '✓ ' + T.bp_available; return true; }
-    if (auto && j.suggest) { inp.value = j.suggest; m.className = 'slugmsg ok'; m.textContent = '✓ ' + T.bp_available; return true; }
+    if (auto && j.suggest) { inp.value = j.suggest; kwMirror(inp); m.className = 'slugmsg ok'; m.textContent = '✓ ' + T.bp_available; return true; }
     m.className = 'slugmsg bad'; m.textContent = T.error_keyword + (j.suggest ? ' ' + fmt(T.bp_try, j.suggest) : ''); return false;
   }).catch(function () { return true; });
 }
@@ -2056,9 +2067,14 @@ R.addEventListener('input', function (e) {
     if (d.r === 'date_start' || d.r === 'date_end') { var st = ruleState(v('date_start').value, v('date_end').value), b = v('st'); b.className = 'bdg ' + st[1]; b.textContent = st[0]; }
     rule.classList.remove('bad'); var m = rule.querySelector('.rmsg'); m.className = 'rmsg'; m.textContent = '';
   }
+  if (d.kwm !== undefined) {
+    var tgt = $('[data-seo="' + d.kwm + '"]');
+    if (tgt) { tgt.value = el.value; tgt.dispatchEvent(new Event('input', {bubbles: true})); }
+    return;
+  }
   if (el.closest('.editor')) el.closest('.editor').dataset.touched = '1';
   if (el.closest('.lp')) { checkLang(); if (d.k === 'name' || d.k === 'meta_title') headRefresh(); }
-  if (d.seo !== undefined) { clearTimeout(seoTimers[d.seo]); seoTimers[d.seo] = setTimeout(function () { seoCheck(el); }, 400); headRefresh(); }
+  if (d.seo !== undefined) { kwMirror(el); clearTimeout(seoTimers[d.seo]); seoTimers[d.seo] = setTimeout(function () { seoCheck(el); }, 400); headRefresh(); }
   if (el.matches && el.matches('[data-lnk], [data-chip]')) return;
   if (CFG.barcode.on && d.d === CFG.barcode.source) bcRefresh();
   markDirty(secOf(el));

@@ -189,3 +189,6 @@ $_['bp_error_disabled'] = 'Quick Product Manager is disabled. Enable it in Exten
 $_['entry_seo_h1'] = 'SEO H1';
 $_['entry_seo_h2'] = 'SEO H2';
 $_['entry_seo_h3'] = 'SEO H3';
+$_['bp_entry_seo_keyword'] = 'Keyword';
+$_['entry_image_alt'] = 'Image alt';
+$_['entry_image_title'] = 'Image title';

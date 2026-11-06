@@ -1061,6 +1061,16 @@ function dnPreview(pn) {
   var nm = pn.querySelector('[data-k="name"]').value.trim(), dn = pn.querySelector('[data-k="display"]').value.trim(), box = pn.querySelector('.dnprev');
   if (box) box.innerHTML = esc(T.bc_storefront_shows) + ' <b>' + esc(dn || nm || '—') + '</b>';
 }
+function seoGeneral(c, l, d) {
+  if (!CFG.complete_seo) return '';
+  var kw = (c.seo[0] && c.seo[0][l.language_id]) || '';
+  return '<div class="f"><label>' + esc(T.bc_entry_seo_keyword) + '</label><input class="inp" data-kwm="0|' + l.language_id + '" value="' + esc(kw) + '" placeholder="' + esc(T.bc_entry_seo_keyword) + '" autocomplete="off"></div>' +
+    ['seo_h1', 'seo_h2', 'seo_h3'].map(function (k) { return '<div class="f"><label>' + esc(T['bc_entry_' + k]) + '</label><input class="inp" data-k="' + k + '" value="' + esc(d[k] || '') + '" placeholder="' + esc(T['bc_entry_' + k]) + '"></div>'; }).join('');
+}
+function kwMirror(inp) {
+  var m = $('[data-kwm="' + inp.dataset.seo + '"]');
+  if (m && m.value !== inp.value) m.value = inp.value;
+}
 function generalBody(c) {
   var langs = CFG.languages;
   return (multiLang() ? '<div class="lang">' + langs.map(function (l, i) { return '<button type="button" data-act="lang" data-lid="' + l.language_id + '" class="' + (i ? '' : 'on') + '">' + esc(l.name) + '</button>'; }).join('') + '</div>' : '') +
@@ -1070,7 +1080,7 @@ function generalBody(c) {
         '<div class="f"><label>' + esc(T.bc_entry_name) + ' <b class="req">*</b> <span class="bdg n">' + esc(T.bc_admin) + '</span></label><input class="inp" data-k="name" value="' + esc(d.name) + '" placeholder="' + esc(T.bc_entry_name) + '"><div class="errtxt" data-e="name"></div><small>' + esc(T.bc_name_help) + '</small></div>' +
         dnBox(l, d, c.display[l.language_id]) + '<div class="errtxt" data-e="display"></div>' +
         '<div class="f"><label>' + esc(T.bc_entry_description) + '</label>' + editorHtml(l.language_id, d.description) + '</div>' +
-        (CFG.complete_seo ? ['seo_h1', 'seo_h2', 'seo_h3'].map(function (k) { return '<div class="f"><label>' + esc(T['bc_entry_' + k]) + '</label><input class="inp" data-k="' + k + '" value="' + esc(d[k] || '') + '" placeholder="' + esc(T['bc_entry_' + k]) + '"></div>'; }).join('') : '') +
+        seoGeneral(c, l, d) +
         '<div class="f"><label>' + esc(T.bc_entry_meta_title) + ' <b class="req">*</b></label><input class="inp" data-k="meta_title" value="' + esc(d.meta_title) + '" placeholder="' + esc(T.bc_entry_meta_title) + '"><div class="errtxt" data-e="meta_title"></div></div>' +
         '<div class="f"><label>' + esc(T.bc_entry_meta_description) + '</label><textarea class="inp" rows="3" data-k="meta_description" placeholder="' + esc(T.bc_entry_meta_description) + '">' + esc(d.meta_description) + '</textarea></div>' +
         '<div class="f"><label>' + esc(T.bc_entry_meta_keyword) + '</label><input class="inp" data-k="meta_keyword" value="' + esc(d.meta_keyword) + '" placeholder="' + esc(T.bc_entry_meta_keyword) + '"></div>' + '</div>';
@@ -1159,6 +1169,7 @@ function collectSeo() {
 }
 var seoTimers = {};
 function seoCheck(inp, auto) {
+  kwMirror(inp);
   var key = inp.dataset.seo, a = key.split('|'), m = $('[data-seomsg="' + key + '"]'), v = inp.value.trim();
   if (!v) { m.className = 'slugmsg'; m.textContent = ''; return Promise.resolve(true); }
   var dup = $$('[data-seo^="' + a[0] + '|"]').some(function (o) { return o !== inp && o.value.trim() === v; });
@@ -1478,10 +1489,15 @@ R.addEventListener('input', function (e) {
   if (el.id === 'a-name') { $('#a-slug').textContent = '/' + slugify(el.value); markDirty(); return; }
   if (el.id === 'a-display') { markDirty(); return; }
   if (!DR || !el.closest('#drawer')) return;
+  if (d.kwm !== undefined) {
+    var tgt = $('[data-seo="' + d.kwm + '"]');
+    if (tgt) { tgt.value = el.value; tgt.dispatchEvent(new Event('input', {bubbles: true})); }
+    return;
+  }
   if (el.closest('.editor')) el.closest('.editor').dataset.touched = '1';
   if (el.matches && el.matches('[data-lnk]')) return;
   if (el.closest('.lp')) { checkLang(); dnPreview(el.closest('.lp')); if (d.k === 'name') headRefresh(); }
-  if (d.seo !== undefined) { clearTimeout(seoTimers[d.seo]); seoTimers[d.seo] = setTimeout(function () { seoCheck(el); }, 400); headRefresh(); }
+  if (d.seo !== undefined) { kwMirror(el); clearTimeout(seoTimers[d.seo]); seoTimers[d.seo] = setTimeout(function () { seoCheck(el); }, 400); headRefresh(); }
   markDirty(secOf(el));
 });
 

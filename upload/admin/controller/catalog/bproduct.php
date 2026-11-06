@@ -134,6 +134,22 @@ class ControllerCatalogBproduct extends Controller {
 		return (bool)$this->db->query("SHOW COLUMNS FROM `" . DB_PREFIX . "product_description` LIKE 'seo_h1'")->num_rows;
 	}
 
+	private function seoFields() {
+		if (!$this->completeSeo()) {
+			return array();
+		}
+
+		$fields = array('seo_h1', 'seo_h2', 'seo_h3');
+
+		foreach (array('image_alt', 'image_title') as $column) {
+			if ($this->db->query("SHOW COLUMNS FROM `" . DB_PREFIX . "product_description` LIKE '" . $column . "'")->num_rows) {
+				$fields[] = $column;
+			}
+		}
+
+		return $fields;
+	}
+
 	private function getConfig() {
 		$token = $this->session->data['user_token'];
 
@@ -206,6 +222,7 @@ class ControllerCatalogBproduct extends Controller {
 			),
 			'can_modify'     => $this->user->hasPermission('modify', 'catalog/product') ? 1 : 0,
 			'complete_seo'   => $this->completeSeo() ? 1 : 0,
+			'seo_fields'     => $this->seoFields(),
 			'default_status' => (int)$this->config->get('config_stock_status_id')
 		);
 	}
@@ -672,7 +689,7 @@ class ControllerCatalogBproduct extends Controller {
 							);
 
 							if ($this->completeSeo()) {
-								foreach (array('seo_h1', 'seo_h2', 'seo_h3') as $key) {
+								foreach ($this->seoFields() as $key) {
 									$data['product_description'][(int)$language_id][$key] = isset($value[$key]) ? (string)$value[$key] : (isset($old[$key]) ? $old[$key] : '');
 								}
 							}
