@@ -350,7 +350,26 @@ button.dt:hover{color:var(--text)}
 .igd{position:relative;display:flex}.igd .inp{flex:1;min-width:0;border-top-right-radius:0;border-bottom-right-radius:0}
 .dcal{flex:none;width:32px;display:grid;place-items:center;border:1px solid var(--line);border-left:0;border-radius:0 10px 10px 0;background:#f4f7fc;color:var(--mute);cursor:pointer;padding:0}
 .dcal:hover{background:var(--blue-soft);color:var(--blue)}
-.dnat{position:absolute;right:0;bottom:0;width:1px;height:1px;opacity:0;pointer-events:none}
+
+.cp-pop{position:fixed;z-index:1090;width:292px;box-sizing:border-box;background:#fff;border:1px solid #d5dcea;border-radius:14px;box-shadow:0 18px 40px -12px rgba(16,31,69,.35);padding:12px;font-size:13px;line-height:1.4;font-family:inherit;color:var(--text)}
+.cp-pop button{text-align:center;font-family:inherit}
+.cp-h{display:flex;align-items:center;gap:6px;margin-bottom:8px}
+.cp-n{flex:none;display:grid;place-items:center;width:32px;height:32px;padding:0;border:1px solid #e3e8f2;border-radius:9px;background:#fff;color:var(--text);font-size:18px;line-height:1;cursor:pointer}
+.cp-n:hover{background:#eef2fc}
+.cp-pop select{flex:1 1 0;min-width:0;height:32px;border:1px solid #e3e8f2;border-radius:9px;background:#fff;padding:0 6px;font:inherit;color:inherit}
+.cp-pop .cp-y{flex:0 0 78px}
+.cp-w,.cp-g{display:grid;grid-template-columns:repeat(7,1fr);gap:2px;text-align:center}
+.cp-w span{font-size:11px;font-weight:600;color:#7a859c;padding:4px 0}
+.cp-d{display:grid;place-items:center;height:34px;border:0;border-radius:9px;background:transparent;color:var(--text);font:inherit;cursor:pointer;padding:0}
+.cp-d:hover{background:#eef2fc}
+.cp-d:focus-visible,.cp-n:focus-visible{outline:2px solid var(--blue);outline-offset:-2px}
+.cp-d.out{color:#a4adc2}
+.cp-d.now{box-shadow:inset 0 0 0 1.5px #9fb3ee}
+.cp-d.on{background:var(--blue);color:#fff;font-weight:700}
+.cp-d:disabled{opacity:.3;cursor:default}
+.cp-f{display:flex;justify-content:space-between;margin-top:8px;padding-top:8px;border-top:1px solid #eef1f7}
+.cp-f button{border:0;background:transparent;color:var(--blue);font:inherit;font-weight:600;padding:6px 10px;border-radius:8px;cursor:pointer}
+.cp-f button:hover{background:#eef2fc}
 .rg{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:10px}
 .rg label{display:block;font-size:11px;font-weight:700;color:var(--mute);text-transform:uppercase;letter-spacing:.03em;margin-bottom:3px}
 .pctw{position:relative}
@@ -1120,8 +1139,88 @@ function dMask(el) {
 }
 function dInput(attr, iso) {
   return '<div class="igd"><input class="inp sm" type="text" inputmode="numeric" maxlength="10" autocomplete="off" placeholder="' + esc(T.bp_date_placeholder) + '" data-date ' + attr + ' value="' + esc(dDisp(iso)) + '">' +
-    '<button type="button" class="dcal" data-act="datepick" title="' + esc(T.bp_pick_date) + '" aria-label="' + esc(T.bp_pick_date) + '">' + ic('cal', 14) + '</button>' +
-    '<input type="date" class="dnat" tabindex="-1" aria-hidden="true" value="' + esc(dDisp(iso) ? iso : '') + '"></div>';
+    '<button type="button" class="dcal" data-act="datepick" title="' + esc(T.bp_pick_date) + '" aria-label="' + esc(T.bp_pick_date) + '">' + ic('cal', 14) + '</button></div>';
+}
+/* ---------- calendar popup for the dd-mm-yyyy fields ---------- */
+var CAL = {pop: null, inp: null};
+var CAL_MONTHS = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+var CAL_DAYS = ['Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa', 'Su'];
+function cPad(n) { return (n < 10 ? '0' : '') + n; }
+function cParse(v) { var m = dIso(v).match(/^(\d{4})-(\d{2})-(\d{2})$/); return m ? {y: +m[1], m: +m[2], d: +m[3]} : null; }
+function cFmt(o) { return cPad(o.d) + '-' + cPad(o.m) + '-' + o.y; }
+function cToday() { var t = new Date(); return {y: t.getFullYear(), m: t.getMonth() + 1, d: t.getDate()}; }
+function calClose() {
+  if (CAL.pop) CAL.pop.remove();
+  CAL.pop = null; CAL.inp = null;
+  document.removeEventListener('mousedown', calOutside, true);
+  document.removeEventListener('keydown', calKey, true);
+  window.removeEventListener('resize', calPlace);
+  window.removeEventListener('scroll', calPlace, true);
+}
+function calOutside(e) {
+  var path = e.composedPath ? e.composedPath() : [];
+  if (CAL.pop && path.indexOf(CAL.pop) < 0 && !path.some(function (n) { return n.classList && n.classList.contains('dcal'); })) calClose();
+}
+function calKey(e) {
+  if (e.key !== 'Escape' || !CAL.pop) return;
+  e.stopPropagation(); e.preventDefault();
+  var i = CAL.inp; calClose(); if (i) i.focus();
+}
+function calPlace() {
+  if (!CAL.pop || !CAL.inp) return;
+  var r = CAL.inp.getBoundingClientRect(), w = CAL.pop.offsetWidth, h = CAL.pop.offsetHeight;
+  var top = r.bottom + 6, left = Math.max(8, Math.min(r.left, window.innerWidth - w - 8));
+  if (top + h > window.innerHeight - 8 && r.top - h - 6 > 8) top = r.top - h - 6;
+  CAL.pop.style.top = top + 'px'; CAL.pop.style.left = left + 'px';
+}
+function calPaint(view) {
+  var sel = cParse(CAL.inp.value), t = cToday(), lead = (new Date(view.y, view.m - 1, 1).getDay() + 6) % 7, h = '', i;
+  h += '<div class="cp-h"><button type="button" class="cp-n" data-dm="-1" aria-label="Previous month">&#8249;</button><select class="cp-m" aria-label="Month">';
+  for (i = 0; i < 12; i++) h += '<option value="' + (i + 1) + '"' + (view.m === i + 1 ? ' selected' : '') + '>' + CAL_MONTHS[i] + '</option>';
+  h += '</select><select class="cp-y" aria-label="Year">';
+  for (i = Math.min(1900, view.y); i <= Math.min(2100, Math.max(t.y + 20, view.y)); i++) h += '<option value="' + i + '"' + (view.y === i ? ' selected' : '') + '>' + i + '</option>';
+  h += '</select><button type="button" class="cp-n" data-dm="1" aria-label="Next month">&#8250;</button></div><div class="cp-w">';
+  for (i = 0; i < 7; i++) h += '<span>' + CAL_DAYS[i] + '</span>';
+  h += '</div><div class="cp-g">';
+  for (i = 0; i < 42; i++) {
+    var d = new Date(view.y, view.m - 1, 1 - lead + i), o = {y: d.getFullYear(), m: d.getMonth() + 1, d: d.getDate()};
+    var cls = 'cp-d' + (o.m !== view.m ? ' out' : '') + (o.y === t.y && o.m === t.m && o.d === t.d ? ' now' : '') + (sel && sel.y === o.y && sel.m === o.m && sel.d === o.d ? ' on' : '');
+    h += '<button type="button" class="' + cls + '" data-day="' + cFmt(o) + '"' + (o.y < 1900 || o.y > 2100 ? ' disabled' : '') + '>' + o.d + '</button>';
+  }
+  h += '</div><div class="cp-f"><button type="button" data-cact="today">Today</button><button type="button" data-cact="clear">Clear</button></div>';
+  CAL.pop.innerHTML = h; CAL.pop._view = view;
+  calPlace();
+}
+function calSet(text) {
+  var i = CAL.inp; calClose();
+  i.value = text;
+  i.dispatchEvent(new Event('input', {bubbles: true}));
+  i.focus();
+}
+function calOpen(inp) {
+  var same = CAL.inp === inp; calClose();
+  if (same) return;
+  CAL.inp = inp;
+  CAL.pop = document.createElement('div'); CAL.pop.className = 'cp-pop'; CAL.pop.setAttribute('role', 'dialog'); CAL.pop.setAttribute('aria-label', T.bp_pick_date);
+  R.appendChild(CAL.pop);
+  var sel = cParse(inp.value) || cToday();
+  calPaint({y: sel.y, m: sel.m});
+  CAL.pop.addEventListener('click', function (e) {
+    var b = e.target.closest('button'); if (!b) return;
+    if (b.dataset.dm) {
+      var v = CAL.pop._view, t = new Date(v.y, v.m - 1 + (+b.dataset.dm), 1);
+      calPaint({y: Math.max(1900, Math.min(2100, t.getFullYear())), m: t.getMonth() + 1});
+    } else if (b.dataset.day) calSet(b.dataset.day);
+    else if (b.dataset.cact) calSet(b.dataset.cact === 'today' ? cFmt(cToday()) : '');
+  });
+  CAL.pop.addEventListener('change', function (e) {
+    if (e.target.matches('.cp-m, .cp-y')) calPaint({y: +CAL.pop.querySelector('.cp-y').value, m: +CAL.pop.querySelector('.cp-m').value});
+  });
+  document.addEventListener('mousedown', calOutside, true);
+  document.addEventListener('keydown', calKey, true);
+  window.addEventListener('resize', calPlace);
+  window.addEventListener('scroll', calPlace, true);
+  var f = CAL.pop.querySelector('.cp-d.on, .cp-d.now'); if (f) f.focus();
 }
 function today() { var d = new Date(); return d.getFullYear() + '-' + ('0' + (d.getMonth() + 1)).slice(-2) + '-' + ('0' + d.getDate()).slice(-2); }
 function langName(l) { return l.name; }
@@ -2126,12 +2225,7 @@ R.addEventListener('click', function (e) {
     case 'dclose': closeDrawer(); break;
     case 'dsave': saveDrawer(); break;
     case 'idtoggle': idsToggle(); break;
-    case 'datepick': {
-      var grp = el.parentNode, nat = grp.querySelector('.dnat'), txt = grp.querySelector('[data-date]');
-      nat.value = dIso(txt.value) || '';
-      try { nat.showPicker(); } catch (er) { nat.focus(); nat.click(); }
-      break;
-    }
+    case 'datepick': calOpen(el.parentNode.querySelector('[data-date]')); break;
     case 'cseogen': seoGenerate(el.dataset.field, el.dataset.lid, el); break;
     case 'cseoall': seoGenerate('all', el.dataset.lid, el); break;
     case 'tab': {
@@ -2201,12 +2295,6 @@ R.addEventListener('click', function (e) {
 
 R.addEventListener('change', function (e) {
   var el = e.target, d = el.dataset;
-  if (el.classList && el.classList.contains('dnat')) {
-    var tx = el.parentNode.querySelector('[data-date]');
-    tx.value = dDisp(el.value);
-    tx.dispatchEvent(new Event('input', {bubbles: true}));
-    return;
-  }
   if (d.oo !== undefined) { optSync(el); if (DR) markDirty('options'); return; }
   if (d.act === 'tog' && denied('tog')) { el.checked = !el.checked; return; }
   if (d.act === 'tog') { setStatus([+d.id], el.checked ? 1 : 0, el); return; }
