@@ -3,7 +3,7 @@
 A fast, AJAX-based replacement for the default OpenCart product list.
 Find, filter, edit and add products from one page, without leaving the list.
 
-- **Version:** 1.1.5.10
+- **Version:** 1.1.5.19
 - **Author:** Bariklabs
 - **Compatibility:** OpenCart 3.0.3.x (admin, Twig, OCMOD)
 - **Tested on:** OpenCart 3.0.3.9, PHP 8.3, MariaDB 10.11
@@ -77,7 +77,7 @@ installed), the default OpenCart product list is used.
 | Setting | Description |
 |---|---|
 | Status | Turns the module on or off. |
-| Products per page | Initial page size: 5, 10, 25, 50 or 100. |
+| Default rows per page | Initial page size of the product list and the category list: 5, 10, 25, 50 or 100. |
 | Default sort | Name A–Z, Name Z–A, Newest first, Oldest first. |
 | Status of new products | Status given to products created with Quick Add. |
 | Category Manager | Replaces the default category list with the Category Manager. Needs the module Status above to be enabled. |
@@ -147,6 +147,12 @@ Display names are stored in the `bproduct_category_display` table, created on in
 ## Changelog
 
 **1.1.5.x**
+- 1.1.5.10: Settings has a Help tab with documentation, ticket, license and support, and a new version hint.
+- 1.1.5.9: Hover state for the Related Products rows.
+- 1.1.5.8: The Save button of the edit drawer is enabled only when there are changes.
+- 1.1.5.7: The drawer width field in the settings uses an input group.
+- 1.1.5.6: Setting for the edit drawer width (default 980 px) for the product and category forms.
+- 1.1.5.5: Search in the product list (name, model) and category list (name, display name) is case-insensitive and uses LIKE %keyword%.
 - 1.1.5.4: Settings has a Columns tab to show or hide the Model, Categories, Manufacturer, Price, Quantity and Date added columns of the product list.
 - 1.1.5.2–1.1.5.3: Cleaner manager headers (no logo, subtitle or version badge). The quick stats sit inline with the Add button.
 - 1.1.5.1: Category Manager shows the category image in the list, with the folder icon as fallback.

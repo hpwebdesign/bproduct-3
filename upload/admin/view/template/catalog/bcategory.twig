@@ -536,6 +536,8 @@ th.sortth{white-space:nowrap}
 .storeh:first-child{margin-top:0}
 .pickrow{display:flex;gap:10px;align-items:center;padding:8px 10px;border:1px solid var(--line);border-radius:10px;margin-bottom:6px;background:#fff}
 .pickrow small{color:var(--mute)}
+.ig{display:flex;gap:6px;align-items:flex-start}.ig .inp{flex:1;min-width:0}.ig .gen{flex:none;height:38px;width:38px;padding:0;display:grid;place-items:center}
+.btn.block{display:flex;width:100%;justify-content:center;align-items:center;gap:6px}
 .pickrow .x{margin-left:auto}
 .hdr-actions{display:flex;gap:8px;align-items:center}
 .head{align-items:center}
@@ -661,6 +663,7 @@ var ICONS = {
 search:'<circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>',
 plus:'<line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>',
 edit:'<path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/>',
+bolt:'<path d="M13 2L4 14h7l-1 8 9-12h-7z"/>',
 trash:'<polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6m5 0V4a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v2"/>',
 chev:'<polyline points="6 9 12 15 18 9"/>',
 check:'<polyline points="20 6 9 17 4 12"/>',
@@ -1113,11 +1116,48 @@ function dnPreview(pn) {
   var nm = pn.querySelector('[data-k="name"]').value.trim(), dn = pn.querySelector('[data-k="display"]').value.trim(), box = pn.querySelector('.dnprev');
   if (box) box.innerHTML = esc(T.bc_storefront_shows) + ' <b>' + esc(dn || nm || '—') + '</b>';
 }
+function seoToken() { var m = String(CFG.endpoint).match(/user_token=([^&]+)/); return m ? m[1] : ''; }
+function seoOn() { return !!CFG.complete_seo; }
+function genBtn(field, l) {
+  return seoOn() ? '<button type="button" class="btn ghost icon gen" data-act="cseogen" data-field="' + field + '" data-lid="' + l.language_id + '" title="' + esc(T.bc_seo_generate) + '" aria-label="' + esc(T.bc_seo_generate) + '">' + ic('bolt', 15) + '</button>' : '';
+}
+function igw(html, field, l) { return seoOn() ? '<div class="ig">' + html + genBtn(field, l) + '</div>' : html; }
+function seoPayload() {
+  var f = new URLSearchParams();
+  $$('.lp').forEach(function (pn) {
+    var lid = pn.dataset.lid, g = function (k) { var e = pn.querySelector('[data-k="' + k + '"]'); return e ? e.value : ''; };
+    ['name', 'meta_title', 'meta_description', 'meta_keyword', 'seo_h1', 'seo_h2', 'seo_h3'].forEach(function (k) { f.append('category_description[' + lid + '][' + k + ']', g(k)); });
+    var ed = pn.querySelector('.editor'), kw = $('[data-kwm="0|' + lid + '"]');
+    f.append('category_description[' + lid + '][description]', ed ? editorValue(ed) : '');
+    f.append('category_description[' + lid + '][seo_keyword]', kw ? kw.value : '');
+  });
+  f.append('parent_id', DR.parent ? DR.parent.id : 0);
+  return f;
+}
+function seoGenerate(field, lid, btn) {
+  if (!DR || !DR.loaded) return;
+  var url = 'index.php?route=module/complete_seo/get_value&type=category&id=' + (DR.id || 0) + '&field=' + encodeURIComponent(field) + '&store=0&lang=' + lid + '&user_token=' + seoToken();
+  if (btn) btn.disabled = true;
+  fetch(url, {method: 'POST', body: seoPayload(), credentials: 'same-origin'}).then(function (r) { return r.text(); }).then(function (t) {
+    var j = JSON.parse(t.slice(t.indexOf('{')));
+    Object.keys(j).forEach(function (key) {
+      var m = key.match(/^[a-z]+_description\[(\d+)\]\[([a-z0-9_]+)\]$/);
+      if (!m || m[2] === 'description') return;
+      var el = m[2] === 'seo_keyword' ? $('[data-kwm="0|' + m[1] + '"]') : $('.lp[data-lid="' + m[1] + '"] [data-k="' + m[2] + '"]');
+      if (!el) return;
+      el.value = j[key];
+      el.dispatchEvent(new Event('input', {bubbles: true}));
+      el.style.transition = ''; el.style.backgroundColor = '#FCFFC6';
+      setTimeout(function () { el.style.transition = 'background-color .6s'; el.style.backgroundColor = ''; }, 30);
+    });
+  }).catch(function () { toast(T.bc_seo_generate_failed, 'err'); }).then(function () { if (btn) btn.disabled = false; });
+}
 function seoGeneral(c, l, d) {
   if (!CFG.complete_seo) return '';
   var kw = (c.seo[0] && c.seo[0][l.language_id]) || '';
-  return '<div class="f"><label>' + esc(T.bc_entry_seo_keyword) + '</label><input class="inp" data-kwm="0|' + l.language_id + '" value="' + esc(kw) + '" placeholder="' + esc(T.bc_entry_seo_keyword) + '" autocomplete="off"></div>' +
-    ['seo_h1', 'seo_h2', 'seo_h3'].map(function (k) { return '<div class="f"><label>' + esc(T['bc_entry_' + k]) + '</label><input class="inp" data-k="' + k + '" value="' + esc(d[k] || '') + '" placeholder="' + esc(T['bc_entry_' + k]) + '"></div>'; }).join('');
+  return '<div class="f"><button type="button" class="btn ghost block" data-act="cseoall" data-lid="' + l.language_id + '">' + ic('bolt', 14) + ' ' + esc(T.bc_seo_generate_all) + '</button></div>' +
+    '<div class="f"><label>' + esc(T.bc_entry_seo_keyword) + '</label>' + igw('<input class="inp" data-kwm="0|' + l.language_id + '" value="' + esc(kw) + '" placeholder="' + esc(T.bc_entry_seo_keyword) + '" autocomplete="off">', 'seo_keyword', l) + '</div>' +
+    ['seo_h1', 'seo_h2', 'seo_h3'].map(function (k) { return '<div class="f"><label>' + esc(T['bc_entry_' + k]) + '</label>' + igw('<input class="inp" data-k="' + k + '" value="' + esc(d[k] || '') + '" placeholder="' + esc(T['bc_entry_' + k]) + '">', k, l) + '</div>'; }).join('');
 }
 function kwMirror(inp) {
   var m = $('[data-kwm="' + inp.dataset.seo + '"]');
@@ -1133,9 +1173,9 @@ function generalBody(c) {
         dnBox(l, d, c.display[l.language_id]) + '<div class="errtxt" data-e="display"></div>' +
         '<div class="f"><label>' + esc(T.bc_entry_description) + '</label>' + editorHtml(l.language_id, d.description) + '</div>' +
         seoGeneral(c, l, d) +
-        '<div class="f"><label>' + esc(T.bc_entry_meta_title) + ' <b class="req">*</b></label><input class="inp" data-k="meta_title" value="' + esc(d.meta_title) + '" placeholder="' + esc(T.bc_entry_meta_title) + '"><div class="errtxt" data-e="meta_title"></div></div>' +
-        '<div class="f"><label>' + esc(T.bc_entry_meta_description) + '</label><textarea class="inp" rows="3" data-k="meta_description" placeholder="' + esc(T.bc_entry_meta_description) + '">' + esc(d.meta_description) + '</textarea></div>' +
-        '<div class="f"><label>' + esc(T.bc_entry_meta_keyword) + '</label><input class="inp" data-k="meta_keyword" value="' + esc(d.meta_keyword) + '" placeholder="' + esc(T.bc_entry_meta_keyword) + '"></div>' + '</div>';
+        '<div class="f"><label>' + esc(T.bc_entry_meta_title) + ' <b class="req">*</b></label>' + igw('<input class="inp" data-k="meta_title" value="' + esc(d.meta_title) + '" placeholder="' + esc(T.bc_entry_meta_title) + '">', 'meta_title', l) + '<div class="errtxt" data-e="meta_title"></div></div>' +
+        '<div class="f"><label>' + esc(T.bc_entry_meta_description) + '</label>' + igw('<textarea class="inp" rows="3" data-k="meta_description" placeholder="' + esc(T.bc_entry_meta_description) + '">' + esc(d.meta_description) + '</textarea>', 'meta_description', l) + '</div>' +
+        '<div class="f"><label>' + esc(T.bc_entry_meta_keyword) + '</label>' + igw('<input class="inp" data-k="meta_keyword" value="' + esc(d.meta_keyword) + '" placeholder="' + esc(T.bc_entry_meta_keyword) + '">', 'meta_keyword', l) + '</div>' + '</div>';
     }).join('');
 }
 function collectGeneral() {
@@ -1375,6 +1415,7 @@ function saveDrawer() {
     headRefresh();
     toast(j.success);
     if (secs.indexOf('data') >= 0) load(); else { replaceRow(j.row); render(); }
+    closeDrawer(true);
   }).catch(function (e) { btn.disabled = false; fail(e); });
 }
 
@@ -1471,6 +1512,8 @@ R.addEventListener('click', function (e) {
     case 'cf-yes': { $('#cf').classList.remove('on'); var cb = cfCb; cfCb = null; if (cb) cb(); break; }
     case 'dclose': closeDrawer(); break;
     case 'dsave': saveDrawer(); break;
+    case 'cseogen': seoGenerate(el.dataset.field, el.dataset.lid, el); break;
+    case 'cseoall': seoGenerate('all', el.dataset.lid, el); break;
     case 'tab': {
       $$('.tabs button').forEach(function (b) { b.classList.toggle('on', b === el); });
       $$('.sec').forEach(function (s) { s.classList.toggle('on', s.dataset.s === el.dataset.sec); });
