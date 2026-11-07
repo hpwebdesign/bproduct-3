@@ -156,3 +156,6 @@ $_['bc_error_disabled'] = 'Quick Category Manager is disabled. Enable it in Exte
 $_['bc_error_invalid'] = 'Invalid request.';
 $_['bc_error_not_found'] = 'Category not found.';
 $_['bc_error_server'] = 'Server error. Please try again.';
+$_['bc_seo_generate'] = 'Generate value';
+$_['bc_seo_generate_all'] = 'Generate all SEO values';
+$_['bc_seo_generate_failed'] = 'The values could not be generated. Check the Complete SEO settings.';

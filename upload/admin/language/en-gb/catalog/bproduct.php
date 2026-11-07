@@ -194,3 +194,6 @@ $_['entry_seo_h3'] = 'SEO H3';
 $_['bp_entry_seo_keyword'] = 'Keyword';
 $_['entry_image_alt'] = 'Image alt';
 $_['entry_image_title'] = 'Image title';
+$_['bp_seo_generate'] = 'Generate value';
+$_['bp_seo_generate_all'] = 'Generate all SEO values';
+$_['bp_seo_generate_failed'] = 'The values could not be generated. Check the Complete SEO settings.';
