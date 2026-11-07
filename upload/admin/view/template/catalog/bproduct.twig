@@ -285,6 +285,11 @@ td.num{white-space:nowrap}
 .f small{color:var(--mute);display:block;margin-top:3px}
 .dg{display:grid;grid-template-columns:1fr 1fr;gap:0 14px}
 .dg .f.full{grid-column:1/-1}
+.dg.collapsed{display:none}
+button.dt{display:flex;align-items:center;gap:8px;width:100%;box-sizing:border-box;background:none;border:0;border-bottom:1px solid var(--line);cursor:pointer;text-align:left;font-family:inherit}
+button.dt:hover{color:var(--text)}
+.dtn{background:var(--blue-soft);color:var(--blue);border-radius:99px;padding:0 7px;font-size:10px;line-height:16px;letter-spacing:0}
+.dtc{margin-left:auto;display:inline-flex;transition:transform .15s}.dtt.open .dtc{transform:rotate(180deg)}
 .dt{font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--mute);margin:18px 0 10px;padding-bottom:6px;border-bottom:1px solid var(--line)}
 .dt:first-child{margin-top:0}
 .dim{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
@@ -1401,11 +1406,22 @@ function extraLinksHtml(d) {
   if (ex.indexOf('extension_id') > -1) h += dinp('extension_id', T.bp_entry_extension_id, d.extension_id);
   return h + '</div>';
 }
+function idsStartOpen() { return !!(CFG.barcode.on && CFG.barcode.source === 'sku'); }
+function idsHead(d) {
+  var n = ['sku', 'upc', 'ean', 'jan', 'isbn', 'mpn', 'location'].filter(function (k) { return String(d[k] || '').trim() !== ''; }).length, open = idsStartOpen();
+  return '<button type="button" class="dt dtt' + (open ? ' open' : '') + '" data-act="idtoggle" aria-expanded="' + (open ? 'true' : 'false') + '" aria-controls="idsgrid"><span>' + esc(T.bp_group_identifiers) + '</span>' + (n ? '<span class="dtn">' + n + '</span>' : '') + '<span class="dtc">' + ic('chev', 14) + '</span></button>';
+}
+function idsToggle(open) {
+  var g = $('#idsgrid'), b = $('[data-act="idtoggle"]');
+  if (!g || !b) return;
+  var o = open === undefined ? g.classList.contains('collapsed') : open;
+  g.classList.toggle('collapsed', !o); b.classList.toggle('open', o); b.setAttribute('aria-expanded', o ? 'true' : 'false');
+}
 function dataBody(p) {
   var d = p.data;
   var yn = function (k, v) { return '<select class="inp" data-d="' + k + '"><option value="1" ' + (+v ? 'selected' : '') + '>' + esc(T.text_yes) + '</option><option value="0" ' + (+v ? '' : 'selected') + '>' + esc(T.text_no) + '</option></select>'; };
   return '<div class="dt">' + esc(T.bp_group_general) + '</div><div class="dg"><div class="f"><label>' + esc(T.entry_model) + ' <b class="req">*</b></label>' + (CFG.barcode.on && CFG.barcode.source === 'model' ? '<div class="bcrow">' + modelInp(d) + bcBtn() + '</div>' : modelInp(d)) + '<div class="errtxt" data-e="model"></div></div></div>' +
-    '<div class="dt">' + esc(T.bp_group_identifiers) + '</div><div class="dg">' +
+    idsHead(d) + '<div class="dg' + (idsStartOpen() ? '' : ' collapsed') + '" id="idsgrid">' +
     ['sku', 'upc', 'ean', 'jan', 'isbn', 'mpn'].map(function (k) { return CFG.barcode.on && k === CFG.barcode.source ? dbarcode(k, d[k]) : dinp(k, T['entry_' + k], d[k]); }).join('') + dinp('location', T.entry_location, d.location) + '</div>' +
     (CFG.barcode.on ? '<div class="bcw" id="bc-box">' + bcBox(d[CFG.barcode.source]) + '</div>' : '') +
     extraLinksHtml(d) +
@@ -1823,7 +1839,7 @@ function applyErrors(err) {
     });
   });
   if (err.model) mark('data', $('[data-d="model"]'), err.model);
-  if (err.sku) mark('data', $('[data-d="sku"]'), err.sku);
+  if (err.sku) { idsToggle(true); mark('data', $('[data-d="sku"]'), err.sku); }
   if (err.keyword) Object.keys(err.keyword).forEach(function (sid) {
     Object.keys(err.keyword[sid]).forEach(function (lid) {
       var inp = $('[data-seo="' + sid + '|' + lid + '"]'), m = $('[data-seomsg="' + sid + '|' + lid + '"]');
@@ -2096,6 +2112,7 @@ R.addEventListener('click', function (e) {
     /* drawer */
     case 'dclose': closeDrawer(); break;
     case 'dsave': saveDrawer(); break;
+    case 'idtoggle': idsToggle(); break;
     case 'cseogen': seoGenerate(el.dataset.field, el.dataset.lid, el); break;
     case 'cseoall': seoGenerate('all', el.dataset.lid, el); break;
     case 'tab': {
