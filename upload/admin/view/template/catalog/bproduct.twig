@@ -343,9 +343,11 @@ button.dt:hover{color:var(--text)}
 .rh{display:flex;align-items:center;gap:10px;margin-bottom:10px}
 .rh select{max-width:170px}
 .rh .rm{margin-left:auto}
-.rl{display:flex;flex-wrap:wrap;align-items:flex-end;gap:10px}
-.rl label{display:block;font-size:11px;font-weight:700;color:var(--mute);text-transform:uppercase;letter-spacing:.03em;margin-bottom:3px}
-.rf-g{width:150px}.rf-q{width:72px}.rf-p{width:66px}.rf-pr{width:122px}.rf-d{width:140px}
+.rl{display:flex;flex-wrap:nowrap;align-items:flex-end;gap:8px}
+.rl label{white-space:nowrap;display:block;font-size:11px;font-weight:700;color:var(--mute);text-transform:uppercase;letter-spacing:.03em;margin-bottom:3px}
+.rf-g{flex:0 0 100px;width:100px}.rf-q{flex:0 0 62px}.rf-p{flex:0 0 62px}.rf-pr{flex:0 1 112px}.rf-d{flex:0 1 132px}
+.rl>div{min-width:0}.rl select,.rl .inp{min-width:0}.rl .bdg{flex:none;white-space:nowrap}
+@media(max-width:860px){.rl{flex-wrap:wrap}}
 .rl .bdg{margin-bottom:8px}.rl .rm{margin-left:auto}
 .igd{position:relative;display:flex}.igd .inp{flex:1;min-width:0;border-top-right-radius:0;border-bottom-right-radius:0}
 .dcal{flex:none;width:32px;display:grid;place-items:center;border:1px solid var(--line);border-left:0;border-radius:0 10px 10px 0;background:#f4f7fc;color:var(--mute);cursor:pointer;padding:0}
@@ -1722,9 +1724,9 @@ function ruleState(s, e) {
 function ruleHtml(kind, r, isNew) {
   var sp = kind === 'specials', st = ruleState(r.date_start, r.date_end);
   return '<div class="rule' + (isNew ? ' new' : '') + '" data-kind="' + kind + '"><div class="rl">' +
-    '<div class="rf-g"><label>' + esc(T.entry_customer_group) + '</label><select class="inp sm" data-r="customer_group_id">' +
+    '<div class="rf-g"><label>' + esc(T.bp_rule_group) + '</label><select class="inp sm" data-r="customer_group_id">' +
     CFG.customer_groups.map(function (g) { return '<option value="' + g.id + '" ' + (String(g.id) === String(r.customer_group_id) ? 'selected' : '') + '>' + esc(g.name) + '</option>'; }).join('') + '</select></div>' +
-    (sp ? '' : '<div class="rf-q"><label>' + esc(T.entry_quantity) + '</label><input class="inp sm" type="number" min="1" data-r="quantity" value="' + esc(r.quantity) + '"></div>') +
+    (sp ? '' : '<div class="rf-q"><label>' + esc(T.bp_rule_qty) + '</label><input class="inp sm" type="number" min="1" data-r="quantity" value="' + esc(r.quantity) + '"></div>') +
     '<div class="rf-p"><label>' + esc(T.entry_priority) + '</label><input class="inp sm" type="number" min="0" data-r="priority" value="' + esc(r.priority) + '"></div>' +
     '<div class="rf-pr"><label>' + esc(T.entry_price) + '</label>' + cur('<input class="inp sm" type="number" step="0.01" data-r="price" value="' + esc(r.price) + '" placeholder="0.00">') + '</div>' +
     '<div class="rf-d"><label>' + esc(T.entry_date_start) + '</label>' + dInput('data-r="date_start"', r.date_start) + '</div>' +
