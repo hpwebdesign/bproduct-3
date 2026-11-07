@@ -3,7 +3,7 @@
 A fast, AJAX-based replacement for the default OpenCart product list.
 Find, filter, edit and add products from one page, without leaving the list.
 
-- **Version:** 1.1.5.13
+- **Version:** 1.1.5.14
 - **Author:** Bariklabs
 - **Compatibility:** OpenCart 3.0.3.x (admin, Twig, OCMOD)
 - **Tested on:** OpenCart 3.0.3.9, PHP 8.3, MariaDB 10.11
@@ -77,7 +77,7 @@ installed), the default OpenCart product list is used.
 | Setting | Description |
 |---|---|
 | Status | Turns the module on or off. |
-| Products per page | Initial page size: 5, 10, 25, 50 or 100. |
+| Default rows per page | Initial page size of the product list and the category list: 5, 10, 25, 50 or 100. |
 | Default sort | Name A–Z, Name Z–A, Newest first, Oldest first. |
 | Status of new products | Status given to products created with Quick Add. |
 | Category Manager | Replaces the default category list with the Category Manager. Needs the module Status above to be enabled. |
