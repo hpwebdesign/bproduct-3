@@ -343,6 +343,14 @@ button.dt:hover{color:var(--text)}
 .rh{display:flex;align-items:center;gap:10px;margin-bottom:10px}
 .rh select{max-width:170px}
 .rh .rm{margin-left:auto}
+.rl{display:flex;flex-wrap:wrap;align-items:flex-end;gap:10px}
+.rl label{display:block;font-size:11px;font-weight:700;color:var(--mute);text-transform:uppercase;letter-spacing:.03em;margin-bottom:3px}
+.rf-g{width:150px}.rf-q{width:72px}.rf-p{width:66px}.rf-pr{width:122px}.rf-d{width:140px}
+.rl .bdg{margin-bottom:8px}.rl .rm{margin-left:auto}
+.igd{position:relative;display:flex}.igd .inp{flex:1;min-width:0;border-top-right-radius:0;border-bottom-right-radius:0}
+.dcal{flex:none;width:32px;display:grid;place-items:center;border:1px solid var(--line);border-left:0;border-radius:0 10px 10px 0;background:#f4f7fc;color:var(--mute);cursor:pointer;padding:0}
+.dcal:hover{background:var(--blue-soft);color:var(--blue)}
+.dnat{position:absolute;right:0;bottom:0;width:1px;height:1px;opacity:0;pointer-events:none}
 .rg{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:10px}
 .rg label{display:block;font-size:11px;font-weight:700;color:var(--mute);text-transform:uppercase;letter-spacing:.03em;margin-bottom:3px}
 .pctw{position:relative}
@@ -658,6 +666,7 @@ search:'<circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.6
 plus:'<line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>',
 edit:'<path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/>',
 bolt:'<path d="M13 2L4 14h7l-1 8 9-12h-7z"/>',
+cal:'<rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/>',
 trash:'<polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6m5 0V4a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v2"/>',
 chev:'<polyline points="6 9 12 15 18 9"/>',
 check:'<polyline points="20 6 9 17 4 12"/>',
@@ -1110,7 +1119,9 @@ function dMask(el) {
   if (el.value !== o) el.value = o;
 }
 function dInput(attr, iso) {
-  return '<input class="inp sm" type="text" inputmode="numeric" maxlength="10" autocomplete="off" placeholder="' + esc(T.bp_date_placeholder) + '" data-date ' + attr + ' value="' + esc(dDisp(iso)) + '">';
+  return '<div class="igd"><input class="inp sm" type="text" inputmode="numeric" maxlength="10" autocomplete="off" placeholder="' + esc(T.bp_date_placeholder) + '" data-date ' + attr + ' value="' + esc(dDisp(iso)) + '">' +
+    '<button type="button" class="dcal" data-act="datepick" title="' + esc(T.bp_pick_date) + '" aria-label="' + esc(T.bp_pick_date) + '">' + ic('cal', 14) + '</button>' +
+    '<input type="date" class="dnat" tabindex="-1" aria-hidden="true" value="' + esc(dDisp(iso) ? iso : '') + '"></div>';
 }
 function today() { var d = new Date(); return d.getFullYear() + '-' + ('0' + (d.getMonth() + 1)).slice(-2) + '-' + ('0' + d.getDate()).slice(-2); }
 function langName(l) { return l.name; }
@@ -1611,14 +1622,16 @@ function ruleState(s, e) {
 }
 function ruleHtml(kind, r, isNew) {
   var sp = kind === 'specials', st = ruleState(r.date_start, r.date_end);
-  return '<div class="rule' + (isNew ? ' new' : '') + '" data-kind="' + kind + '"><div class="rh"><select class="inp sm" data-r="customer_group_id">' +
-    CFG.customer_groups.map(function (g) { return '<option value="' + g.id + '" ' + (String(g.id) === String(r.customer_group_id) ? 'selected' : '') + '>' + esc(g.name) + '</option>'; }).join('') +
-    '</select><span class="bdg ' + st[1] + '" data-r="st">' + esc(st[0]) + '</span><button type="button" class="rm btn red icon sm" data-act="rmrule" aria-label="' + esc(T.button_remove) + '">' + ic('trash', 14) + '</button></div><div class="rg">' +
-    (sp ? '' : '<div><label>' + esc(T.entry_quantity) + '</label><input class="inp sm" type="number" min="1" data-r="quantity" value="' + esc(r.quantity) + '"></div>') +
-    '<div><label>' + esc(T.entry_priority) + '</label><input class="inp sm" type="number" min="0" data-r="priority" value="' + esc(r.priority) + '"></div>' +
-    '<div><label>' + esc(T.entry_price) + '</label>' + cur('<input class="inp sm" type="number" step="0.01" data-r="price" value="' + esc(r.price) + '" placeholder="0.00">') + '</div>' +
-    '<div><label>' + esc(T.entry_date_start) + '</label>' + dInput('data-r="date_start"', r.date_start) + '</div>' +
-    '<div><label>' + esc(T.entry_date_end) + '</label>' + dInput('data-r="date_end"', r.date_end) + '</div></div><div class="rmsg"></div></div>';
+  return '<div class="rule' + (isNew ? ' new' : '') + '" data-kind="' + kind + '"><div class="rl">' +
+    '<div class="rf-g"><label>' + esc(T.entry_customer_group) + '</label><select class="inp sm" data-r="customer_group_id">' +
+    CFG.customer_groups.map(function (g) { return '<option value="' + g.id + '" ' + (String(g.id) === String(r.customer_group_id) ? 'selected' : '') + '>' + esc(g.name) + '</option>'; }).join('') + '</select></div>' +
+    (sp ? '' : '<div class="rf-q"><label>' + esc(T.entry_quantity) + '</label><input class="inp sm" type="number" min="1" data-r="quantity" value="' + esc(r.quantity) + '"></div>') +
+    '<div class="rf-p"><label>' + esc(T.entry_priority) + '</label><input class="inp sm" type="number" min="0" data-r="priority" value="' + esc(r.priority) + '"></div>' +
+    '<div class="rf-pr"><label>' + esc(T.entry_price) + '</label>' + cur('<input class="inp sm" type="number" step="0.01" data-r="price" value="' + esc(r.price) + '" placeholder="0.00">') + '</div>' +
+    '<div class="rf-d"><label>' + esc(T.entry_date_start) + '</label>' + dInput('data-r="date_start"', r.date_start) + '</div>' +
+    '<div class="rf-d"><label>' + esc(T.entry_date_end) + '</label>' + dInput('data-r="date_end"', r.date_end) + '</div>' +
+    '<span class="bdg ' + st[1] + '" data-r="st">' + esc(st[0]) + '</span>' +
+    '<button type="button" class="rm btn red icon sm" data-act="rmrule" aria-label="' + esc(T.button_remove) + '">' + ic('trash', 14) + '</button></div><div class="rmsg"></div></div>';
 }
 function rulesBody(kind, p) {
   var sp = kind === 'specials', rows = p[kind];
@@ -2113,6 +2126,12 @@ R.addEventListener('click', function (e) {
     case 'dclose': closeDrawer(); break;
     case 'dsave': saveDrawer(); break;
     case 'idtoggle': idsToggle(); break;
+    case 'datepick': {
+      var grp = el.parentNode, nat = grp.querySelector('.dnat'), txt = grp.querySelector('[data-date]');
+      nat.value = dIso(txt.value) || '';
+      try { nat.showPicker(); } catch (er) { nat.focus(); nat.click(); }
+      break;
+    }
     case 'cseogen': seoGenerate(el.dataset.field, el.dataset.lid, el); break;
     case 'cseoall': seoGenerate('all', el.dataset.lid, el); break;
     case 'tab': {
@@ -2182,6 +2201,12 @@ R.addEventListener('click', function (e) {
 
 R.addEventListener('change', function (e) {
   var el = e.target, d = el.dataset;
+  if (el.classList && el.classList.contains('dnat')) {
+    var tx = el.parentNode.querySelector('[data-date]');
+    tx.value = dDisp(el.value);
+    tx.dispatchEvent(new Event('input', {bubbles: true}));
+    return;
+  }
   if (d.oo !== undefined) { optSync(el); if (DR) markDirty('options'); return; }
   if (d.act === 'tog' && denied('tog')) { el.checked = !el.checked; return; }
   if (d.act === 'tog') { setStatus([+d.id], el.checked ? 1 : 0, el); return; }

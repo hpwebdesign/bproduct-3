@@ -197,3 +197,4 @@ $_['entry_image_title'] = 'Image title';
 $_['bp_seo_generate'] = 'Generate value';
 $_['bp_seo_generate_all'] = 'Generate all SEO values';
 $_['bp_seo_generate_failed'] = 'The values could not be generated. Check the Complete SEO settings.';
+$_['bp_pick_date'] = 'Pick a date';
