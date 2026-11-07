@@ -150,6 +150,17 @@ class ControllerCatalogBproduct extends Controller {
 		return $data;
 	}
 
+	private function currencyInfo() {
+		$code = $this->config->get('config_currency');
+		$info = $this->model_localisation_currency->getCurrencyByCode($code);
+
+		return array(
+			'code'  => (string)$code,
+			'left'  => $info ? html_entity_decode((string)$info['symbol_left'], ENT_QUOTES, 'UTF-8') : '',
+			'right' => $info ? html_entity_decode((string)$info['symbol_right'], ENT_QUOTES, 'UTF-8') : ''
+		);
+	}
+
 	private function completeSeo() {
 		if ((int)$this->config->get('module_complete_seo_status') !== 1) {
 			return false;
@@ -192,6 +203,7 @@ class ControllerCatalogBproduct extends Controller {
 		$this->load->model('localisation/weight_class');
 		$this->load->model('design/layout');
 		$this->load->model('tool/image');
+		$this->load->model('localisation/currency');
 
 		$languages = array();
 
@@ -247,6 +259,7 @@ class ControllerCatalogBproduct extends Controller {
 				'source' => $this->barcodeSource()
 			),
 			'can_modify'     => $this->user->hasPermission('modify', 'catalog/product') ? 1 : 0,
+			'currency'       => $this->currencyInfo(),
 			'complete_seo'   => $this->completeSeo() ? 1 : 0,
 			'seo_fields'     => $this->seoFields(),
 			'default_status' => (int)$this->config->get('config_stock_status_id')

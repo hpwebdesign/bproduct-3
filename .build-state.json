@@ -1,10 +1,10 @@
 {
-    "version": "1.1.5.12",
+    "version": "1.1.5.13",
     "files": {
         "install.xml": "d1858244aaf92c8bcb46b7c63d0f6dd1f585495b0450f11864e5188327a6f45e",
         "upload/admin/controller/catalog/bcategory.php": "91f9c913d7f495ddb837c3232cd76025f7ce4fb9e913b87d6be9fd7eec624a9a",
         "upload/admin/controller/catalog/bmedia.php": "111cb90beb08a3f3767b39325b1389999b7f980e02724220e2bb297b78869038",
-        "upload/admin/controller/catalog/bproduct.php": "74aa5ceb12fddb522e77df117e69afca1056e63195e91787c4602ae626fdf014",
+        "upload/admin/controller/catalog/bproduct.php": "3222d7a863be06be83a074695c3ff27a1ba011dac22567e05ea068a93ed85b75",
         "upload/admin/controller/common/bariklabs.php": "2dcab831830275fe301cc34bc0a0b0e82e0f98058d4bd4304273496335d9f78c",
         "upload/admin/controller/extension/module/bproduct.php": "49b49a20f12b13e854f8d9d3d793182839d8fba285df770640510826432174a3",
         "upload/admin/language/en-gb/catalog/bcategory.php": "bd200d7d5b06384262c606cfc00b3b031270a05c860517182e612f10cf29c4e7",
@@ -17,7 +17,7 @@
         "upload/admin/view/javascript/bproduct/settings.js": "11180a57d7b7aff71b5656abeb5c702b337f5d749c72a8ebcda61fee7bb6556b",
         "upload/admin/view/stylesheet/bproduct/settings.css": "1e2033c914729e15b01663a97070e9383231e6ce2777a7c5e1973fcea89caeaf",
         "upload/admin/view/template/catalog/bcategory.twig": "5284af3d6abbd12842477b00221dbdb15e7f20ec911c0248f52fa61eb54db3a2",
-        "upload/admin/view/template/catalog/bproduct.twig": "628ecaffae763a38f406be7b3e6011dbcbec1853db34f7d1c5a41f7b3e2f98e2",
+        "upload/admin/view/template/catalog/bproduct.twig": "4e414d073bf66b506e8947d3d038f596c33fdc0917cb2627639af812f1012617",
         "upload/admin/view/template/extension/module/bproduct.twig": "480c9473f7e74125d95c4c0fd63c53f71ebe2d416ad956e27f43a1e000014f48",
         "upload/catalog/controller/extension/module/bproduct.php": "e04b119eecb178b4887d80b67c21c1a5dbfd4f445728efedb92efd79d846dcf5",
         "upload/catalog/model/extension/module/bproduct.php": "84c61894787e58826f5a728ee899bf05526c333ef196b6df4706620d06506bc9"

@@ -539,6 +539,11 @@ th.sortth{white-space:nowrap}
 .pickrow{display:flex;gap:10px;align-items:center;padding:8px 10px;border:1px solid var(--line);border-radius:10px;margin-bottom:6px;background:#fff;transition:background-color .15s,border-color .15s,box-shadow .15s}
 .pickrow:hover{background:#f6f8ff;border-color:#c9d6f5;box-shadow:0 2px 8px rgba(20,40,90,.06)}
 .pickrow small{color:var(--mute)}
+.igc{display:flex;align-items:stretch}.igc .inp{flex:1;min-width:0}
+.igc-ad{display:flex;align-items:center;padding:0 12px;border:1px solid var(--line);background:#f4f7fc;color:var(--mute);font-weight:700;font-size:13px;white-space:nowrap}
+.igc-ad.l{border-right:0;border-radius:10px 0 0 10px}.igc-ad.r{border-left:0;border-radius:0 10px 10px 0}
+.igc .inp:not(:first-child){border-top-left-radius:0;border-bottom-left-radius:0}.igc .inp:not(:last-child){border-top-right-radius:0;border-bottom-right-radius:0}
+.igc .inp:focus{position:relative;z-index:1}
 .ig{display:flex;gap:6px;align-items:flex-start}.ig .inp{flex:1;min-width:0}.ig .gen{flex:none;height:38px;width:38px;padding:0;display:grid;place-items:center}
 .btn.block{display:flex;width:100%;justify-content:center;align-items:center;gap:6px}
 .pickrow .x{margin-left:auto}
@@ -1317,6 +1322,12 @@ function checkLang() {
 }
 
 /* ---------- section: data ---------- */
+function cur(html) {
+  var c = CFG.currency || {}, l = c.left || '', r = c.right || '';
+  if (!l && !r) r = c.code || '';
+  if (!l && !r) return html;
+  return '<div class="igc">' + (l ? '<span class="igc-ad l">' + esc(l) + '</span>' : '') + html + (r ? '<span class="igc-ad r">' + esc(r) + '</span>' : '') + '</div>';
+}
 function dinp(k, label, v, extra) {
   return '<div class="f ' + (extra || '') + '"><label>' + esc(label) + '</label><input class="inp" data-d="' + k + '" value="' + esc(v) + '" placeholder="' + esc(label) + '" autocomplete="off"></div>';
 }
@@ -1399,7 +1410,7 @@ function dataBody(p) {
     (CFG.barcode.on ? '<div class="bcw" id="bc-box">' + bcBox(d[CFG.barcode.source]) + '</div>' : '') +
     extraLinksHtml(d) +
     '<div class="dt">' + esc(T.bp_group_price_stock) + '</div><div class="dg">' +
-    dinp('price', T.entry_price, d.price) + dsel('tax_class_id', T.entry_tax_class, CFG.tax_classes, d.tax_class_id, true) +
+    '<div class="f"><label>' + esc(T.entry_price) + '</label>' + cur('<input class="inp" data-d="price" value="' + esc(d.price) + '" placeholder="' + esc(T.entry_price) + '" autocomplete="off">') + '</div>' + dsel('tax_class_id', T.entry_tax_class, CFG.tax_classes, d.tax_class_id, true) +
     dinp('quantity', T.entry_quantity, d.quantity) + dinp('minimum', T.entry_minimum, d.minimum) +
     '<div class="f"><label>' + esc(T.entry_subtract) + '</label>' + yn('subtract', d.subtract) + '</div>' + dsel('stock_status_id', T.entry_stock_status, CFG.stock_statuses, d.stock_status_id) +
     '<div class="f"><label>' + esc(T.entry_date_available) + '</label>' + dInput('data-d="date_available"', d.date_available).replace('inp sm', 'inp') + '</div></div>' +
@@ -1589,7 +1600,7 @@ function ruleHtml(kind, r, isNew) {
     '</select><span class="bdg ' + st[1] + '" data-r="st">' + esc(st[0]) + '</span><button type="button" class="rm btn red icon sm" data-act="rmrule" aria-label="' + esc(T.button_remove) + '">' + ic('trash', 14) + '</button></div><div class="rg">' +
     (sp ? '' : '<div><label>' + esc(T.entry_quantity) + '</label><input class="inp sm" type="number" min="1" data-r="quantity" value="' + esc(r.quantity) + '"></div>') +
     '<div><label>' + esc(T.entry_priority) + '</label><input class="inp sm" type="number" min="0" data-r="priority" value="' + esc(r.priority) + '"></div>' +
-    '<div><label>' + esc(T.entry_price) + '</label><input class="inp sm" type="number" step="0.01" data-r="price" value="' + esc(r.price) + '" placeholder="0.00"></div>' +
+    '<div><label>' + esc(T.entry_price) + '</label>' + cur('<input class="inp sm" type="number" step="0.01" data-r="price" value="' + esc(r.price) + '" placeholder="0.00">') + '</div>' +
     '<div><label>' + esc(T.entry_date_start) + '</label>' + dInput('data-r="date_start"', r.date_start) + '</div>' +
     '<div><label>' + esc(T.entry_date_end) + '</label>' + dInput('data-r="date_end"', r.date_end) + '</div></div><div class="rmsg"></div></div>';
 }
