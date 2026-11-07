@@ -1,0 +1,11 @@
+Add Help tab in the module settings: documentation and support links, license and support details, and a notice when a new version is available
+Add setting for the edit drawer width (default 980 px, range 600 to 1600) used by the product and category forms
+Add hover state to the Related Products rows
+Change drawer Save button to be enabled only when something has changed
+Change search to case-insensitive LIKE %keyword%: product name or model in the product list, category name or display name in the category list
+Change drawer width field in the settings to an input group (value and unit on one line)
+
+Upgrade notes
+Install the package, Refresh modifications, hard refresh the manager page (Ctrl+F5)
+Open Settings and check the Help tab; the drawer width keeps 980 px until you change it
+No database changes

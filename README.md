@@ -147,6 +147,12 @@ Display names are stored in the `bproduct_category_display` table, created on in
 ## Changelog
 
 **1.1.5.x**
+- 1.1.5.10: Settings has a Help tab with documentation, ticket, license and support, and a new version hint.
+- 1.1.5.9: Hover state for the Related Products rows.
+- 1.1.5.8: The Save button of the edit drawer is enabled only when there are changes.
+- 1.1.5.7: The drawer width field in the settings uses an input group.
+- 1.1.5.6: Setting for the edit drawer width (default 980 px) for the product and category forms.
+- 1.1.5.5: Search in the product list (name, model) and category list (name, display name) is case-insensitive and uses LIKE %keyword%.
 - 1.1.5.4: Settings has a Columns tab to show or hide the Model, Categories, Manufacturer, Price, Quantity and Date added columns of the product list.
 - 1.1.5.2–1.1.5.3: Cleaner manager headers (no logo, subtitle or version badge). The quick stats sit inline with the Add button.
 - 1.1.5.1: Category Manager shows the category image in the list, with the folder icon as fallback.
