@@ -1415,6 +1415,7 @@ function saveDrawer() {
     headRefresh();
     toast(j.success);
     if (secs.indexOf('data') >= 0) load(); else { replaceRow(j.row); render(); }
+    closeDrawer(true);
   }).catch(function (e) { btn.disabled = false; fail(e); });
 }
 

@@ -1866,6 +1866,7 @@ function saveDrawer() {
     headRefresh();
     render();
     toast(j.success);
+    closeDrawer(true);
   }).catch(function (e) { btn.disabled = false; fail(e); });
 }
 
