@@ -7,7 +7,7 @@ class ControllerExtensionModuleBproduct extends Controller {
 	private $error = array();
 
 	private $v_d = '';
-	private $version = '1.1.5.9';
+	private $version = '1.1.5.10';
 	private $extension_code = 'bproduct';
 	private $domain = '';
 	private $extension_type = 'com';
@@ -43,8 +43,14 @@ class ControllerExtensionModuleBproduct extends Controller {
 
 		$data['version'] = $this->version;
 		$data['extension_code'] = $this->extension_code;
-		$data['doc_link'] = 'https://hpwebdesign.' . $this->extension_type . '/docs/' . $this->extension_code;
-		$data['ticket_link'] = 'https://hpwebdesign.' . $this->extension_type . '/support';
+		$data['doc_link'] = 'https://bariklabs.com/docs/' . $this->extension_code;
+		$data['ticket_link'] = 'https://bariklabs.com/support';
+
+		$token = $this->session->data['user_token'];
+
+		$data['support_url'] = 'index.php?route=common/hp_validate/support&user_token=' . $token;
+		$data['license_url'] = 'index.php?route=common/hp_validate/license&user_token=' . $token . '&code=' . $this->extension_code . '&version=' . $this->version;
+		$data['version_url'] = 'https://hpwebdesign.' . $this->extension_type . '/index.php?route=common/extension/version&code=' . $this->extension_code . '&oc=3.0.x.x';
 
 		$data['error_warning'] = isset($this->error['warning']) ? $this->error['warning'] : '';
 
