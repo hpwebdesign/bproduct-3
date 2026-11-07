@@ -136,6 +136,21 @@
 
 	$save.on('click', save);
 
+	/* help tab: license and support come from the shared validate module */
+	if ($root.data('support')) $('#support').load($root.data('support'));
+	if ($root.data('license')) $('#license').load($root.data('license'));
+
+	/* new version hint */
+	if ($root.data('version-url')) {
+		$.get($root.data('version-url'), function (data) {
+			var current = String($root.data('version')).replace(/\D/g, ''), latest = String(data).replace(/\D/g, '');
+
+			if (latest && Number(current) < Number(latest)) {
+				$('<div class="bps-ver"><i class="fa fa-exclamation-circle"></i> </div>').append($root.data('upgrade')).insertBefore('.bps-ph');
+			}
+		});
+	}
+
 	$form.on('submit', function (e) { e.preventDefault(); save(); });
 
 	$(document).on('keydown', function (e) {

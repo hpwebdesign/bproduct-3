@@ -23,7 +23,12 @@
 			data-save="{{ action }}"
 			data-unsaved="{{ text_unsaved|e('html_attr') }}"
 			data-fail="{{ text_request_failed|e('html_attr') }}"
-			data-denied="{{ error_permission|e('html_attr') }}">
+			data-denied="{{ error_permission|e('html_attr') }}"
+			data-support="{{ support_url|e('html_attr') }}"
+			data-license="{{ license_url|e('html_attr') }}"
+			data-version="{{ version }}"
+			data-version-url="{{ version_url|e('html_attr') }}"
+			data-upgrade="{{ text_upgrade_version|e('html_attr') }}">
 
 			<div class="bps-ph">
 				<div><h1>{{ heading_title2 }} <span class="bps-pill bps-pill-inline">{{ text_build }} · v{{ version }}</span></h1><p>{{ text_subtitle }}</p></div>
@@ -44,6 +49,8 @@
 					<a href="#bps-columns" data-bps-tab="columns" class="bps-snav"><i class="fa fa-table"></i> {{ tab_columns }}</a>
 					<div class="bps-sg">{{ nav_editor }}</div>
 					<a href="#bps-tabs" data-bps-tab="tabs" class="bps-snav"><i class="fa fa-columns"></i> {{ tab_editor }}</a>
+					<div class="bps-sg">{{ nav_system }}</div>
+					<a href="#bps-help" data-bps-tab="help" class="bps-snav"><i class="fa fa-question-circle"></i> {{ tab_help }}</a>
 				</nav>
 
 				<main class="bps-main">
@@ -160,6 +167,23 @@
 					</div>
 
 					</form>
+					<div class="bps-pane" id="bps-help">
+						<div class="bps-card">
+							<div class="bps-card-h"><h3>{{ tab_help }}</h3></div>
+							<div class="bps-row">
+								<div class="bps-row-l"><b>{{ text_documentation }}</b></div>
+								<div class="bps-row-r"><a target="_blank" rel="noopener" class="btn btn-default" href="{{ doc_link }}"><i class="fa fa-book"></i> {{ text_documentation }}</a></div>
+							</div>
+							<div class="bps-row">
+								<div class="bps-row-l"><b>{{ text_raise_ticket }}</b></div>
+								<div class="bps-row-r"><a target="_blank" rel="noopener" class="btn btn-default" href="{{ ticket_link }}"><i class="fa fa-life-ring"></i> {{ text_raise_ticket }}</a></div>
+							</div>
+						</div>
+						<div class="bps-card bps-helpcard">
+							<div id="license"></div>
+							<div id="support"></div>
+						</div>
+					</div>
 				</main>
 			</div>
 
