@@ -1,10 +1,10 @@
 {
-    "version": "1.1.5.22",
+    "version": "1.1.5.23",
     "files": {
         "install.xml": "d1858244aaf92c8bcb46b7c63d0f6dd1f585495b0450f11864e5188327a6f45e",
-        "upload/admin/controller/catalog/bcategory.php": "91f9c913d7f495ddb837c3232cd76025f7ce4fb9e913b87d6be9fd7eec624a9a",
+        "upload/admin/controller/catalog/bcategory.php": "cf103c8bd0068c19b84e305689c519bbd0446465a89a8038cd52181c00bae13e",
         "upload/admin/controller/catalog/bmedia.php": "7e15ef4bebac01f8131f67da6ef9f647c67fd0078c10b683c922f27f4cb3b4fb",
-        "upload/admin/controller/catalog/bproduct.php": "820dffba0028ea1719c16a06fa345d61e766bf58daff7a292ddc19e8a0245a91",
+        "upload/admin/controller/catalog/bproduct.php": "5dc0c5a18da7d76213aedab426eaf74616f6452c6c7ced0b2506a61423cf69d6",
         "upload/admin/controller/common/bariklabs.php": "2dcab831830275fe301cc34bc0a0b0e82e0f98058d4bd4304273496335d9f78c",
         "upload/admin/controller/extension/module/bproduct.php": "49b49a20f12b13e854f8d9d3d793182839d8fba285df770640510826432174a3",
         "upload/admin/language/en-gb/catalog/bcategory.php": "bd200d7d5b06384262c606cfc00b3b031270a05c860517182e612f10cf29c4e7",
@@ -16,8 +16,8 @@
         "upload/admin/view/javascript/bproduct/hpmm_common.js": "266af640dacdf554b8ce4307a0fa092c2d26b11f6cf3198a5c3177bc01a9abc3",
         "upload/admin/view/javascript/bproduct/settings.js": "11180a57d7b7aff71b5656abeb5c702b337f5d749c72a8ebcda61fee7bb6556b",
         "upload/admin/view/stylesheet/bproduct/settings.css": "1e2033c914729e15b01663a97070e9383231e6ce2777a7c5e1973fcea89caeaf",
-        "upload/admin/view/template/catalog/bcategory.twig": "5284af3d6abbd12842477b00221dbdb15e7f20ec911c0248f52fa61eb54db3a2",
-        "upload/admin/view/template/catalog/bproduct.twig": "f472a5e3bf4c0e76312454d2b3ede64b195b1e80faaf9cfed937e16a65223ae8",
+        "upload/admin/view/template/catalog/bcategory.twig": "0e18a59892c4f55988f99bf91baefd673511a1e35192d58294d339c4f5db6a73",
+        "upload/admin/view/template/catalog/bproduct.twig": "05f04fb7cd79d082b36de8d26250ad7c6739015406591b3678f91e229e1d5931",
         "upload/admin/view/template/extension/module/bproduct.twig": "480c9473f7e74125d95c4c0fd63c53f71ebe2d416ad956e27f43a1e000014f48",
         "upload/catalog/controller/extension/module/bproduct.php": "e04b119eecb178b4887d80b67c21c1a5dbfd4f445728efedb92efd79d846dcf5",
         "upload/catalog/model/extension/module/bproduct.php": "84c61894787e58826f5a728ee899bf05526c333ef196b6df4706620d06506bc9"

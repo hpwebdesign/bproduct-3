@@ -125,6 +125,7 @@ class ControllerCatalogBproduct extends Controller {
 
 		$data['bp_lang'] = $this->encodeForScript($this->language->all());
 		$data['bp_config'] = $this->encodeForScript($this->getConfig());
+		$data['bp_asset_v'] = (int)@filemtime(DIR_APPLICATION . 'view/javascript/bproduct/hpmm_common.js');
 
 		$data['header'] = $this->load->controller('common/header');
 		$data['column_left'] = $this->load->controller('common/column_left');

@@ -7,7 +7,7 @@ class ControllerExtensionModuleBproduct extends Controller {
 	private $error = array();
 
 	private $v_d = '';
-	private $version = '1.1.5.22';
+	private $version = '1.1.5.23';
 	private $extension_code = 'bproduct';
 	private $domain = '';
 	private $extension_type = 'com';

@@ -14,7 +14,7 @@
     <div id="bp-host"></div>
   </div>
 </div>
-<script src="view/javascript/bproduct/hpmm_common.js"></script>
+<script src="view/javascript/bproduct/hpmm_common.js?v={{ bp_asset_v }}"></script>
 <script type="application/json" id="bp-config">{{ bp_config }}</script>
 <script type="application/json" id="bp-lang">{{ bp_lang }}</script>
 <template id="bp-shell"><style>{% verbatim %}
@@ -2366,7 +2366,7 @@ R.addEventListener('click', function (e) {
     case 'dclose': closeDrawer(); break;
     case 'dsave': saveDrawer(); break;
     case 'idtoggle': idsToggle(); break;
-    case 'imgbulk': if (CFG.hpmm && window.bpUploader) { window.bpUploader.hpmmMulti(addImages); } else { bmOpen(); } break;
+    case 'imgbulk': if (CFG.hpmm && window.bpUploader && typeof window.bpUploader.hpmmMulti === 'function') { window.bpUploader.hpmmMulti(addImages); } else { bmOpen(); } break;
     case 'datepick': calOpen(el.parentNode.querySelector('[data-date]')); break;
     case 'cseogen': seoGenerate(el.dataset.field, el.dataset.lid, el); break;
     case 'cseoall': seoGenerate('all', el.dataset.lid, el); break;
