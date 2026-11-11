@@ -91,7 +91,7 @@ class ControllerCatalogBproduct extends Controller {
 	private function ajaxMedia() {
 		$op = isset($this->request->get['op']) ? $this->request->get['op'] : '';
 
-		if (in_array($op, array('limits', 'upload', 'download'))) {
+		if (in_array($op, array('limits', 'upload', 'download', 'browse'))) {
 			$this->load->controller('catalog/bmedia/' . $op);
 		} else {
 			$this->json(array('error' => $this->language->get('bp_error_invalid')));
@@ -260,6 +260,7 @@ class ControllerCatalogBproduct extends Controller {
 			),
 			'can_modify'     => $this->user->hasPermission('modify', 'catalog/product') ? 1 : 0,
 			'currency'       => $this->currencyInfo(),
+			'hpmm'           => (is_file(DIR_APPLICATION . 'controller/common/hpmm.php') && $this->user->hasPermission('access', 'common/hpmm')) ? 1 : 0,
 			'complete_seo'   => $this->completeSeo() ? 1 : 0,
 			'seo_fields'     => $this->seoFields(),
 			'default_status' => (int)$this->config->get('config_stock_status_id')

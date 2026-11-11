@@ -289,14 +289,104 @@ var bpUploader = (function() {
 		});
 	}
 
+	// hpmm file manager in its multiple mode (checkboxes and the green Insert button); the picked images go to onFiles
+	var multiWatch = null;
+
+	function hpmmMulti(onFiles) {
+		var $box = $('#bp-mm-box');
+		var directory = '';
+
+		if (!$box.length) {
+			$box = $('<span id="bp-mm-box" style="display:none"><input type="hidden" id="bp-mm-target"><a id="bp-mm-thumb0"><img src="" alt=""></a></span>').appendTo('body');
+		}
+
+		try {
+			directory = localStorage.getItem('lastFolder') ? '&directory=' + encodeURIComponent(localStorage.getItem('lastFolder')) : '';
+		} catch (e) {
+			directory = '';
+		}
+
+		closePop();
+		$('#modal-image').remove();
+
+		// Several images: the Insert button of the hpmm manager
+		$(document).off('click.bpmm', '#modal-image #multiple-insert').on('click.bpmm', '#modal-image #multiple-insert', function(e) {
+			e.preventDefault();
+
+			var files = [];
+
+			$('#modal-image input#image-to-select:checked').each(function() {
+				var $cell = $(this).closest('.image-content');
+
+				if (!$cell.find('a.directory').length) {
+					files.push({path: $(this).val(), thumb: $cell.find('img').attr('src') || ''});
+				}
+			});
+
+			$('#modal-image').modal('hide');
+
+			if (files.length) {
+				onFiles(files);
+			}
+		});
+
+		// One image: a click on a thumbnail sets the hidden target and thumb of the manager
+		if (multiWatch) {
+			multiWatch.disconnect();
+		}
+
+		var img = $box.find('img')[0];
+
+		img.setAttribute('src', '');
+		$('#bp-mm-target').val('');
+
+		multiWatch = new MutationObserver(function() {
+			var path = $('#bp-mm-target').val();
+			var thumb = img.getAttribute('src');
+
+			multiWatch.disconnect();
+			multiWatch = null;
+			$('#bp-mm-target').val('');
+			img.setAttribute('src', '');
+
+			if (path) {
+				onFiles([{path: path, thumb: thumb}]);
+			}
+		});
+
+		multiWatch.observe(img, {attributes: true, attributeFilter: ['src']});
+
+		// A thumb id that ends in a digit makes hpmm show the Insert button
+		$.ajax({
+			url: 'index.php?route=common/hpmm&user_token=' + getURLVar('user_token') + '&target=bp-mm-target&thumb=bp-mm-thumb0&product_id=0' + directory,
+			dataType: 'html',
+			success: function(html) {
+				$('body').append('<div id="modal-image" class="modal">' + html + '</div>');
+				$('#modal-image').modal('show');
+
+				if (typeof tippy === 'function') {
+					setTimeout(function() {
+						tippy('.file-info', {theme: 'light-border', placement: 'bottom', animation: 'scale', delay: [100, 100], allowHTML: true, interactive: true});
+					}, 300);
+				}
+			}
+		});
+	}
+
 	function openManager($element, $button) {
+		if (opts.onFiles && window.BP_HPMM) {
+			hpmmMulti(opts.onFiles);
+
+			return;
+		}
+
 		var q = query($element);
 		var $icon = $button.find('> i');
 
 		$('#modal-image').remove();
 
 		$.ajax({
-			url: 'index.php?route=common/filemanager&user_token=' + getURLVar('user_token') + '&target=' + q.target + '&thumb=' + q.thumb + q.directory,
+			url: 'index.php?route=' + (window.BP_HPMM ? 'common/hpmm' : 'common/filemanager') + '&user_token=' + getURLVar('user_token') + '&target=' + q.target + '&thumb=' + q.thumb + q.directory,
 			dataType: 'html',
 			success: function(html) {
 				$('body').append('<div id="modal-image" class="modal">' + html + '</div>');
@@ -467,6 +557,7 @@ var bpUploader = (function() {
 	}
 
 	return {
+		hpmmMulti: hpmmMulti,
 		toggle: function($element, options) {
 			opts = options || {};
 
