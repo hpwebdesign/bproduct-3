@@ -1,5 +1,5 @@
 {
-    "version": "1.1.5.25",
+    "version": "1.1.5.26",
     "files": {
         "install.xml": "d1858244aaf92c8bcb46b7c63d0f6dd1f585495b0450f11864e5188327a6f45e",
         "upload/admin/controller/catalog/bcategory.php": "545c09f2ff5f4839e7aa60db03f1e873f07ddf966b71bb4905564522baa3a9f1",
@@ -17,7 +17,7 @@
         "upload/admin/view/javascript/bproduct/settings.js": "11180a57d7b7aff71b5656abeb5c702b337f5d749c72a8ebcda61fee7bb6556b",
         "upload/admin/view/stylesheet/bproduct/settings.css": "1e2033c914729e15b01663a97070e9383231e6ce2777a7c5e1973fcea89caeaf",
         "upload/admin/view/template/catalog/bcategory.twig": "0e18a59892c4f55988f99bf91baefd673511a1e35192d58294d339c4f5db6a73",
-        "upload/admin/view/template/catalog/bproduct.twig": "05f04fb7cd79d082b36de8d26250ad7c6739015406591b3678f91e229e1d5931",
+        "upload/admin/view/template/catalog/bproduct.twig": "e12cc16333c1299184cdd3094dabfd22c9663de97095cf8d57b113db1fe3d4d4",
         "upload/admin/view/template/extension/module/bproduct.twig": "480c9473f7e74125d95c4c0fd63c53f71ebe2d416ad956e27f43a1e000014f48",
         "upload/catalog/controller/extension/module/bproduct.php": "e04b119eecb178b4887d80b67c21c1a5dbfd4f445728efedb92efd79d846dcf5",
         "upload/catalog/model/extension/module/bproduct.php": "84c61894787e58826f5a728ee899bf05526c333ef196b6df4706620d06506bc9"
