@@ -82,7 +82,7 @@ class ControllerCatalogBcategory extends Controller {
 		$data['classic'] = str_replace('&amp;', '&', $this->url->link('catalog/category', 'user_token=' . $token . '&classic=1'));
 		$data['add_full'] = str_replace('&amp;', '&', $this->url->link('catalog/category/add', 'user_token=' . $token));
 
-		$data['bc_lang'] = $this->encodeForScript($this->language->all());
+		$data['bc_lang'] = $this->encodeForScript($this->languageWithFallback(array('catalog/bcategory')));
 		$data['bc_config'] = $this->encodeForScript($this->getConfig());
 		$data['bp_asset_v'] = (int)@filemtime(DIR_APPLICATION . 'view/javascript/bproduct/hpmm_common.js');
 
@@ -1031,5 +1031,22 @@ class ControllerCatalogBcategory extends Controller {
 		$this->model_catalog_category->editCategory($category_id, $this->withSeoKeyword($data));
 
 		$this->json(array('success' => 1, 'row' => $this->rowFor($category_id), 'stats' => $this->model_catalog_bcategory->getStats()));
+	}
+
+	// Missing keys (for example a language file that was not updated) fall back to English.
+	private function languageWithFallback($files) {
+		$base = array();
+
+		foreach ($files as $file) {
+			$path = DIR_LANGUAGE . 'en-gb/' . $file . '.php';
+
+			if (is_file($path)) {
+				$_ = array();
+				include $path;
+				$base = array_merge($base, $_);
+			}
+		}
+
+		return array_merge($base, $this->language->all());
 	}
 }

@@ -1,10 +1,10 @@
 {
-    "version": "1.1.5.23",
+    "version": "1.1.5.24",
     "files": {
         "install.xml": "d1858244aaf92c8bcb46b7c63d0f6dd1f585495b0450f11864e5188327a6f45e",
-        "upload/admin/controller/catalog/bcategory.php": "cf103c8bd0068c19b84e305689c519bbd0446465a89a8038cd52181c00bae13e",
+        "upload/admin/controller/catalog/bcategory.php": "545c09f2ff5f4839e7aa60db03f1e873f07ddf966b71bb4905564522baa3a9f1",
         "upload/admin/controller/catalog/bmedia.php": "7e15ef4bebac01f8131f67da6ef9f647c67fd0078c10b683c922f27f4cb3b4fb",
-        "upload/admin/controller/catalog/bproduct.php": "5dc0c5a18da7d76213aedab426eaf74616f6452c6c7ced0b2506a61423cf69d6",
+        "upload/admin/controller/catalog/bproduct.php": "fbe95f98b366609393b6d229cf819fb3dda6d94c8e744ac990f73e24de1c502a",
         "upload/admin/controller/common/bariklabs.php": "2dcab831830275fe301cc34bc0a0b0e82e0f98058d4bd4304273496335d9f78c",
         "upload/admin/controller/extension/module/bproduct.php": "49b49a20f12b13e854f8d9d3d793182839d8fba285df770640510826432174a3",
         "upload/admin/language/en-gb/catalog/bcategory.php": "bd200d7d5b06384262c606cfc00b3b031270a05c860517182e612f10cf29c4e7",

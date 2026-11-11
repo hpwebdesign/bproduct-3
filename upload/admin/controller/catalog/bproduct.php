@@ -123,7 +123,7 @@ class ControllerCatalogBproduct extends Controller {
 		$data['button_classic'] = $this->language->get('bp_button_classic');
 		$data['button_add_full'] = $this->language->get('bp_button_add_full');
 
-		$data['bp_lang'] = $this->encodeForScript($this->language->all());
+		$data['bp_lang'] = $this->encodeForScript($this->languageWithFallback(array('catalog/product', 'catalog/bproduct')));
 		$data['bp_config'] = $this->encodeForScript($this->getConfig());
 		$data['bp_asset_v'] = (int)@filemtime(DIR_APPLICATION . 'view/javascript/bproduct/hpmm_common.js');
 
@@ -1464,5 +1464,22 @@ class ControllerCatalogBproduct extends Controller {
 
 	private function encodeKeyword($keyword) {
 		return htmlspecialchars($keyword, ENT_COMPAT, 'UTF-8');
+	}
+
+	// Missing keys (for example a language file that was not updated) fall back to English.
+	private function languageWithFallback($files) {
+		$base = array();
+
+		foreach ($files as $file) {
+			$path = DIR_LANGUAGE . 'en-gb/' . $file . '.php';
+
+			if (is_file($path)) {
+				$_ = array();
+				include $path;
+				$base = array_merge($base, $_);
+			}
+		}
+
+		return array_merge($base, $this->language->all());
 	}
 }
