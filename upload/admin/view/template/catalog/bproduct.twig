@@ -14,7 +14,7 @@
     <div id="bp-host"></div>
   </div>
 </div>
-<script src="view/javascript/bproduct/hpmm_common.js"></script>
+<script src="view/javascript/bproduct/hpmm_common.js?v={{ bp_asset_v }}"></script>
 <script type="application/json" id="bp-config">{{ bp_config }}</script>
 <script type="application/json" id="bp-lang">{{ bp_lang }}</script>
 <template id="bp-shell"><style>{% verbatim %}
@@ -675,6 +675,7 @@ th.sortth{white-space:nowrap}
 
 var CFG = JSON.parse(document.getElementById('bp-config').textContent);
 var T = JSON.parse(document.getElementById('bp-lang').textContent);
+(function (D) { for (var k in D) { if (!T[k]) { T[k] = D[k]; } } })({"bp_seo_generate": "Generate value", "bp_seo_generate_all": "Generate all SEO values", "bp_seo_generate_failed": "The values could not be generated. Check the Complete SEO settings.", "bp_pick_date": "Pick a date", "bp_rule_group": "Group", "bp_rule_qty": "Qty", "bp_add_images": "Add Images", "bp_bm_title": "Add images", "bp_bm_search": "Search images", "bp_bm_upload": "Upload", "bp_bm_selected": "%d selected", "bp_bm_add": "Add selected", "bp_bm_added": "Added", "bp_bm_drop": "Drop images to upload", "bp_bm_more": "Load more", "bp_bm_empty": "No images here. Upload some or open another folder.", "bp_bm_root": "Images", "bp_bm_n_added": "%d image(s) added.", "bp_bm_uploaded": "%d image(s) uploaded.", "bp_bm_failed": "The images could not be loaded."});
 var host = document.getElementById('bp-host');
 var R = host.attachShadow({mode: 'open'});
 R.appendChild(document.getElementById('bp-shell').content.cloneNode(true));
@@ -1271,7 +1272,7 @@ document.addEventListener('mousedown', function (e) {
   var b = e.target.closest ? e.target.closest('[data-act]') : null;
   HPX_SKIP = !!(HPX && HPX.last && document.querySelector('.hpmm-pop') && b && b === HPX.last);
 }, true);
-function hpmmPick(anchor, cb, clearCb) {
+function hpmmPick(anchor, cb, clearCb, onFiles) {
   var j = window.jQuery;
   if (HPX_SKIP) { HPX_SKIP = false; return; }
   if (!HPX) {
@@ -1289,13 +1290,13 @@ function hpmmPick(anchor, cb, clearCb) {
   HPX.box.css({left: r.left, top: r.top, width: r.width, height: r.height});
   HPX.a.css({width: r.width, height: r.height}).data('productid', PRODUCT_ID());
   HPX.h = {cb: cb, clear: clearCb}; HPX.last = anchor;
-  window.BP_MEDIA_BASE = CFG.endpoint + 'media&op=';
-  (window.hpmmUploader || window.bpUploader).toggle(HPX.a);
+  window.BP_MEDIA_BASE = CFG.endpoint + 'media&op='; window.BP_HPMM = CFG.hpmm ? 1 : 0;
+  (onFiles ? window.bpUploader : (window.hpmmUploader || window.bpUploader)).toggle(HPX.a, onFiles ? {multiple: true, noClear: true, onFiles: onFiles} : undefined);
 }
 function PRODUCT_ID() { return DR && DR.id ? DR.id : 0; }
-function pickImage(cb, anchor, clearCb) {
+function pickImage(cb, anchor, clearCb, onFiles) {
   var j = window.jQuery;
-  if (anchor && j && (window.hpmmUploader || window.bpUploader)) { hpmmPick(anchor, cb, clearCb); return; }
+  if (anchor && j && (window.hpmmUploader || window.bpUploader)) { hpmmPick(anchor, cb, clearCb, onFiles); return; }
   if (!j || !j.fn.modal) { window.open(CFG.filemanager, '_blank'); return; }
   j('#bp-fm-target, #bp-fm-thumb, #modal-image').remove();
   j('body').append('<input type="hidden" id="bp-fm-target"><div id="bp-fm-thumb" style="display:none"><img src="" alt=""></div>');
@@ -1811,7 +1812,7 @@ function imgPaint() {
     (DR.im.add.length ? '<table class="imgt"><thead><tr><th></th><th>' + esc(T.entry_image) + '</th><th></th></tr></thead><tbody>' + DR.im.add.map(function (x, i) {
       return '<tr draggable="true" data-i="' + i + '"><td class="dgh">' + ic('grip', 18) + '</td><td><button type="button" class="imgm" data-act="trow" data-i="' + i + '" aria-label="' + esc(T.bp_change_image) + '"><img src="' + esc(x.thumb) + '" alt=""><span class="cam">' + ic('camera', 18) + '</span></button></td><td style="text-align:right"><button type="button" class="btn red icon sm" data-act="trowrm" data-i="' + i + '" aria-label="' + esc(T.button_remove) + '">' + ic('trash', 14) + '</button></td></tr>';
     }).join('') + '</tbody></table>' : '<div class="rempty"><b>' + esc(T.bp_no_images) + '</b>' + esc(T.bp_no_images_hint) + '</div>') +
-    '<button type="button" class="btn blue sm" data-act="trowadd">' + ic('plus') + ' ' + esc(T.button_image_add) + '</button></div>';
+    '<button type="button" class="btn blue sm" data-act="trowadd">' + ic('plus') + ' ' + esc(T.bp_add_images) + '</button></div>';
   setBadge('images', DR.im.add.length + (DR.im.main ? 1 : 0));
   var h = $('.dh img'); if (h) h.src = DR.im.main ? DR.im.main.thumb : CFG.placeholder;
 }
@@ -1918,6 +1919,14 @@ function bmOpen() {
   document.addEventListener('keydown', bmKey, true);
   var last = ''; try { last = localStorage.getItem('bpLastDir') || ''; } catch (er) { last = ''; }
   bmSync(); bmLoad(last, 1);
+}
+function addImages(files) {
+  var n = 0;
+  files.forEach(function (x) {
+    if ((DR.im.main && DR.im.main.path === x.path) || DR.im.add.some(function (y) { return y.path === x.path; })) return;
+    DR.im.add.push({path: x.path, thumb: x.thumb, sort: String(DR.im.add.length)}); n++;
+  });
+  if (n) { imgPaint(); markDirty('images'); if (n > 1) toast(fmt(T.bp_bm_n_added, n)); }
 }
 function imagesBody() { return '<div id="imgroot"></div>'; }
 function collectImages() {
@@ -2358,7 +2367,7 @@ R.addEventListener('click', function (e) {
     case 'dclose': closeDrawer(); break;
     case 'dsave': saveDrawer(); break;
     case 'idtoggle': idsToggle(); break;
-    case 'imgbulk': bmOpen(); break;
+    case 'imgbulk': if (CFG.hpmm && window.bpUploader && typeof window.bpUploader.hpmmMulti === 'function') { window.bpUploader.hpmmMulti(addImages); } else { bmOpen(); } break;
     case 'datepick': calOpen(el.parentNode.querySelector('[data-date]')); break;
     case 'cseogen': seoGenerate(el.dataset.field, el.dataset.lid, el); break;
     case 'cseoall': seoGenerate('all', el.dataset.lid, el); break;
@@ -2414,7 +2423,7 @@ R.addEventListener('click', function (e) {
     case 'tmainrm': DR.im.main = null; imgPaint(); markDirty('images'); break;
     case 'trow': pickImage(function (path, thumb) { DR.im.add[i].path = path; DR.im.add[i].thumb = thumb; imgPaint(); markDirty('images'); }, el, function () { DR.im.add.splice(i, 1); imgPaint(); markDirty('images'); }); break;
     case 'trowrm': DR.im.add.splice(i, 1); imgPaint(); markDirty('images'); break;
-    case 'trowadd': pickImage(function (path, thumb) { DR.im.add.push({path: path, thumb: thumb, sort: String(DR.im.add.length)}); imgPaint(); markDirty('images'); }, el); break;
+    case 'trowadd': pickImage(function (path, thumb) { addImages([{path: path, thumb: thumb}]); }, el, null, addImages); break;
     case 'seogen': {
       var key2 = el.dataset.sid + '|' + el.dataset.lid, sin = $('[data-seo="' + key2 + '"]');
       var lp = $('.lp[data-lid="' + el.dataset.lid + '"] [data-k="name"]');

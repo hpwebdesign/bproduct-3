@@ -123,8 +123,9 @@ class ControllerCatalogBproduct extends Controller {
 		$data['button_classic'] = $this->language->get('bp_button_classic');
 		$data['button_add_full'] = $this->language->get('bp_button_add_full');
 
-		$data['bp_lang'] = $this->encodeForScript($this->language->all());
+		$data['bp_lang'] = $this->encodeForScript($this->languageWithFallback(array('catalog/product', 'catalog/bproduct')));
 		$data['bp_config'] = $this->encodeForScript($this->getConfig());
+		$data['bp_asset_v'] = (int)@filemtime(DIR_APPLICATION . 'view/javascript/bproduct/hpmm_common.js');
 
 		$data['header'] = $this->load->controller('common/header');
 		$data['column_left'] = $this->load->controller('common/column_left');
@@ -260,6 +261,7 @@ class ControllerCatalogBproduct extends Controller {
 			),
 			'can_modify'     => $this->user->hasPermission('modify', 'catalog/product') ? 1 : 0,
 			'currency'       => $this->currencyInfo(),
+			'hpmm'           => (is_file(DIR_APPLICATION . 'controller/common/hpmm.php') && $this->user->hasPermission('access', 'common/hpmm')) ? 1 : 0,
 			'complete_seo'   => $this->completeSeo() ? 1 : 0,
 			'seo_fields'     => $this->seoFields(),
 			'default_status' => (int)$this->config->get('config_stock_status_id')
@@ -1462,5 +1464,22 @@ class ControllerCatalogBproduct extends Controller {
 
 	private function encodeKeyword($keyword) {
 		return htmlspecialchars($keyword, ENT_COMPAT, 'UTF-8');
+	}
+
+	// Missing keys (for example a language file that was not updated) fall back to English.
+	private function languageWithFallback($files) {
+		$base = array();
+
+		foreach ($files as $file) {
+			$path = DIR_LANGUAGE . 'en-gb/' . $file . '.php';
+
+			if (is_file($path)) {
+				$_ = array();
+				include $path;
+				$base = array_merge($base, $_);
+			}
+		}
+
+		return array_merge($base, $this->language->all());
 	}
 }
