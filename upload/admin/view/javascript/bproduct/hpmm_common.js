@@ -19,6 +19,7 @@ var bpUploader = (function() {
 	var limits = null;
 	var $pop = null;
 	var $anchor = null;
+	var opts = {};
 	var styled = false;
 
 	var TEXT = {
@@ -28,6 +29,7 @@ var bpUploader = (function() {
 		clear: 'Clear',
 		download: 'Download',
 		drag: 'Drag an image here',
+		dragMany: 'Drag images here',
 		drop: 'Drop to upload',
 		failed: 'Upload failed',
 		retry: 'Try again',
@@ -152,7 +154,7 @@ var bpUploader = (function() {
 			return ICON_UPLOAD + '<div><strong>' + TEXT.drop + '</strong></div>';
 		}
 
-		return ICON_UPLOAD + '<div><strong>' + TEXT.drag + '</strong></div>';
+		return ICON_UPLOAD + '<div><strong>' + (opts.multiple ? TEXT.dragMany : TEXT.drag) + '</strong></div>';
 	}
 
 	function setDrop(state, name, pct, message) {
@@ -186,32 +188,40 @@ var bpUploader = (function() {
 	}
 
 	function handleResponse($element, json) {
-		if (json && json.files && json.files.length) {
+		if (json && json.files && json.files.length && opts.onFiles) {
+			var done = opts.onFiles;
+
+			closePop();
+			done(json.files);
+		} else if (json && json.files && json.files.length) {
 			applyFile($element, json.files[0]);
 		} else {
 			setDrop('fail', '', 0, (json && json.error) ? json.error : TEXT.generic);
 		}
 	}
 
-	function uploadFile($element, file) {
+	function uploadFile($element, files) {
 		var q = query($element);
-
-		if (!TYPES.test(file.type)) {
-			setDrop('fail', '', 0, TEXT.badType);
-
-			return;
-		}
-
-		if (limits && limits.max_size && file.size > limits.max_size) {
-			setDrop('fail', '', 0, TEXT.tooBig);
-
-			return;
-		}
-
 		var data = new FormData();
-		data.append('file[]', file);
+		var i;
 
-		setDrop('busy', file.name, 0);
+		for (i = 0; i < files.length; i++) {
+			if (!TYPES.test(files[i].type)) {
+				setDrop('fail', '', 0, TEXT.badType);
+
+				return;
+			}
+
+			if (limits && limits.max_size && files[i].size > limits.max_size) {
+				setDrop('fail', '', 0, TEXT.tooBig);
+
+				return;
+			}
+
+			data.append('file[]', files[i]);
+		}
+
+		setDrop('busy', files.length > 1 ? files.length + ' images' : files[0].name, 0);
 
 		$.ajax({
 			url: window.BP_MEDIA_BASE + 'upload' + q.directory,
@@ -336,11 +346,17 @@ var bpUploader = (function() {
 		});
 
 		var $file = $pop.find('input[type=file]');
+
+		$file.prop('multiple', !!opts.multiple);
+
+		if (opts.noClear) {
+			$pop.find('[data-act="clear"]').remove();
+		}
 		var $drop = $pop.find('.hpmm-drop');
 
 		$file.on('change', function() {
 			if (this.files.length) {
-				uploadFile($element, this.files[0]);
+				uploadFile($element, opts.multiple ? this.files : [this.files[0]]);
 			}
 
 			this.value = '';
@@ -387,7 +403,7 @@ var bpUploader = (function() {
 			}
 
 			if (files.length) {
-				uploadFile($element, files[0]);
+				uploadFile($element, opts.multiple ? files : [files[0]]);
 			} else {
 				setDrop('idle');
 			}
@@ -451,7 +467,9 @@ var bpUploader = (function() {
 	}
 
 	return {
-		toggle: function($element) {
+		toggle: function($element, options) {
+			opts = options || {};
+
 			if ($anchor && $anchor[0] === $element[0]) {
 				closePop();
 			} else {

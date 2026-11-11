@@ -91,7 +91,7 @@ class ControllerCatalogBproduct extends Controller {
 	private function ajaxMedia() {
 		$op = isset($this->request->get['op']) ? $this->request->get['op'] : '';
 
-		if (in_array($op, array('limits', 'upload', 'download', 'browse'))) {
+		if (in_array($op, array('limits', 'upload', 'download'))) {
 			$this->load->controller('catalog/bmedia/' . $op);
 		} else {
 			$this->json(array('error' => $this->language->get('bp_error_invalid')));

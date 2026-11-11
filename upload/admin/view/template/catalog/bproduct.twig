@@ -573,32 +573,6 @@ th.sortth{white-space:nowrap}
 .pickrow{display:flex;gap:10px;align-items:center;padding:8px 10px;border:1px solid var(--line);border-radius:10px;margin-bottom:6px;background:#fff;transition:background-color .15s,border-color .15s,box-shadow .15s}
 .pickrow:hover{background:#f6f8ff;border-color:#c9d6f5;box-shadow:0 2px 8px rgba(20,40,90,.06)}
 .pickrow small{color:var(--mute)}
-.imgh{display:flex;align-items:center;gap:8px;margin-bottom:6px}.imgh label{margin:0}.imgh .btn{margin-left:auto}
-.bm-ov{position:fixed;inset:0;z-index:1100;background:rgba(15,25,50,.5);display:flex;align-items:center;justify-content:center;padding:16px}
-.bm-dlg{position:relative;width:min(940px,100%);height:min(660px,92vh);background:#fff;border-radius:16px;box-shadow:0 30px 70px -20px rgba(10,20,50,.55);display:flex;flex-direction:column;overflow:hidden}
-.bm-h{display:flex;align-items:center;justify-content:space-between;padding:12px 16px;border-bottom:1px solid var(--line);font-size:15px}
-.bm-t{display:flex;align-items:center;gap:10px;padding:10px 16px;border-bottom:1px solid var(--line);flex-wrap:wrap}
-.bm-bc{display:flex;align-items:center;gap:2px;flex:1 1 200px;min-width:0;overflow:hidden;font-size:13px}
-.bm-bc button{display:inline-flex;align-items:center;gap:5px;border:0;background:none;color:var(--blue);font:inherit;font-weight:600;cursor:pointer;padding:4px 6px;border-radius:7px;white-space:nowrap}
-.bm-bc button:hover{background:var(--blue-soft)}.bm-sep{color:var(--mute)}
-.bm-q{width:190px}
-.bm-up{position:relative;cursor:pointer}
-.bm-b{position:relative;flex:1;min-height:0;overflow:auto;padding:14px 16px}
-.bm-g{display:grid;grid-template-columns:repeat(auto-fill,minmax(118px,1fr));gap:10px}
-.bm-empty{grid-column:1/-1;text-align:center;color:var(--mute);padding:40px 0}
-.bm-f,.bm-i{position:relative;display:flex;flex-direction:column;align-items:center;gap:6px;border:1px solid var(--line);border-radius:12px;background:#fff;padding:8px;cursor:pointer;font:inherit;color:var(--text);text-align:center;transition:border-color .15s,box-shadow .15s,background .15s}
-.bm-f{justify-content:center;min-height:118px;color:var(--blue)}.bm-f span{font-size:12px;font-weight:600;color:var(--text);word-break:break-all}
-.bm-f:hover,.bm-i:hover{border-color:#c9d6f5;background:#f6f8ff;box-shadow:0 2px 8px rgba(20,40,90,.07)}
-.bm-im{display:block;width:100%;aspect-ratio:1;border-radius:8px;overflow:hidden;background:#f4f7fc}.bm-im img{width:100%;height:100%;object-fit:contain;display:block}
-.bm-nm{width:100%;font-size:11px;color:var(--mute);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.bm-ck{position:absolute;right:6px;top:6px;width:22px;height:22px;border-radius:50%;background:var(--blue);color:#fff;display:none;place-items:center}
-.bm-i.on{border-color:var(--blue);box-shadow:0 0 0 2px rgba(35,71,168,.25);background:var(--blue-soft)}.bm-i.on .bm-ck{display:grid}
-.bm-i.used{opacity:.5;cursor:default}.bm-us{position:absolute;left:6px;top:6px;background:var(--green-soft);color:var(--green);font-size:10px;font-weight:700;border-radius:99px;padding:1px 7px}
-.bm-more{text-align:center;padding:12px 0 2px}
-.bm-ft{display:flex;align-items:center;gap:8px;padding:10px 16px;border-top:1px solid var(--line)}.bm-n{margin-right:auto;font-weight:600;color:var(--mute)}
-.bm-drop{display:none;position:absolute;inset:8px;border:2px dashed var(--blue);border-radius:14px;background:rgba(232,238,252,.92);flex-direction:column;align-items:center;justify-content:center;gap:8px;color:var(--blue);pointer-events:none}
-.bm-ov.drag .bm-drop{display:flex}.bm-ov.busy .bm-dlg:after{content:'';position:absolute;left:0;right:0;top:0;height:3px;background:linear-gradient(90deg,var(--blue),#9fb3ee,var(--blue));background-size:200% 100%;animation:bmbar 1s linear infinite}
-@keyframes bmbar{to{background-position:-200% 0}}
 .igc{display:flex;align-items:stretch}.igc .inp{flex:1;min-width:0}
 .igc-ad{display:flex;align-items:center;padding:0 12px;border:1px solid var(--line);background:#f4f7fc;color:var(--mute);font-weight:700;font-size:13px;white-space:nowrap}
 .igc-ad.l{border-right:0;border-radius:10px 0 0 10px}.igc-ad.r{border-left:0;border-radius:0 10px 10px 0}
@@ -714,7 +688,6 @@ plus:'<line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"
 edit:'<path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/>',
 bolt:'<path d="M13 2L4 14h7l-1 8 9-12h-7z"/>',
 cal:'<rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/>',
-upload:'<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/>',
 trash:'<polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6m5 0V4a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v2"/>',
 chev:'<polyline points="6 9 12 15 18 9"/>',
 check:'<polyline points="20 6 9 17 4 12"/>',
@@ -1271,7 +1244,7 @@ document.addEventListener('mousedown', function (e) {
   var b = e.target.closest ? e.target.closest('[data-act]') : null;
   HPX_SKIP = !!(HPX && HPX.last && document.querySelector('.hpmm-pop') && b && b === HPX.last);
 }, true);
-function hpmmPick(anchor, cb, clearCb) {
+function hpmmPick(anchor, cb, clearCb, onFiles) {
   var j = window.jQuery;
   if (HPX_SKIP) { HPX_SKIP = false; return; }
   if (!HPX) {
@@ -1290,12 +1263,12 @@ function hpmmPick(anchor, cb, clearCb) {
   HPX.a.css({width: r.width, height: r.height}).data('productid', PRODUCT_ID());
   HPX.h = {cb: cb, clear: clearCb}; HPX.last = anchor;
   window.BP_MEDIA_BASE = CFG.endpoint + 'media&op=';
-  (window.hpmmUploader || window.bpUploader).toggle(HPX.a);
+  (onFiles ? window.bpUploader : (window.hpmmUploader || window.bpUploader)).toggle(HPX.a, onFiles ? {multiple: true, noClear: true, onFiles: onFiles} : undefined);
 }
 function PRODUCT_ID() { return DR && DR.id ? DR.id : 0; }
-function pickImage(cb, anchor, clearCb) {
+function pickImage(cb, anchor, clearCb, onFiles) {
   var j = window.jQuery;
-  if (anchor && j && (window.hpmmUploader || window.bpUploader)) { hpmmPick(anchor, cb, clearCb); return; }
+  if (anchor && j && (window.hpmmUploader || window.bpUploader)) { hpmmPick(anchor, cb, clearCb, onFiles); return; }
   if (!j || !j.fn.modal) { window.open(CFG.filemanager, '_blank'); return; }
   j('#bp-fm-target, #bp-fm-thumb, #modal-image').remove();
   j('body').append('<input type="hidden" id="bp-fm-target"><div id="bp-fm-thumb" style="display:none"><img src="" alt=""></div>');
@@ -1807,117 +1780,21 @@ function imgPaint() {
     (m ? '<button type="button" class="imgm" data-act="tmain" aria-label="' + esc(T.bp_change_image) + '"><img src="' + esc(m.thumb) + '" alt=""><span class="cam">' + ic('camera', 22) + '</span></button><div style="margin-top:8px;display:flex;gap:6px"><button type="button" class="btn ghost sm" data-act="tmain">' + ic('edit', 14) + ' ' + esc(T.bp_change_image) + '</button><button type="button" class="btn red sm" data-act="tmainrm">' + ic('trash', 14) + ' ' + esc(T.button_remove) + '</button></div>'
       : '<button type="button" class="imgm empty" data-act="tmain">' + ic('image', 22) + '<span>' + esc(T.bp_select_image) + '</span></button>') +
     '<small>' + esc(T.bp_main_image_hint) + '</small></div>' +
-    '<div class="f"><div class="imgh"><label>' + esc(T.entry_additional_image) + ' <span class="n" style="background:var(--green-soft);color:var(--green);font-size:10px;font-weight:700;padding:0 6px;border-radius:99px">' + DR.im.add.length + '</span></label><button type="button" class="btn blue sm needmod" data-act="imgbulk">' + ic('image', 14) + ' ' + esc(T.bp_add_images) + '</button></div>' +
+    '<div class="f"><label>' + esc(T.entry_additional_image) + ' <span class="n" style="background:var(--green-soft);color:var(--green);font-size:10px;font-weight:700;padding:0 6px;border-radius:99px">' + DR.im.add.length + '</span></label>' +
     (DR.im.add.length ? '<table class="imgt"><thead><tr><th></th><th>' + esc(T.entry_image) + '</th><th></th></tr></thead><tbody>' + DR.im.add.map(function (x, i) {
       return '<tr draggable="true" data-i="' + i + '"><td class="dgh">' + ic('grip', 18) + '</td><td><button type="button" class="imgm" data-act="trow" data-i="' + i + '" aria-label="' + esc(T.bp_change_image) + '"><img src="' + esc(x.thumb) + '" alt=""><span class="cam">' + ic('camera', 18) + '</span></button></td><td style="text-align:right"><button type="button" class="btn red icon sm" data-act="trowrm" data-i="' + i + '" aria-label="' + esc(T.button_remove) + '">' + ic('trash', 14) + '</button></td></tr>';
     }).join('') + '</tbody></table>' : '<div class="rempty"><b>' + esc(T.bp_no_images) + '</b>' + esc(T.bp_no_images_hint) + '</div>') +
-    '<button type="button" class="btn blue sm" data-act="trowadd">' + ic('plus') + ' ' + esc(T.button_image_add) + '</button></div>';
+    '<button type="button" class="btn blue sm" data-act="trowadd">' + ic('plus') + ' ' + esc(T.bp_add_images) + '</button></div>';
   setBadge('images', DR.im.add.length + (DR.im.main ? 1 : 0));
   var h = $('.dh img'); if (h) h.src = DR.im.main ? DR.im.main.thumb : CFG.placeholder;
 }
-/* ---------- media window: pick many images at once ---------- */
-var BM = {el: null, dir: '', q: '', page: 1, pages: 1, sel: {}, order: [], timer: null};
-function bmCount() { return BM.order.length; }
-function bmUsed(path) { return (DR.im.main && DR.im.main.path === path) || DR.im.add.some(function (x) { return x.path === path; }); }
-function bmClose() {
-  if (BM.el) BM.el.remove();
-  BM.el = null;
-  document.removeEventListener('keydown', bmKey, true);
-}
-function bmKey(e) { if (e.key === 'Escape' && BM.el && !CAL.pop) { e.stopPropagation(); e.preventDefault(); bmClose(); } }
-function bmSync() {
-  var n = bmCount(), c = BM.el.querySelector('.bm-n'), b = BM.el.querySelector('[data-bm="add"]');
-  c.textContent = fmt(T.bp_bm_selected, n); b.disabled = !n;
-  BM.el.querySelectorAll('.bm-i').forEach(function (t) { t.classList.toggle('on', !!BM.sel[t.dataset.path]); });
-}
-function bmCrumbs() {
-  var parts = BM.dir ? BM.dir.split('/') : [], h = '<button type="button" data-bm="dir" data-dir="">' + ic('folder', 14) + ' ' + esc(T.bp_bm_root) + '</button>', acc = '';
-  parts.forEach(function (p) { acc += (acc ? '/' : '') + p; h += '<span class="bm-sep">/</span><button type="button" data-bm="dir" data-dir="' + esc(acc) + '">' + esc(p) + '</button>'; });
-  BM.el.querySelector('.bm-bc').innerHTML = h;
-}
-function bmTiles(j, append) {
-  var g = BM.el.querySelector('.bm-g'), h = '';
-  (j.folders || []).forEach(function (f) { h += '<button type="button" class="bm-f" data-bm="dir" data-dir="' + esc(f.path) + '">' + ic('folder', 34) + '<span>' + esc(f.name) + '</span></button>'; });
-  (j.images || []).forEach(function (x) {
-    var used = bmUsed(x.path);
-    h += '<button type="button" class="bm-i' + (used ? ' used' : '') + (BM.sel[x.path] ? ' on' : '') + '" data-bm="pick" data-path="' + esc(x.path) + '" data-thumb="' + esc(x.thumb) + '"' + (used ? ' disabled' : '') + '><span class="bm-im"><img src="' + esc(x.thumb) + '" alt="" loading="lazy"></span><span class="bm-nm">' + esc(x.name) + '</span><span class="bm-ck">' + ic('check', 14) + '</span>' + (used ? '<span class="bm-us">' + esc(T.bp_bm_added) + '</span>' : '') + '</button>';
+function addImages(files) {
+  var n = 0;
+  files.forEach(function (x) {
+    if ((DR.im.main && DR.im.main.path === x.path) || DR.im.add.some(function (y) { return y.path === x.path; })) return;
+    DR.im.add.push({path: x.path, thumb: x.thumb, sort: String(DR.im.add.length)}); n++;
   });
-  if (append) g.insertAdjacentHTML('beforeend', h); else g.innerHTML = h || '<div class="bm-empty">' + esc(T.bp_bm_empty) + '</div>';
-  if (!append && !h) g.innerHTML = '<div class="bm-empty">' + esc(T.bp_bm_empty) + '</div>';
-  BM.el.querySelector('.bm-more').hidden = BM.page >= BM.pages;
-}
-function bmLoad(dir, page) {
-  BM.dir = dir; BM.page = page;
-  var g = BM.el.querySelector('.bm-g'); if (page === 1) g.innerHTML = '<div class="bm-empty">...</div>';
-  api('media', {op: 'browse', directory: dir, q: BM.q, page: page}).then(function (j) {
-    if (!BM.el) return;
-    if (j.error) { toast(typeof j.error === 'string' ? j.error : T.bp_bm_failed, 'err'); return; }
-    BM.dir = j.directory; BM.pages = j.pages; BM.page = j.page;
-    try { localStorage.setItem('bpLastDir', BM.dir); } catch (er) { /* storage may be blocked */ }
-    bmCrumbs(); bmTiles(j, page > 1); bmSync();
-  }).catch(function () { toast(T.bp_bm_failed, 'err'); });
-}
-function bmUpload(files) {
-  if (!files || !files.length || !BM.el) return;
-  var fd = new FormData();
-  Array.prototype.forEach.call(files, function (f) { fd.append('file[]', f); });
-  var url = CFG.endpoint + 'media&op=upload' + (BM.dir ? '&directory=' + encodeURIComponent(BM.dir) : '');
-  BM.el.classList.add('busy');
-  fetch(url, {method: 'POST', body: fd, credentials: 'same-origin'}).then(function (r) { return r.json(); }).then(function (j) {
-    if (!BM.el) return;
-    BM.el.classList.remove('busy');
-    if (j.error) { toast(j.error, 'err'); return; }
-    (j.files || []).forEach(function (x) { if (!BM.sel[x.path] && !bmUsed(x.path)) { BM.sel[x.path] = {path: x.path, thumb: x.thumb}; BM.order.push(x.path); } });
-    toast(fmt(T.bp_bm_uploaded, (j.files || []).length));
-    bmLoad(BM.dir, 1);
-  }).catch(function () { if (BM.el) BM.el.classList.remove('busy'); toast(T.bp_bm_failed, 'err'); });
-}
-function bmOpen() {
-  bmClose();
-  BM = {el: null, dir: '', q: '', page: 1, pages: 1, sel: {}, order: [], timer: null};
-  var el = document.createElement('div');
-  el.className = 'bm-ov';
-  el.innerHTML = '<div class="bm-dlg" role="dialog" aria-label="' + esc(T.bp_bm_title) + '">' +
-    '<div class="bm-h"><b>' + esc(T.bp_bm_title) + '</b><button type="button" class="btn ghost icon sm" data-bm="close" aria-label="' + esc(T.button_close) + '">' + ic('x', 14) + '</button></div>' +
-    '<div class="bm-t"><nav class="bm-bc"></nav><input type="text" class="inp sm bm-q" placeholder="' + esc(T.bp_bm_search) + '" autocomplete="off"><label class="btn blue sm bm-up">' + ic('upload', 14) + ' ' + esc(T.bp_bm_upload) + '<input type="file" multiple accept="image/jpeg,image/png,image/gif,image/webp" hidden></label></div>' +
-    '<div class="bm-b"><div class="bm-g"></div><div class="bm-more" hidden><button type="button" class="btn ghost sm" data-bm="more">' + esc(T.bp_bm_more) + '</button></div><div class="bm-drop">' + ic('upload', 30) + '<b>' + esc(T.bp_bm_drop) + '</b></div></div>' +
-    '<div class="bm-ft"><span class="bm-n"></span><button type="button" class="btn ghost" data-bm="close">' + esc(T.button_cancel) + '</button><button type="button" class="btn primary" data-bm="add" disabled>' + ic('check', 14) + ' ' + esc(T.bp_bm_add) + '</button></div></div>';
-  R.appendChild(el); BM.el = el;
-  el.addEventListener('click', function (e) {
-    if (e.target === el) { bmClose(); return; }
-    var b = e.target.closest('[data-bm]'); if (!b) return;
-    var act = b.dataset.bm;
-    if (act === 'close') bmClose();
-    else if (act === 'dir') bmLoad(b.dataset.dir, 1);
-    else if (act === 'more') bmLoad(BM.dir, BM.page + 1);
-    else if (act === 'pick') {
-      var p = b.dataset.path;
-      if (BM.sel[p]) { delete BM.sel[p]; BM.order = BM.order.filter(function (x) { return x !== p; }); }
-      else { BM.sel[p] = {path: p, thumb: b.dataset.thumb}; BM.order.push(p); }
-      bmSync();
-    } else if (act === 'add') {
-      var added = 0;
-      BM.order.forEach(function (p) {
-        if (bmUsed(p)) return;
-        DR.im.add.push({path: p, thumb: BM.sel[p].thumb, sort: String(DR.im.add.length)}); added++;
-      });
-      bmClose();
-      if (added) { imgPaint(); markDirty('images'); toast(fmt(T.bp_bm_n_added, added)); }
-    }
-  });
-  el.querySelector('.bm-q').addEventListener('input', function () {
-    var v = this.value; clearTimeout(BM.timer);
-    BM.timer = setTimeout(function () { BM.q = v.trim(); bmLoad(BM.dir, 1); }, 250);
-  });
-  el.querySelector('.bm-up input').addEventListener('change', function () { bmUpload(this.files); this.value = ''; });
-  var body = el.querySelector('.bm-b'), depth = 0;
-  body.addEventListener('dragenter', function (e) { e.preventDefault(); depth++; el.classList.add('drag'); });
-  body.addEventListener('dragover', function (e) { e.preventDefault(); });
-  body.addEventListener('dragleave', function (e) { e.preventDefault(); depth = Math.max(0, depth - 1); if (!depth) el.classList.remove('drag'); });
-  body.addEventListener('drop', function (e) { e.preventDefault(); depth = 0; el.classList.remove('drag'); bmUpload(e.dataTransfer ? e.dataTransfer.files : []); });
-  document.addEventListener('keydown', bmKey, true);
-  var last = ''; try { last = localStorage.getItem('bpLastDir') || ''; } catch (er) { last = ''; }
-  bmSync(); bmLoad(last, 1);
+  if (n) { imgPaint(); markDirty('images'); if (n > 1) toast(fmt(T.bp_bm_n_added, n)); }
 }
 function imagesBody() { return '<div id="imgroot"></div>'; }
 function collectImages() {
@@ -2358,7 +2235,6 @@ R.addEventListener('click', function (e) {
     case 'dclose': closeDrawer(); break;
     case 'dsave': saveDrawer(); break;
     case 'idtoggle': idsToggle(); break;
-    case 'imgbulk': bmOpen(); break;
     case 'datepick': calOpen(el.parentNode.querySelector('[data-date]')); break;
     case 'cseogen': seoGenerate(el.dataset.field, el.dataset.lid, el); break;
     case 'cseoall': seoGenerate('all', el.dataset.lid, el); break;
@@ -2414,7 +2290,7 @@ R.addEventListener('click', function (e) {
     case 'tmainrm': DR.im.main = null; imgPaint(); markDirty('images'); break;
     case 'trow': pickImage(function (path, thumb) { DR.im.add[i].path = path; DR.im.add[i].thumb = thumb; imgPaint(); markDirty('images'); }, el, function () { DR.im.add.splice(i, 1); imgPaint(); markDirty('images'); }); break;
     case 'trowrm': DR.im.add.splice(i, 1); imgPaint(); markDirty('images'); break;
-    case 'trowadd': pickImage(function (path, thumb) { DR.im.add.push({path: path, thumb: thumb, sort: String(DR.im.add.length)}); imgPaint(); markDirty('images'); }, el); break;
+    case 'trowadd': pickImage(function (path, thumb) { addImages([{path: path, thumb: thumb}]); }, el, null, addImages); break;
     case 'seogen': {
       var key2 = el.dataset.sid + '|' + el.dataset.lid, sin = $('[data-seo="' + key2 + '"]');
       var lp = $('.lp[data-lid="' + el.dataset.lid + '"] [data-k="name"]');
