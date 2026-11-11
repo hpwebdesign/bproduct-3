@@ -1,5 +1,5 @@
 {
-    "version": "1.1.5.24",
+    "version": "1.1.5.25",
     "files": {
         "install.xml": "d1858244aaf92c8bcb46b7c63d0f6dd1f585495b0450f11864e5188327a6f45e",
         "upload/admin/controller/catalog/bcategory.php": "545c09f2ff5f4839e7aa60db03f1e873f07ddf966b71bb4905564522baa3a9f1",
@@ -13,7 +13,7 @@
         "upload/admin/language/en-gb/extension/module/bproduct.php": "c8d32e033e7b36e5dcc8c6ad8f0b18f238c7d57631d1dd2dfbf993c3005bfa30",
         "upload/admin/model/catalog/bcategory.php": "814892942c9f4a60768fe276df671ab54d9d56271dcd9557b15a2fd999c6ceda",
         "upload/admin/model/catalog/bproduct.php": "b9b2c6ae50098d8c4cd10af526f747b62d38da0a239559d02276666fe7552aaf",
-        "upload/admin/view/javascript/bproduct/hpmm_common.js": "266af640dacdf554b8ce4307a0fa092c2d26b11f6cf3198a5c3177bc01a9abc3",
+        "upload/admin/view/javascript/bproduct/hpmm_common.js": "cb2d1f84b190bfc3b991a58e4c00c196bd520abde707e85668cb7f6e960654e9",
         "upload/admin/view/javascript/bproduct/settings.js": "11180a57d7b7aff71b5656abeb5c702b337f5d749c72a8ebcda61fee7bb6556b",
         "upload/admin/view/stylesheet/bproduct/settings.css": "1e2033c914729e15b01663a97070e9383231e6ce2777a7c5e1973fcea89caeaf",
         "upload/admin/view/template/catalog/bcategory.twig": "0e18a59892c4f55988f99bf91baefd673511a1e35192d58294d339c4f5db6a73",

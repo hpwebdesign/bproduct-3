@@ -357,8 +357,17 @@ var bpUploader = (function() {
 		multiWatch.observe(img, {attributes: true, attributeFilter: ['src']});
 
 		// A thumb id that ends in a digit makes hpmm show the Insert button
+		var url = 'index.php?route=common/hpmm&user_token=' + getURLVar('user_token') + '&target=bp-mm-target&thumb=bp-mm-thumb0&product_id=0' + directory;
+
+		// Current hpmm builds ship their own modal loader (skeleton, styles, tooltips)
+		if (typeof window.hpmmOpenModal === 'function') {
+			window.hpmmOpenModal(url);
+
+			return;
+		}
+
 		$.ajax({
-			url: 'index.php?route=common/hpmm&user_token=' + getURLVar('user_token') + '&target=bp-mm-target&thumb=bp-mm-thumb0&product_id=0' + directory,
+			url: url,
 			dataType: 'html',
 			success: function(html) {
 				$('body').append('<div id="modal-image" class="modal">' + html + '</div>');
