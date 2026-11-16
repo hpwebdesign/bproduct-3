@@ -970,9 +970,7 @@ class ControllerCatalogBproduct extends Controller {
 						continue;
 					}
 
-					if (count(array_keys($data['product_seo_url'][(int)$store_id], $keyword)) > 1) {
-						$error['keyword'][$store_id][$language_id] = $this->language->get('error_unique');
-					} elseif ($this->keywordTaken($keyword, (int)$store_id, $product_id)) {
+					if ($this->keywordTaken($keyword, (int)$store_id, $product_id)) {
 						$error['keyword'][$store_id][$language_id] = $this->language->get('error_keyword');
 					}
 				}
@@ -1038,7 +1036,7 @@ class ControllerCatalogBproduct extends Controller {
 		$keyword = $base;
 		$n = 2;
 
-		while (in_array($keyword, $used) || $this->keywordTaken($keyword, 0, 0)) {
+		while ($this->keywordTaken($keyword, 0, 0)) {
 			$keyword = $base . '-' . $n++;
 		}
 
@@ -1441,7 +1439,7 @@ class ControllerCatalogBproduct extends Controller {
 				$keyword = $base;
 				$n = 2;
 
-				while (in_array($keyword, $used) || $this->keywordTaken($keyword, $store_id, $product_id)) {
+				while ($this->keywordTaken($keyword, $store_id, $product_id)) {
 					$keyword = $base . '-' . $n++;
 				}
 

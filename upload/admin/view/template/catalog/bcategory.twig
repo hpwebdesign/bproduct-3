@@ -1264,8 +1264,6 @@ function seoCheck(inp, auto) {
   kwMirror(inp);
   var key = inp.dataset.seo, a = key.split('|'), m = $('[data-seomsg="' + key + '"]'), v = inp.value.trim();
   if (!v) { m.className = 'slugmsg'; m.textContent = ''; return Promise.resolve(true); }
-  var dup = $$('[data-seo^="' + a[0] + '|"]').some(function (o) { return o !== inp && o.value.trim() === v; });
-  if (dup) { m.className = 'slugmsg bad'; m.textContent = T.bc_error_unique; return Promise.resolve(false); }
   return api('seo', {keyword: v, store_id: a[0], category_id: DR ? DR.id : 0}).then(function (j) {
     if (j.ok) { m.className = 'slugmsg ok'; m.textContent = '✓ ' + T.bc_available; return true; }
     if (auto && j.suggest) { inp.value = j.suggest; return seoCheck(inp); }
