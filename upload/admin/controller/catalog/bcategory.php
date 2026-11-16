@@ -641,9 +641,7 @@ class ControllerCatalogBcategory extends Controller {
 						continue;
 					}
 
-					if (count(array_keys($data['category_seo_url'][(int)$store_id], $keyword)) > 1) {
-						$error['keyword'][$store_id][$language_id] = $this->language->get('bc_error_unique');
-					} elseif ($this->keywordTaken($keyword, (int)$store_id, $category_id)) {
+					if ($this->keywordTaken($keyword, (int)$store_id, $category_id)) {
 						$error['keyword'][$store_id][$language_id] = $this->language->get('bc_error_keyword');
 					}
 				}
@@ -717,7 +715,7 @@ class ControllerCatalogBcategory extends Controller {
 		$keyword = $base;
 		$n = 2;
 
-		while (in_array($keyword, $used) || $this->keywordTaken($keyword, $store_id, 0)) {
+		while ($this->keywordTaken($keyword, $store_id, 0)) {
 			$keyword = $base . '-' . $n++;
 		}
 
@@ -1012,7 +1010,7 @@ class ControllerCatalogBcategory extends Controller {
 				$keyword = $base;
 				$n = 2;
 
-				while (in_array($keyword, $used) || $this->keywordTaken($keyword, $store_id, $category_id)) {
+				while ($this->keywordTaken($keyword, $store_id, $category_id)) {
 					$keyword = $base . '-' . $n++;
 				}
 
